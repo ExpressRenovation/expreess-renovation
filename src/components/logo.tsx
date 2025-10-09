@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils';
 export function Logo({ className, width = 48, height = 48 }: { className?: string, width?: number, height?: number }) {
   return (
     <Link href="/" className={cn("flex items-center gap-2 text-xl font-bold font-headline", className)}>
-      <Building className="text-primary" style={{ width, height }} />
+      <Building className="text-primary" style={{ width: '1.12em', height: '1.12em' }} />
       <span>Nombre de empresa</span>
     </Link>
   );
