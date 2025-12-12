@@ -75,12 +75,12 @@ export default function RootLayout({
           attribute="class"
           defaultTheme="theme-blue"
           enableSystem={false}
-          themes={['theme-blue', 'dark-theme-blue', 'theme-green', 'dark-theme-green', 'theme-orange', 'dark-theme-orange']}
+          themes={['theme-blue', 'dark-theme-blue', 'theme-green', 'dark-theme-green', 'theme-orange', 'dark-theme-orange', 'theme-purple', 'dark-theme-purple', 'theme-luxury', 'dark-theme-luxury']}
         >
           <AuthProvider>
             {children}
             <Toaster />
-            <ContactFab />
+            {/* <ContactFab /> */}
           </AuthProvider>
         </ThemeProvider>
       </body>
