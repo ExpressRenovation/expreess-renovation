@@ -15,7 +15,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { getSafeAuth } from '@/lib/firebase/client';
 import { useRouter } from 'next/navigation';
@@ -33,7 +33,7 @@ const formSchema = z
     path: ['confirmPassword'],
   });
 
-export default function SignupPage({ params: { locale } }: { params: { locale: any }}) {
+export default function SignupPage({ params: { locale } }: { params: { locale: any } }) {
   const { toast } = useToast();
   const router = useRouter();
   const [dict, setDict] = useState<any>(null);

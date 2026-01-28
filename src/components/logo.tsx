@@ -11,7 +11,7 @@ export function Logo({ className, width = 60, height = 20 }: { className?: strin
            However, let's try standard Next Image with unoptimized prop to allow external without config changes if needed, 
            or just standard img tag. */}
       <img
-        src="https://firebasestorage.googleapis.com/v0/b/local-digital-eye.firebasestorage.app/o/business%2Fdochevi%2Flogo.png?alt=media&token=5a49433e-2b9f-4984-b5f8-41eb5a6fd3a0"
+        src="/images/logo.png"
         alt="Dochevi Construction"
         style={{ width: width, height: 'auto', maxHeight: height * 2, objectFit: 'contain' }}
       />

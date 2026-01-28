@@ -1,4 +1,3 @@
-
 {
   "construccion-y-reformas": {
     "title": "Bau und Renovierungen",
@@ -10,7 +9,25 @@
       "Komplettrenovierungen von Wohnungen und Geschäftsräumen.",
       "Erweiterungen und Neuaufteilung von Räumen.",
       "Beratung zu Materialien und Baulösungen."
-    ]
+    ],
+    "subservices": {
+      "gestion-integral-obra-nueva": {
+        "title": "Ganzheitliches Neubau-Management",
+        "description": "Wir koordinieren und führen Ihr Bauprojekt vom Erdaushub bis zur Schlüsselübergabe durch. Volle Kontrolle über Termine und Kosten."
+      },
+      "reformas-integrales-viviendas-locales": {
+        "title": "Komplette Wohn- und Geschäftsrenovierungen",
+        "description": "Vollständige Renovierung von Innen- und Außenbereichen, Anpassung Ihrer Immobilie an moderne Bedürfnisse von Funktionalität und Stil."
+      },
+      "ampliaciones-redistribucion": {
+        "title": "Erweiterungen und Umverteilung",
+        "description": "Wir maximieren das Potenzial Ihrer Immobilie durch Hinzufügen von Quadratmetern oder Neukonfiguration des Grundrisses für offenere und hellere Räume."
+      },
+      "asesoramiento-materiales-construccion": {
+        "title": "Materialberatung",
+        "description": "Expertenberatung für die Wahl nachhaltiger, langlebiger Materialien, die ästhetisch mit Ihrer architektonischen Vision übereinstimmen."
+      }
+    }
   },
   "piscinas": {
     "title": "Poolbau",
@@ -22,7 +39,25 @@
       "Bau mit Spritzbeton (Gunite).",
       "Installation von Salzelektrolyse- und Heizsystemen.",
       "Wartungs- und Reparaturservice."
-    ]
+    ],
+    "subservices": {
+      "diseno-personalizado": {
+        "title": "Individuelles Pool-Design",
+        "description": "Wir schaffen einzigartige Pools, die sich perfekt in die Architektur Ihres Hauses und die Landschaft integrieren. Freiformen, Infinity-Pools und Designer-Entwürfe."
+      },
+      "construccion-gunitado": {
+        "title": "Spritzbetonbau",
+        "description": "Wir verwenden die Spritzbetontechnik (Gunite), um monolithische, absolut wasserdichte und maximal langlebige Becken zu gewährleisten."
+      },
+      "sistemas-cloracion-salina": {
+        "title": "Salzelektrolyse und Heizung",
+        "description": "Genießen Sie gesünderes und kristallklares Wasser mit unseren Salzelektrolysesystemen. Verlängern Sie die Badesaison mit effizienten Wärmepumpen."
+      },
+      "mantenimiento-reparacion": {
+        "title": "Wartungs- und Reparaturservice",
+        "description": "Wir kümmern uns um die Instandsetzung, Reinigung, Verfugung und Reparatur von Lecks, damit Ihr Pool immer tadellos ist."
+      }
+    }
   },
   "reformas-de-interiores": {
     "title": "Innenausbau",
@@ -34,7 +69,25 @@
       "Installation neuer Sanitär- und Elektroanlagen.",
       "Maßgeschneiderter Einbau von Küchen- und Badmöbeln.",
       "Installation von Duschwannen, Duschabtrennungen und Sanitärkeramik."
-    ]
+    ],
+    "subservices": {
+      "alicatados-pavimentos": {
+        "title": "Erneuerung von Fliesen & Böden",
+        "description": "Austausch von Keramikbelägen, Mikrozement und Holzböden zur Modernisierung der Ästhetik Ihrer Räume."
+      },
+      "instalaciones-fontaneria-electricidad": {
+        "title": "Technische Installationen",
+        "description": "Komplette Erneuerung von Sanitär- und Elektroleitungen zur Einhaltung von Vorschriften und Verbesserung der Sicherheit."
+      },
+      "mobiliario-medida": {
+        "title": "Maßgefertigte Möbel",
+        "description": "Design und Montage von Küchen- und Badmöbeln, die jeden verfügbaren Zentimeter nutzen."
+      },
+      "banos-sanitarios": {
+        "title": "Badausstattung",
+        "description": "Fachgerechte Installation von extraflachen Duschwannen, Glasabtrennungen und hängenden Design-Sanitärobjekten."
+      }
+    }
   },
   "paramentos-verticales": {
     "title": "Vertikale Verkleidungen",
@@ -46,19 +99,55 @@
       "Wärmedämmverbundsysteme (WDVS).",
       "Reparatur und Sanierung von Fassaden.",
       "Außenanstrich und Abdichtung."
-    ]
+    ],
+    "subservices": {
+      "revestimientos-continuos": {
+        "title": "Durchgehende Beschichtungen",
+        "description": "Anwendung von technischen und dekorativen Mörteln zum Schutz und zur Verschönerung von Außenwänden."
+      },
+      "aislamiento-sate": {
+        "title": "WDVS-Isolierung",
+        "description": "Wärmedämmverbundsystem zur drastischen Reduzierung des Energieverbrauchs Ihres Hauses."
+      },
+      "rehabilitacion-fachadas": {
+        "title": "Fassadensanierung",
+        "description": "Ästhetische und funktionale Wiederherstellung beschädigter Fassaden, Gewährleistung der Sicherheit und Wertsteigerung der Immobilie."
+      },
+      "pintura-impermeabilizacion-exterior": {
+        "title": "Außenanstrich & Abdichtung",
+        "description": "Wasserabweisende Behandlungen und hochbeständige Farben für dauerhaften Schutz gegen Witterungseinflüsse."
+      }
+    }
   },
   "electricidad": {
     "title": "Elektrizität",
     "subtitle": "Sichere und effiziente Elektroinstallationen für Ihre Sicherheit.",
-    "shortDescription": "Verkabelung, Beleuchtung, Schalttafel-Upgrades und Sicherheitsinspektionen.",
+    "shortDescription": "Sichere und effiziente Elektroinstallationen für Ihre Sicherheit.",
     "description": "Wir führen alle Arten von Elektroinstallationen durch, von der kompletten Verkabelung eines Hauses bis zur Installation neuer Lichtpunkte, immer unter Einhaltung der geltenden Vorschriften, um maximale Sicherheit und Energieeffizienz zu gewährleisten.",
     "features": [
       "Komplette Elektroinstallationen im Neubau.",
       "Modernisierung und Sanierung alter Anlagen.",
       "Elektrobulletins und Zertifizierungen.",
       "Installation von energiesparender LED-Beleuchtung."
-    ]
+    ],
+    "subservices": {
+      "instalaciones-obra-nueva": {
+        "title": "Elektroinstallation Neubau",
+        "description": "Planung und Ausführung umfassender Elektroprojekte für neue Häuser und Gebäude."
+      },
+      "actualizacion-reforma-electrica": {
+        "title": "Elektrische Aufrüstung & Sanierung",
+        "description": "Austausch alter Verkabelungen und Schalttafeln zur Anpassung der Anlage an aktuelle Vorschriften."
+      },
+      "boletines-certificaciones": {
+        "title": "Zertifikate & Bescheinigungen",
+        "description": "Ausstellung offizieller Elektrobescheinigungen und Abwicklung mit Versorgungsunternehmen."
+      },
+      "iluminacion-led": {
+        "title": "Effiziente LED-Beleuchtung",
+        "description": "Technische und dekorative Beleuchtungsprojekte mit LED-Technologie für maximale Einsparung und visuellen Komfort."
+      }
+    }
   },
   "carpinteria": {
     "title": "Holz- und Aluminiumschreinerei",
@@ -70,7 +159,25 @@
       "Planung und Montage von Aluminiumverkleidungen, Pergolen und Strukturen.",
       "Einbau von Durchgangs- und Eingangstüren aus Holz.",
       "Planung und Herstellung von maßgefertigten Holzschränken, Ankleidezimmern und Möbeln."
-    ]
+    ],
+    "subservices": {
+      "ventanas-puertas-aluminio-pvc": {
+        "title": "Fenster & Türen (Alu/PVC)",
+        "description": "Hocheffiziente Außenschreinerei mit thermischer Trennung und Doppelverglasung."
+      },
+      "cerramientos-pergolas": {
+        "title": "Überdachungen & Pergolen",
+        "description": "Leichte Strukturen für Terrassen und Gärten, die Ihren Wohnraum nach außen erweitern."
+      },
+      "puertas-paso-entrada": {
+        "title": "Durchgangs- & Eingangstüren",
+        "description": "Lieferung und Montage von massiven, lackierten oder gepanzerten Holztüren mit erstklassigen Oberflächen."
+      },
+      "armarios-vestidores-medida": {
+        "title": "Maßgefertigte Schränke & Ankleiden",
+        "description": "Design von personalisierten Schrankinnenräumen für maximale Organisation und Eleganz."
+      }
+    }
   },
   "fontaneria": {
     "title": "Spezialisierte Sanitärtechnik",
@@ -82,7 +189,25 @@
       "Reparatur von Lecks und Störungen.",
       "Installation von Armaturen und Sanitärkeramik.",
       "Warmwassersysteme (Boiler, Heizkessel)."
-    ]
+    ],
+    "subservices": {
+      "redes-fontaneria-desagues": {
+        "title": "Sanitär- & Abwassernetze",
+        "description": "Installation von Versorgungs- und Entsorgungsrohren mit modernen Materialien (Mehrschicht, PPR, schallgedämmtes PVC)."
+      },
+      "reparacion-fugas": {
+        "title": "Leckreparatur & Störungen",
+        "description": "Schnelle Erkennung und endgültige Lösung von Dichtheitsproblemen und Verstopfungen."
+      },
+      "griferia-sanitarios": {
+        "title": "Armaturen & Sanitärkeramik",
+        "description": "Montage von Bad- und Küchenelementen aller Marken, die eine einwandfreie Funktion gewährleisten."
+      },
+      "agua-caliente-sanitaria": {
+        "title": "Warmwasserbereitung",
+        "description": "Installation und Wartung von Elektroboilern, Gasheizern und Aerothermiesystemen."
+      }
+    }
   },
   "pintura": {
     "title": "Professionelle Malerei",
@@ -94,7 +219,25 @@
       "Spezialbeschichtungen und -farben für Außenfassaden.",
       "Glätten von Wänden und Entfernen von Rauputz.",
       "Feuchtigkeitsbehandlung und Untergrundvorbereitung."
-    ]
+    ],
+    "subservices": {
+      "pintura-interior-decorativa": {
+        "title": "Innen- & Dekorationsmalerei",
+        "description": "Glatte Oberflächen, Stuck, Tapeten und dekorative Techniken zur Personalisierung Ihrer Umgebungen."
+      },
+      "pintura-fachadas": {
+        "title": "Fassadenanstrich",
+        "description": "Elastische und steinartige Beschichtungen zum Schutz der Gebäudehülle gegen Witterungseinflüsse."
+      },
+      "alisado-paredes": {
+        "title": "Wandglättung",
+        "description": "Umwandlung alter Wände in glatte und moderne Oberflächen, bereit zum Streichen oder Tapezieren."
+      },
+      "tratamiento-humedades": {
+        "title": "Feuchtigkeitsbehandlung",
+        "description": "Sanierung von Oberflächen, die von Schimmel, Salpeter oder Kapillarität betroffen sind, vor dem Anstrich."
+      }
+    }
   },
   "impermeabilizacion": {
     "title": "Abdichtung und Dacheindeckung",
@@ -106,7 +249,25 @@
       "Reparatur und Wartung von Dächern.",
       "Anwendung von Bitumenbahnen, PVC, EPDM und Flüssigmembranen.",
       "Wärmedämmung für Dächer zur Verbesserung der Energieeffizienz."
-    ]
+    ],
+    "subservices": {
+      "cubiertas-planas-terrazas": {
+        "title": "Flachdächer & Terrassen",
+        "description": "Begehbare Abdichtung mit Oberflächen aus Fliesen, Kies oder Kunstrasen."
+      },
+      "reparacion-tejados": {
+        "title": "Dachreparatur",
+        "description": "Austausch kaputter Ziegel, Reinigung von Dachrinnen und Verstärkung besonderer Punkte auf Schrägdächern."
+      },
+      "laminas-membranas": {
+        "title": "Technische Folien & Membranen",
+        "description": "Zertifizierte Installation von EPDM, PVC-Folien und Bitumenbahnen der neuesten Generation."
+      },
+      "aislamiento-cubiertas": {
+        "title": "Dachwärmedämmung",
+        "description": "Einbau von Dämmplatten unter die Abdichtung zur Verbesserung des thermischen Komforts unter dem Dach."
+      }
+    }
   },
   "cta": {
     "title": "Bereit, Ihr {serviceName}-Projekt zu starten?",
@@ -114,5 +275,45 @@
     "button": "Sofortangebot",
     "descriptionTitle": "Servicebeschreibung",
     "featuresTitle": "Hauptmerkmale"
+  },
+  "common": {
+    "process": {
+      "title": "Unser Arbeitsprozess",
+      "steps": [
+        {
+          "title": "1. Erstberatung",
+          "description": "Wir bewerten Ihre Bedürfnisse und den aktuellen Zustand, um den Umfang zu definieren."
+        },
+        {
+          "title": "2. Planung",
+          "description": "Wir entwerfen die technische Lösung und präsentieren ein detailliertes Budget."
+        },
+        {
+          "title": "3. Fachgerechte Ausführung",
+          "description": "Wir führen die Arbeiten termingerecht und mit hochwertigen Materialien aus."
+        },
+        {
+          "title": "4. Übergabe & Garantie",
+          "description": "Gemeinsame Endabnahme und Übergabe von Dokumentation und Garantien."
+        }
+      ]
+    },
+    "faq": {
+      "title": "Häufig gestellte Fragen",
+      "items": [
+        {
+          "question": "Bieten Sie eine Garantie auf die ausgeführten Arbeiten?",
+          "answer": "Ja, alle unsere Dienstleistungen haben eine volle Garantie sowohl auf Arbeitsleistung als auch auf Materialien, gemäß den geltenden Vorschriften und unseren Qualitätsstandards."
+        },
+        {
+          "question": "Beinhaltet das Budget die Verwaltung von Lizenzen?",
+          "answer": "Wir können alle notwendigen kommunalen Lizenzen und Genehmigungen für Ihre Arbeit oder Renovierung verwalten, damit Sie sich nicht um den Papierkram kümmern müssen."
+        },
+        {
+          "question": "Wie lange dauert es, bis die Arbeiten beginnen?",
+          "answer": "Unsere Reaktionsfähigkeit ist schnell. Sobald das Budget genehmigt ist, vereinbaren wir je nach Verfügbarkeit und Komplexität des Projekts einen sofortigen Starttermin."
+        }
+      ]
+    }
   }
 }

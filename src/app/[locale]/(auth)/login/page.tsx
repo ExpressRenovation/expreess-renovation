@@ -15,7 +15,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { getSafeAuth } from '@/lib/firebase/client';
 import { useRouter } from 'next/navigation';
@@ -27,7 +27,7 @@ const formSchema = z.object({
   password: z.string().min(6, { message: 'La contraseña debe tener al menos 6 caracteres.' }),
 });
 
-export default function LoginPage({ params: { locale } }: { params: { locale: any }}) {
+export default function LoginPage({ params: { locale } }: { params: { locale: any } }) {
   const { toast } = useToast();
   const router = useRouter();
   const [dict, setDict] = useState<any>(null);
@@ -35,7 +35,7 @@ export default function LoginPage({ params: { locale } }: { params: { locale: an
   useEffect(() => {
     getDictionary(locale).then(d => setDict(d.login));
   }, [locale]);
-  
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {

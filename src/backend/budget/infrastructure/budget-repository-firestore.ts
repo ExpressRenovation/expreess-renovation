@@ -1,31 +1,63 @@
 // src/backend/budget/infrastructure/budget-repository-firestore.ts
-import type { Budget, BudgetRepository } from '../domain/budget';
-// import { adminDb } from '@/lib/firebase/server';
+import { Budget, BudgetRepository } from '../domain/budget';
+import { getFirestore } from 'firebase-admin/firestore';
+import { initFirebaseAdminApp } from '@/backend/shared/infrastructure/firebase/admin-app';
 
 /**
  * Firestore implementation of the BudgetRepository.
  */
 export class BudgetRepositoryFirestore implements BudgetRepository {
-  // private budgetCollection = adminDb.collection('budgets');
+  private db;
+
+  constructor() {
+    initFirebaseAdminApp();
+    this.db = getFirestore();
+  }
+
+  private get collection() {
+    return this.db.collection('budgets');
+  }
 
   async findById(id: string): Promise<Budget | null> {
-    console.log(`[Infrastructure] Finding budget by ID from Firestore: ${id}`);
-    // const doc = await this.budgetCollection.doc(id).get();
-    // if (!doc.exists) return null;
-    // return doc.data() as Budget;
-    return Promise.resolve(null);
+    const doc = await this.collection.doc(id).get();
+    if (!doc.exists) return null;
+    return this.mapDocToBudget(doc);
   }
 
   async findByUserId(userId: string): Promise<Budget[]> {
-    console.log(`[Infrastructure] Finding budgets for user from Firestore: ${userId}`);
-    // const snapshot = await this.budgetCollection.where('userId', '==', userId).get();
-    // return snapshot.docs.map(doc => doc.data() as Budget);
-    return Promise.resolve([]);
+    const snapshot = await this.collection.where('userId', '==', userId).get();
+    return snapshot.docs.map(doc => this.mapDocToBudget(doc));
+  }
+
+  async findAll(): Promise<Budget[]> {
+    const snapshot = await this.collection.orderBy('createdAt', 'desc').get();
+    return snapshot.docs.map(doc => this.mapDocToBudget(doc));
   }
 
   async save(budget: Budget): Promise<void> {
     console.log(`[Infrastructure] Saving budget to Firestore: ${budget.id}`);
-    // await this.budgetCollection.doc(budget.id).set(budget);
-    return Promise.resolve();
+    await this.collection.doc(budget.id).set({
+      ...budget,
+      createdAt: budget.createdAt, // Ensure dates are handled (Firestore supports native Date)
+      updatedAt: budget.updatedAt || new Date(),
+    }, { merge: true });
+  }
+
+  private mapDocToBudget(doc: any): Budget {
+    const data = doc.data();
+
+    // Map nested collections/arrays if they contain Timestamps
+    const renders = data.renders?.map((r: any) => ({
+      ...r,
+      createdAt: r.createdAt?.toDate ? r.createdAt.toDate() : (new Date(r.createdAt) || new Date())
+    })) || [];
+
+    return {
+      ...data,
+      id: doc.id,
+      renders: renders,
+      createdAt: data.createdAt?.toDate ? data.createdAt.toDate() : (new Date(data.createdAt) || new Date()),
+      updatedAt: data.updatedAt?.toDate ? data.updatedAt.toDate() : (new Date(data.updatedAt) || new Date()),
+    } as Budget;
   }
 }

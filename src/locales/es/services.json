@@ -1,4 +1,3 @@
-
 {
   "construccion-y-reformas": {
     "title": "Construcción y Reformas",
@@ -10,7 +9,25 @@
       "Reformas completas de viviendas y locales comerciales.",
       "Ampliaciones y redistribución de espacios.",
       "Asesoramiento en materiales y soluciones constructivas."
-    ]
+    ],
+    "subservices": {
+      "gestion-integral-obra-nueva": {
+        "title": "Gestión Integral de Obra Nueva",
+        "description": "Coordinamos y ejecutamos tu proyecto de edificación desde el movimiento de tierras hasta la entrega de llaves. Control total de plazos y costes."
+      },
+      "reformas-integrales-viviendas-locales": {
+        "title": "Reformas Integrales de Viviendas y Locales",
+        "description": "Renovación completa de espacios interiores y exteriores, adaptando tu propiedad a las necesidades modernas de funcionalidad y estilo."
+      },
+      "ampliaciones-redistribucion": {
+        "title": "Ampliaciones y Redistribución",
+        "description": "Maximizamos el potencial de tu inmueble añadiendo metros cuadrados o reconfigurando el layout para obtener espacios más abiertos y luminosos."
+      },
+      "asesoramiento-materiales-construccion": {
+        "title": "Asesoramiento en Materiales",
+        "description": "Consultoría experta para la elección de materiales sostenibles, duraderos y estéticamente acordes a tu visión arquitectónica."
+      }
+    }
   },
   "piscinas": {
     "title": "Construcción de Piscinas",
@@ -22,7 +39,25 @@
       "Construcción con hormigón proyectado (gunitado).",
       "Instalación de sistemas de cloración salina y climatización.",
       "Servicio de mantenimiento y reparación."
-    ]
+    ],
+    "subservices": {
+      "diseno-personalizado": {
+        "title": "Diseño Personalizado de Piscinas",
+        "description": "Creamos piscinas únicas que se integran perfectamente con la arquitectura de tu casa y el paisaje. Formas libres, infinity pools y diseños de autor."
+      },
+      "construccion-gunitado": {
+        "title": "Construcción con Hormigón Gunitado",
+        "description": "Utilizamos la técnica del gunitado (hormigón proyectado) para garantizar vasos monolíticos, totalmente estancos y de máxima durabilidad."
+      },
+      "sistemas-cloracion-salina": {
+        "title": "Cloración Salina y Climatización",
+        "description": "Disfruta de un agua más sana y cristalina con nuestros sistemas de electrólisis salina. Alarga la temporada de baño con bombas de calor eficientes."
+      },
+      "mantenimiento-reparacion": {
+        "title": "Servicio de Mantenimiento y Reparación",
+        "description": "Nos encargamos de la puesta a punto, limpieza, lechada y reparación de fugas para que tu piscina esté siempre impecable."
+      }
+    }
   },
   "reformas-de-interiores": {
     "title": "Reformas de Interiores",
@@ -34,7 +69,25 @@
       "Instalación de fontanería y electricidad nuevas.",
       "Montaje de mobiliario de cocina y baño a medida.",
       "Instalación de platos de ducha, mamparas y sanitarios."
-    ]
+    ],
+    "subservices": {
+      "alicatados-pavimentos": {
+        "title": "Renovación de Alicatados y Pavimentos",
+        "description": "Sustitución de revestimientos cerámicos, microcemento y suelos de madera para modernizar la estética de tus estancias."
+      },
+      "instalaciones-fontaneria-electricidad": {
+        "title": "Instalaciones Técnicas",
+        "description": "Renovación completa de redes de fontanería y circuitos eléctricos para cumplir normativas y mejorar la seguridad."
+      },
+      "mobiliario-medida": {
+        "title": "Mobiliario a Medida",
+        "description": "Diseño y montaje de muebles de cocina y baño que aprovechan cada centímetro disponible."
+      },
+      "banos-sanitarios": {
+        "title": "Equipamiento de Baños",
+        "description": "Instalación experta de platos de ducha extraplanos, mamparas de vidrio y sanitarios suspendidos de diseño."
+      }
+    }
   },
   "paramentos-verticales": {
     "title": "Paramentos Verticales",
@@ -46,7 +99,25 @@
       "Sistemas de Aislamiento Térmico por el Exterior (SATE).",
       "Reparación y rehabilitación de fachadas.",
       "Pintura exterior e impermeabilización."
-    ]
+    ],
+    "subservices": {
+      "revestimientos-continuos": {
+        "title": "Revestimientos Continuos",
+        "description": "Aplicación de morteros técnicos y decorativos para proteger y embellecer paramentos exteriores."
+      },
+      "aislamiento-sate": {
+        "title": "Aislamiento SATE",
+        "description": "Sistema de Aislamiento Térmico por el Exterior para reducir drásticamente el consumo energético de tu vivienda."
+      },
+      "rehabilitacion-fachadas": {
+        "title": "Rehabilitación de Fachadas",
+        "description": "Recuperación estética y funcional de fachadas deterioradas, asegurando la seguridad y revalorizando el inmueble."
+      },
+      "pintura-impermeabilizacion-exterior": {
+        "title": "Pintura e Impermeabilización Exterior",
+        "description": "Tratamientos hidrófugos y pinturas de alta resistencia a la intemperie para una protección duradera."
+      }
+    }
   },
   "electricidad": {
     "title": "Electricidad",
@@ -58,7 +129,25 @@
       "Actualización y reforma de instalaciones antiguas.",
       "Boletines eléctricos y certificaciones.",
       "Instalación de iluminación LED de bajo consumo."
-    ]
+    ],
+    "subservices": {
+      "instalaciones-obra-nueva": {
+        "title": "Instalaciones Eléctricas Obra Nueva",
+        "description": "Diseño y ejecución de proyectos eléctricos integrales para viviendas y edificios nuevos."
+      },
+      "actualizacion-reforma-electrica": {
+        "title": "Actualización y Reforma Eléctrica",
+        "description": "Sustitución de cableado antiguo y cuadros eléctricos para adaptar la instalación a la normativa actual."
+      },
+      "boletines-certificaciones": {
+        "title": "Boletines y Certificaciones",
+        "description": "Emisión de boletines eléctricos oficiales y gestiones con compañías suministradoras."
+      },
+      "iluminacion-led": {
+        "title": "Iluminación LED Eficiente",
+        "description": "Proyectos de iluminación técnica y decorativa con tecnología LED para máximo ahorro y confort visual."
+      }
+    }
   },
   "carpinteria": {
     "title": "Carpintería de Madera y Aluminio",
@@ -70,7 +159,25 @@
       "Diseño y montaje de cerramientos, pérgolas y estructuras de aluminio.",
       "Instalación de puertas de paso y de entrada en madera.",
       "Diseño y fabricación de armarios, vestidores y mobiliario a medida en madera."
-    ]
+    ],
+    "subservices": {
+      "ventanas-puertas-aluminio-pvc": {
+        "title": "Ventanas y Puertas de Aluminio/PVC",
+        "description": "Carpintería exterior de alta eficiencia energética con rotura de puente térmico y doble acristalamiento."
+      },
+      "cerramientos-pergolas": {
+        "title": "Cerramientos y Pérgolas",
+        "description": "Estructuras ligeras para terrazas y jardines, ampliando tu espacio habitable hacia el exterior."
+      },
+      "puertas-paso-entrada": {
+        "title": "Puertas de Paso y Entrada",
+        "description": "Suministro e instalación de puertas de madera maciza, lacadas o blindadas con acabados premium."
+      },
+      "armarios-vestidores-medida": {
+        "title": "Armarios y Vestidores a Medida",
+        "description": "Diseño de interiores de armario personalizados para la máxima organización y elegancia."
+      }
+    }
   },
   "fontaneria": {
     "title": "Fontanería Especializada",
@@ -82,7 +189,25 @@
       "Reparación de fugas y averías.",
       "Instalación de grifería y sanitarios.",
       "Sistemas de agua caliente sanitaria (termos, calderas)."
-    ]
+    ],
+    "subservices": {
+      "redes-fontaneria-desagues": {
+        "title": "Redes de Fontanería y Desagües",
+        "description": "Instalación de tuberías de alimentación y evacuación con materiales modernos (multicapa, PPR, PVC insonorizado)."
+      },
+      "reparacion-fugas": {
+        "title": "Reparación de Fugas y Averías",
+        "description": "Detección rápida y solucion definitiva de problemas de estanqueidad y atascos."
+      },
+      "griferia-sanitarios": {
+        "title": "Instalación de Grifería y Sanitarios",
+        "description": "Montaje de elementos de baño y cocina de todas las marcas, asegurando un funcionamiento perfecto."
+      },
+      "agua-caliente-sanitaria": {
+        "title": "Agua Caliente Sanitaria",
+        "description": "Instalación y mantenimiento de termos eléctricos, calentadores de gas y sistemas de aerotermia."
+      }
+    }
   },
   "pintura": {
     "title": "Pintura Profesional",
@@ -94,7 +219,25 @@
       "Revestimientos y pinturas especiales para fachadas exteriores.",
       "Alisado de paredes y eliminación de gotelé.",
       "Tratamiento de humedades y preparación de superficies."
-    ]
+    ],
+    "subservices": {
+      "pintura-interior-decorativa": {
+        "title": "Pintura Interior y Decorativa",
+        "description": "Acabados lisos, estucos, papeles pintados y técnicas decorativas para personalizar tus ambientes."
+      },
+      "pintura-fachadas": {
+        "title": "Pintura de Fachadas",
+        "description": "Revestimientos elásticos y pétreos para proteger la envolvente del edificio contra la intemperie."
+      },
+      "alisado-paredes": {
+        "title": "Alisado y Quitado de Gotelé",
+        "description": "Transformación de paredes antiguas en superficies lisas y modernas, listas para pintar o empapelar."
+      },
+      "tratamiento-humedades": {
+        "title": "Tratamiento de Humedades",
+        "description": "Saneamiento de superficies afectadas por moho, salitre o capilaridad antes del pintado."
+      }
+    }
   },
   "impermeabilizacion": {
     "title": "Impermeabilización y Cubiertas",
@@ -106,7 +249,25 @@
       "Reparación y mantenimiento de tejados.",
       "Aplicación de láminas asfálticas, PVC, EPDM y membranas líquidas.",
       "Aislamiento térmico para cubiertas, mejorando la eficiencia energética."
-    ]
+    ],
+    "subservices": {
+      "cubiertas-planas-terrazas": {
+        "title": "Cubiertas Planas y Terrazas",
+        "description": "Impermeabilización transitable con acabados en baldosa, grava o césped artificial."
+      },
+      "reparacion-tejados": {
+        "title": "Reparación de Tejados",
+        "description": "Sustitución de tejas rotas, limpieza de canalones y refuerzo de puntos singulares en cubiertas inclinadas."
+      },
+      "laminas-membranas": {
+        "title": "Láminas y Membranas Técnicas",
+        "description": "Instalación certificada de láminas EPDM, PVC y telas asfálticas de última generación."
+      },
+      "aislamiento-cubiertas": {
+        "title": "Aislamiento Térmico de Cubiertas",
+        "description": "Incorporación de paneles aislantes bajo la impermeabilización para mejorar el confort térmico bajo cubierta."
+      }
+    }
   },
   "cta": {
     "title": "¿Listo para empezar tu proyecto de {serviceName}?",
@@ -114,5 +275,45 @@
     "button": "Presupuesto al instante",
     "descriptionTitle": "Descripción del Servicio",
     "featuresTitle": "Características Clave"
+  },
+  "common": {
+    "process": {
+      "title": "Nuestro Proceso de Trabajo",
+      "steps": [
+        {
+          "title": "1. Consulta Inicial",
+          "description": "Evaluamos tus necesidades y el estado actual para definir el alcance."
+        },
+        {
+          "title": "2. Planificación",
+          "description": "Diseñamos la solución técnica y presentamos un presupuesto detallado."
+        },
+        {
+          "title": "3. Ejecución Experta",
+          "description": "Realizamos la obra cumpliendo plazos y con materiales de primera."
+        },
+        {
+          "title": "4. Entrega y Garantía",
+          "description": "Revisión final conjunta y entrega de documentación y garantías."
+        }
+      ]
+    },
+    "faq": {
+      "title": "Preguntas Frecuentes",
+      "items": [
+        {
+          "question": "¿Ofrecen garantía por los trabajos realizados?",
+          "answer": "Sí, todos nuestros servicios cuentan con garantía completa tanto en mano de obra como en materiales, conforme a la normativa vigente y nuestros estándares de calidad."
+        },
+        {
+          "question": "¿El presupuesto incluye la gestión de licencias?",
+          "answer": "Podemos gestionar todas las licencias y permisos municipales necesarios para tu obra o reforma, para que no tengas que preocuparte por el papeleo."
+        },
+        {
+          "question": "¿Cuánto tiempo tardan en iniciar la obra?",
+          "answer": "Nuestra capacidad de respuesta es rápida. Una vez aprobado el presupuesto, acordamos una fecha de inicio inmediata según disponibilidad y complejidad del proyecto."
+        }
+      ]
+    }
   }
 }

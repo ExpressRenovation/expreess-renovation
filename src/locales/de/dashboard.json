@@ -3,13 +3,22 @@
         "title": "Willkommen in Ihrem Dashboard",
         "description": "Verwalten Sie Ihre Projekte und Budgetanfragen von hier aus."
     },
-     "nav": {
+    "sidebar": {
+        "groups": {
+            "management": "Verwaltung",
+            "library": "Bibliothek",
+            "configuration": "Konfiguration"
+        }
+    },
+    "nav": {
         "dashboard": "Dashboard",
-        "requestBudget": "Budget anfordern",
+        "requestBudget": "Anfragen",
         "myBudgets": "Meine Budgets",
-        "seoGenerator": "SEO-Generator",
-        "settings": "Einstellungen",
-        "pricing": "Preise konfigurieren"
+        "seoGenerator": "SEO Generator",
+        "priceBook": "Preisbuch",
+        "settings": "Allgemein",
+        "quickPricing": "Schnellpreise",
+        "financial": "Finanzen"
     },
     "requestBudget": {
         "title": "Budget anfordern",
@@ -18,5 +27,10 @@
     "seoGenerator": {
         "title": "SEO-Blog-Generator",
         "description": "Erstellen Sie SEO-optimierte Blogartikel, um mehr Kunden zu gewinnen."
+    },
+    "metrics": {
+        "totalBudgeted": "Budgetiert Gesamt",
+        "totalRequests": "Gesamtanfragen",
+        "pendingReview": "Zur Überprüfung ausstehend"
     }
 }

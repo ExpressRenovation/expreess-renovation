@@ -1,0 +1,149 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { Search, Plus, Package, Loader2 } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { EditableBudgetLineItem } from '@/types/budget-editor';
+import { searchPriceBookAction } from '@/actions/price-book/search-items.action';
+import { PriceBookItem } from '@/backend/price-book/domain/price-book-item';
+import { useToast } from '@/hooks/use-toast';
+
+interface BudgetLibrarySidebarProps {
+    onAddItem: (item: Partial<EditableBudgetLineItem>) => void;
+}
+
+export const BudgetLibrarySidebar = ({ onAddItem }: BudgetLibrarySidebarProps) => {
+    const [search, setSearch] = useState('');
+    const [items, setItems] = useState<PriceBookItem[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const { toast } = useToast();
+
+    // Debounce Search
+    useEffect(() => {
+        const timer = setTimeout(async () => {
+            if (search.trim().length > 2) {
+                setIsLoading(true);
+                try {
+                    const result = await searchPriceBookAction(search);
+                    if (result.success && result.data) {
+                        setItems(result.data);
+                    } else {
+                        toast({
+                            title: "Error en búsqueda",
+                            description: result.error || "No se pudieron cargar los datos.",
+                            variant: "destructive"
+                        });
+                    }
+                } catch (error) {
+                    console.error("Search error", error);
+                } finally {
+                    setIsLoading(false);
+                }
+            } else if (search.trim().length === 0) {
+                setItems([]);
+            }
+        }, 500);
+
+        return () => clearTimeout(timer);
+    }, [search, toast]);
+
+    const handleAdd = (dbItem: PriceBookItem) => {
+        // Map PriceBookItem to EditableBudgetLineItem structure
+        const newItem: Partial<EditableBudgetLineItem> = {
+            originalTask: dbItem.description.substring(0, 50) + (dbItem.description.length > 50 ? '...' : ''), // Title from initial description
+            chapter: 'General', // We don't have explicit chapters in PriceBookItem yet, default to General or maybe categorize later?
+            // Actually, if we had a category field in PriceBookItem we would use it. 
+            // For now, let's leave it as 'General' or let the user move it.
+            item: {
+                description: dbItem.description,
+                unit: dbItem.unit,
+                quantity: 1,
+                unitPrice: dbItem.priceTotal, // Use the total execution price as the unit price for the client budget
+                totalPrice: dbItem.priceTotal,
+                code: dbItem.code
+            },
+            originalState: {
+                unitPrice: dbItem.priceTotal,
+                quantity: 1,
+                description: dbItem.description,
+                unit: dbItem.unit
+            }
+        };
+        onAddItem(newItem);
+        toast({
+            title: "Partida añadida",
+            description: `${dbItem.code} se ha añadido al presupuesto.`,
+        });
+    };
+
+    return (
+        <div className="bg-white rounded-xl border shadow-sm flex flex-col h-[calc(100vh-180px)] overflow-hidden">
+            <div className="p-4 border-b bg-slate-50/50">
+                <h3 className="font-bold text-slate-800 flex items-center gap-2 mb-3">
+                    <Package className="w-4 h-4 text-primary" />
+                    Biblioteca de Precios
+                </h3>
+                <div className="relative">
+                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-slate-400" />
+                    <Input
+                        placeholder="Buscar (min 3 letras)..."
+                        className="pl-9 bg-white"
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                    />
+                    {isLoading && (
+                        <div className="absolute right-3 top-2.5">
+                            <Loader2 className="w-4 h-4 animate-spin text-primary" />
+                        </div>
+                    )}
+                </div>
+            </div>
+
+            <ScrollArea className="flex-1 p-0">
+                <div className="p-2 space-y-1">
+                    {items.length === 0 && !isLoading ? (
+                        <div className="text-center py-8 text-slate-400 text-sm px-4">
+                            {search.length > 0 && search.length < 3
+                                ? "Escribe al menos 3 caracteres..."
+                                : "Busca partidas en tu base de datos centralizada."}
+                        </div>
+                    ) : (
+                        items.map((item) => (
+                            <div
+                                key={item.id}
+                                className="group flex flex-col gap-2 p-3 rounded-lg border border-transparent hover:bg-slate-50 hover:border-slate-100 transition-all cursor-default"
+                            >
+                                <div className="flex justify-between items-start gap-2">
+                                    <div>
+                                        <Badge variant="outline" className="text-[10px] mb-1 text-slate-500 font-normal">
+                                            {item.year}
+                                        </Badge>
+                                        <h4 className="font-medium text-sm text-slate-700 leading-tight line-clamp-2">
+                                            {item.description}
+                                        </h4>
+                                    </div>
+                                    <span className="font-mono text-xs font-bold text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded whitespace-nowrap">
+                                        {item.priceTotal.toLocaleString('es-ES', { style: 'currency', currency: 'EUR' })}
+                                    </span>
+                                </div>
+                                <div className="flex justify-between items-end mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <span className="text-[10px] text-slate-400 font-mono">{item.code}</span>
+                                    <Button
+                                        size="sm"
+                                        className="h-7 text-xs"
+                                        onClick={() => handleAdd(item)}
+                                    >
+                                        <Plus className="w-3 h-3 mr-1" /> Añadir
+                                    </Button>
+                                </div>
+                            </div>
+                        ))
+                    )}
+                </div>
+            </ScrollArea>
+        </div>
+    );
+};

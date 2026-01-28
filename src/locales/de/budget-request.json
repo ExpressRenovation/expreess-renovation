@@ -1,4 +1,3 @@
-
 {
     "title": "Fordern Sie Ihr Angebot an",
     "description": "Wählen Sie den gewünschten Detaillierungsgrad und wir erstellen Ihnen einen Kostenvoranschlag.",
@@ -6,14 +5,89 @@
         "title": "Sofortangebot",
         "description": "Füllen Sie unser schnelles Formular aus und erhalten Sie in wenigen Minuten einen Kostenvoranschlag für Ihr Projekt."
     },
-    "selection": {
-        "quick": {
-            "title": "Schnelles Angebot",
-            "description": "Ideal, um mit wenigen Daten eine schnelle Kostenschätzung für Ihr Projekt zu erhalten."
+    "selector": {
+        "title": "Wie können wir Ihnen helfen?",
+        "subtitle": "Wählen Sie die Option, die am besten zu Ihrem Projekt passt.",
+        "options": {
+            "wizard": {
+                "title": "Intelligenter Kostenvoranschlag",
+                "desc": "Detaillierte 360°-Analyse mit KI",
+                "badge": "Empfohlen"
+            },
+            "newBuild": {
+                "title": "Neubau",
+                "desc": "Bau von Grund auf"
+            },
+            "fast": {
+                "title": "Schnelles Angebot",
+                "desc": "Express-Schätzung für Renovierungen"
+            }
+        }
+    },
+    "modal": {
+        "headers": {
+            "newBuild": {
+                "title": "Neubau-Studie",
+                "desc": "Lassen Sie uns die Machbarkeit Ihres Projekts analysieren."
+            },
+            "wizard": {
+                "title": "Budget-Assistent",
+                "desc": "Detaillieren Sie Ihre Vision Schritt für Schritt."
+            },
+            "pool": {
+                "title": "Pool-Angebot",
+                "desc": "Entwerfen Sie Ihre perfekte Oase."
+            },
+            "fast": {
+                "title": "Schnellrechner",
+                "desc": "Erhalten Sie eine sofortige Schätzung."
+            }
         },
-        "detailed": {
-            "title": "Detailliertes Angebot",
-            "description": "Geben Sie alle Details an, um ein genaueres und maßgeschneidertes vorläufiges Angebot zu erhalten."
+        "cancel": "Abbrechen"
+    },
+    "newBuild": {
+        "hasLand": {
+            "label": "Haben Sie bereits ein Grundstück?",
+            "yes": "Ja, ich besitze ein Grundstück",
+            "no": "Nein, ich suche noch",
+            "searching": "Ich habe ein Grundstück im Auge/reserviert"
+        },
+        "hasProject": {
+            "label": "Haben Sie bereits ein Architektenprojekt?",
+            "yes": "Ja, ich habe genehmigte Pläne",
+            "no": "Nein, ich brauche einen Architekten"
+        },
+        "location": {
+            "label": "In welchem Gebiet/Gemeinde?",
+            "placeholder": "Z.B. Andratx, Son Vida..."
+        },
+        "approxMeters": {
+            "label": "Ungefähre bebaubare Quadratmeter"
+        },
+        "details": {
+            "label": "Zusätzliche Details (Optional)",
+            "placeholder": "Moderner Stil, Pool..."
+        },
+        "submit": "Studie anfordern"
+    },
+    "multimedia": {
+        "title": "Dateien und Pläne",
+        "description": "Laden Sie Pläne oder Fotos des aktuellen Zustands hoch",
+        "upload": "Dateien hochladen",
+        "dragDrop": "Hierher ziehen oder klicken zum Hochladen"
+    },
+    "trigger": {
+        "title": "Denken Sie an eine Renovierung?",
+        "subtitle": "Erhalten Sie Ihre kostenlose Schätzung in Sekunden.",
+        "mobileSubtitle": "Klicken zum Starten",
+        "modes": {
+            "general": "Angebot anfordern",
+            "pool": "Pool Angebot",
+            "reform": "Renovierungskosten",
+            "new_build": "Neubau Studie",
+            "kitchen": "Küche Budget",
+            "bathroom": "Bad Budget",
+            "wizard": "360º Budget"
         }
     },
     "quickForm": {
@@ -30,6 +104,10 @@
         },
         "squareMeters": {
             "label": "Bodenquadratmeter (m²)"
+        },
+        "additionalDetails": {
+            "label": "Zusätzliche Beschreibung (Optional)",
+            "placeholder": "Extra Details..."
         }
     },
     "detailedForm": {
@@ -69,6 +147,12 @@
             "submit": "Geschätzten Preis berechnen",
             "loading": "Wird gesendet..."
         },
+        "contact": {
+            "banner": {
+                "title": "Lassen Sie uns anfangen!",
+                "description": "Wir benötigen Ihre Daten, um Ihnen nach Abschluss das detaillierte Angebot zusenden zu können."
+            }
+        },
         "name": {
             "label": "Vollständiger Name",
             "placeholder": "Ihr Vor- und Nachname"
@@ -95,11 +179,21 @@
             "projectScope": {
                 "label": "Projektumfang",
                 "integral": "Komplettrenovierung",
-                "partial": "Teilrenovierung"
+                "integralDesc": "Komplette Renovierung der gesamten Immobilie.",
+                "partial": "Teilrenovierung",
+                "partialDesc": "Nur bestimmte Räume oder Bereiche."
             },
             "partialScope": {
                 "label": "Zu renovierende Bereiche",
-                "description": "Wählen Sie die Bereiche aus, die Sie in die Teilrenovierung einbeziehen möchten."
+                "description": "Wählen Sie die Bereiche aus, die Sie in die Teilrenovierung einbeziehen möchten.",
+                "options": {
+                    "bathroom": "Badezimmerrenovierung",
+                    "kitchen": "Küchenrenovierung",
+                    "demolition": "Abrissarbeiten",
+                    "ceilings": "Abgehängte Decken",
+                    "electricity": "Elektrik",
+                    "carpentry": "Tischler- und Malerarbeiten"
+                }
             },
             "totalAreaM2": {
                 "label": "Gesamtfläche der Immobilie (m²)"
@@ -124,11 +218,23 @@
             "placeholder": "Wählen Sie eine Qualität",
             "options": {
                 "basic": "Basis",
+                "basicDesc": "Funktional und wirtschaftlich, ideal zur Vermietung.",
                 "medium": "Mittel",
-                "premium": "Premium"
+                "mediumDesc": "Ausgewogenes Preis-Leistungs-Verhältnis, langlebige Materialien.",
+                "premium": "Premium",
+                "premiumDesc": "Luxusausführungen und exklusives Design."
             }
         },
         "demolition": {
+            "elevator": "Verfügt das Gebäude über einen Aufzug?",
+            "furniture": "Benötigen Sie die Demontage und Entfernung vorhandener Möbel?",
+            "thickWall": {
+                "label": "Art der abzureißenden Trennwand",
+                "thin": "Einfache Trennwand (Hohlziegel / Gipskarton)",
+                "thick": "Tragende Wand oder dicke Mauer (Massivziegel / Block)"
+            },
+            "floors": "Bodenabbruch (m²)",
+            "wallTiles": "Fliesenabbruch (m²)",
             "demolishPartitions": {
                 "label": "Benötigen Sie den Abriss von Innenwänden?"
             },
@@ -201,6 +307,23 @@
                 "sockets": "Hinzuzufügende Steckdosen",
                 "lights": "Hinzuzufügende geschaltete Lichtpunkte",
                 "tv": "Wünschen Sie einen TV-Anschluss?"
+            },
+            "scope": {
+                "label": "Umfang der Elektroinstallation",
+                "total": "Komplettrenovierung",
+                "totalDesc": "Komplette Neuinstallation (Verteilerkasten, Verkabelung, Schalter). Ideal für Altbau.",
+                "partial": "Nur Schalter/Steckdosen",
+                "partialDesc": "Austausch von Steckdosen und Schaltern ohne Änderung der internen Verkabelung."
+            },
+            "ac": {
+                "label": "Klimaanlage",
+                "installLabel": "Klimaanlage installieren?",
+                "countLabel": "Anzahl der Geräte",
+                "typeLabel": "Installationsart",
+                "split": "Wand-Splits",
+                "splitDesc": "Sichtbare Geräte an der Wand. Einfachere Installation.",
+                "ducts": "Kanal (Zentralisiert)",
+                "ductsDesc": "Unsichtbar durch abgehängte Decke. Erfordert Bauarbeiten und Gitter."
             }
         },
         "carpentry": {

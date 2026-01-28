@@ -1,11 +1,13 @@
 'use client';
 
 import Image from 'next/image';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
+import { useWidgetContext } from '@/context/budget-widget-context';
 
 export function HeroSection({ t }: { t: any }) {
+    const { openWidget } = useWidgetContext();
     if (!t) return null;
 
     return (
@@ -65,11 +67,11 @@ export function HeroSection({ t }: { t: any }) {
                         transition={{ duration: 0.8, delay: 0.8 }}
                         className="flex flex-col sm:flex-row gap-6 justify-center pt-8"
                     >
-                        <Button asChild size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 text-lg px-10 py-7 rounded-full shadow-[0_0_20px_rgba(var(--primary-rgb),0.5)] hover:shadow-[0_0_30px_rgba(var(--primary-rgb),0.6)] transition-all duration-300 transform hover:-translate-y-1">
-                            <Link href="/budget-request">{t.cta}</Link>
+                        <Button size="lg" onClick={() => openWidget('general')} className="bg-primary text-primary-foreground hover:bg-primary/90 text-lg px-10 py-7 rounded-full shadow-[0_0_20px_rgba(var(--primary-rgb),0.5)] hover:shadow-[0_0_30px_rgba(var(--primary-rgb),0.6)] transition-all duration-300 transform hover:-translate-y-1">
+                            {t.cta}
                         </Button>
                         <Button asChild variant="outline" size="lg" className="border-white/50 text-white hover:bg-white/10 hover:border-white bg-transparent text-lg px-10 py-7 rounded-full backdrop-blur-sm transition-all duration-300">
-                            <Link href="#services">{t.ctaSecondary}</Link>
+                            <Link href="/services">{t.ctaSecondary}</Link>
                         </Button>
                     </motion.div>
                 </motion.div>

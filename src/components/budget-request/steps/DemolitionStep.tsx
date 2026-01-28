@@ -16,14 +16,8 @@ export const DemolitionStep = ({ form, t }: DemolitionStepProps) => {
   const watchRemoveDoors = form.watch('removeDoors');
   const commonT = t.budgetRequest.form;
 
-  // Translation helpers (to be moved to dictionary later)
-  const labels = {
-    elevator: "¿El edificio dispone de ascensor?",
-    furniture: "¿Necesitas desmontaje y retirada de muebles existentes?",
-    thickWall: "Tipo de Tabiquería a Demoler",
-    floors: "Demolición de Suelos (m²)",
-    wallTiles: "Demolición de Alicatados (m²)",
-  };
+  // Translation from dictionary
+  const commonDemolition = commonT.demolition;
 
   return (
     <div className="space-y-6">
@@ -33,7 +27,7 @@ export const DemolitionStep = ({ form, t }: DemolitionStepProps) => {
           name="hasElevator"
           render={({ field }) => (
             <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4 bg-muted/20">
-              <FormLabel className="text-base font-medium">{labels.elevator}</FormLabel>
+              <FormLabel className="text-base font-medium">{commonDemolition.elevator}</FormLabel>
               <FormControl><Switch checked={field.value} onCheckedChange={field.onChange} /></FormControl>
             </FormItem>
           )}
@@ -43,7 +37,7 @@ export const DemolitionStep = ({ form, t }: DemolitionStepProps) => {
           name="furnitureRemoval"
           render={({ field }) => (
             <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4 bg-muted/20">
-              <FormLabel className="text-base font-medium">{labels.furniture}</FormLabel>
+              <FormLabel className="text-base font-medium">{commonDemolition.furniture}</FormLabel>
               <FormControl><Switch checked={field.value} onCheckedChange={field.onChange} /></FormControl>
             </FormItem>
           )}
@@ -51,7 +45,7 @@ export const DemolitionStep = ({ form, t }: DemolitionStepProps) => {
       </div>
 
       <div className="border-t pt-4 space-y-4">
-        <h3 className="text-lg font-semibold">Tabiquería y Puertas</h3>
+        <h3 className="text-lg font-semibold">{commonDemolition.demolishPartitions.label}</h3>
 
         <FormField
           control={form.control}
@@ -59,7 +53,7 @@ export const DemolitionStep = ({ form, t }: DemolitionStepProps) => {
           render={({ field }) => (
             <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4 text-left">
               <div className="space-y-0.5">
-                <FormLabel className="text-base">{commonT.demolition.demolishPartitions.label}</FormLabel>
+                <FormLabel className="text-base">{commonDemolition.demolishPartitions.label}</FormLabel>
               </div>
               <FormControl>
                 <Switch checked={field.value} onCheckedChange={field.onChange} />
@@ -75,7 +69,7 @@ export const DemolitionStep = ({ form, t }: DemolitionStepProps) => {
               name="demolishPartitionsM2"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{commonT.demolition.demolishPartitionsM2.label}</FormLabel>
+                  <FormLabel>{commonDemolition.demolishPartitionsM2.label}</FormLabel>
                   <FormControl><Input type="number" placeholder="25" {...field} value={field.value || ''} /></FormControl>
                   <FormMessage />
                 </FormItem>
@@ -86,7 +80,7 @@ export const DemolitionStep = ({ form, t }: DemolitionStepProps) => {
               name="wallThickness"
               render={({ field }) => (
                 <FormItem className="space-y-3">
-                  <FormLabel>{labels.thickWall}</FormLabel>
+                  <FormLabel>{commonDemolition.thickWall.label}</FormLabel>
                   <FormControl>
                     <RadioGroup
                       onValueChange={field.onChange}
@@ -98,7 +92,7 @@ export const DemolitionStep = ({ form, t }: DemolitionStepProps) => {
                           <RadioGroupItem value="thin" />
                         </FormControl>
                         <FormLabel className="font-normal">
-                          Tabique sencillo (Ladrillo hueco / Pladur simple)
+                          {commonDemolition.thickWall.thin}
                         </FormLabel>
                       </FormItem>
                       <FormItem className="flex items-center space-x-3 space-y-0">
@@ -106,7 +100,7 @@ export const DemolitionStep = ({ form, t }: DemolitionStepProps) => {
                           <RadioGroupItem value="thick" />
                         </FormControl>
                         <FormLabel className="font-normal">
-                          Muro grueso o de carga (Ladrillo macizo / Bloque)
+                          {commonDemolition.thickWall.thick}
                         </FormLabel>
                       </FormItem>
                     </RadioGroup>
@@ -124,7 +118,7 @@ export const DemolitionStep = ({ form, t }: DemolitionStepProps) => {
           render={({ field }) => (
             <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4 text-left">
               <div className="space-y-0.5">
-                <FormLabel className="text-base">{commonT.demolition.removeDoors.label}</FormLabel>
+                <FormLabel className="text-base">{commonDemolition.removeDoors.label}</FormLabel>
               </div>
               <FormControl>
                 <Switch checked={field.value} onCheckedChange={field.onChange} />
@@ -139,7 +133,7 @@ export const DemolitionStep = ({ form, t }: DemolitionStepProps) => {
             name="removeDoorsAmount"
             render={({ field }) => (
               <FormItem className="pl-4 border-l-2 border-primary">
-                <FormLabel>{commonT.demolition.removeDoorsAmount.label}</FormLabel>
+                <FormLabel>{commonDemolition.removeDoorsAmount.label}</FormLabel>
                 <FormControl><Input type="number" placeholder="5" {...field} value={field.value || ''} /></FormControl>
                 <FormMessage />
               </FormItem>
@@ -149,14 +143,14 @@ export const DemolitionStep = ({ form, t }: DemolitionStepProps) => {
       </div>
 
       <div className="border-t pt-4 space-y-4">
-        <h3 className="text-lg font-semibold">Revestimientos</h3>
+        <h3 className="text-lg font-semibold">{commonDemolition.demolishPartitions.label}</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormField
             control={form.control}
             name="demolishFloorsM2"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{labels.floors}</FormLabel>
+                <FormLabel>{commonDemolition.floors}</FormLabel>
                 <FormControl><Input type="number" placeholder="Ej: 80" {...field} value={field.value || ''} /></FormControl>
                 <FormMessage />
               </FormItem>
@@ -167,7 +161,7 @@ export const DemolitionStep = ({ form, t }: DemolitionStepProps) => {
             name="demolishWallTilesM2"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{labels.wallTiles}</FormLabel>
+                <FormLabel>{commonDemolition.wallTiles}</FormLabel>
                 <FormControl><Input type="number" placeholder="Ej: 30 (Baños/Cocina)" {...field} value={field.value || ''} /></FormControl>
                 <FormMessage />
               </FormItem>

@@ -14,19 +14,19 @@ interface ProjectDefinitionStepProps {
   t: any;
 }
 
-const partialScopeOptions = [
-  { id: 'bathroom', label: 'Reforma de Baño(s)', icon: Bath },
-  { id: 'kitchen', label: 'Reforma de Cocina', icon: ChefHat },
-  { id: 'demolition', label: 'Demoliciones', icon: Hammer },
-  { id: 'ceilings', label: 'Falsos Techos', icon: Grid },
-  { id: 'electricity', label: 'Electricidad', icon: Lightbulb },
-  { id: 'carpentry', label: 'Carpintería y Pintura', icon: DoorOpen },
-];
-
 export const ProjectDefinitionStep = ({ form, t }: ProjectDefinitionStepProps) => {
   const commonT = t.budgetRequest.form.projectDefinition;
   const watchPropertyType = form.watch('propertyType');
   const watchProjectScope = form.watch('projectScope');
+
+  const partialScopeOptions = [
+    { id: 'bathroom', label: commonT.partialScope.options.bathroom, icon: Bath },
+    { id: 'kitchen', label: commonT.partialScope.options.kitchen, icon: ChefHat },
+    { id: 'demolition', label: commonT.partialScope.options.demolition, icon: Hammer },
+    { id: 'ceilings', label: commonT.partialScope.options.ceilings, icon: Grid },
+    { id: 'electricity', label: commonT.partialScope.options.electricity, icon: Lightbulb },
+    { id: 'carpentry', label: commonT.partialScope.options.carpentry, icon: DoorOpen },
+  ];
 
   return (
     <div className="space-y-8 animate-in fade-in-50 duration-500 text-left">
@@ -42,7 +42,7 @@ export const ProjectDefinitionStep = ({ form, t }: ProjectDefinitionStepProps) =
               <RadioGroup
                 onValueChange={field.onChange}
                 defaultValue={field.value}
-                className="grid grid-cols-1 md:grid-cols-3 gap-4"
+                className="grid grid-cols-1 sm:grid-cols-3 gap-4"
               >
                 <RadioCard value="residential" label={commonT.propertyType.residential} icon={<Home className="w-5 h-5" />} />
                 <RadioCard value="commercial" label={commonT.propertyType.commercial} icon={<Building className="w-5 h-5" />} />
@@ -70,13 +70,13 @@ export const ProjectDefinitionStep = ({ form, t }: ProjectDefinitionStepProps) =
                 <RadioCard
                   value="integral"
                   label={commonT.projectScope.integral}
-                  description="Reforma completa de toda la propiedad."
+                  description={commonT.projectScope.integralDesc}
                   className='border-primary/50'
                 />
                 <RadioCard
                   value="partial"
                   label={commonT.projectScope.partial}
-                  description="Solo ciertas estancias o partidas."
+                  description={commonT.projectScope.partialDesc}
                 />
               </RadioGroup>
             </FormControl>
@@ -97,7 +97,7 @@ export const ProjectDefinitionStep = ({ form, t }: ProjectDefinitionStepProps) =
                   <FormLabel className="text-base font-semibold">{commonT.partialScope.label}</FormLabel>
                   <FormDescription>{commonT.partialScope.description}</FormDescription>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {partialScopeOptions.map((item) => (
                     <FormField
                       key={item.id}

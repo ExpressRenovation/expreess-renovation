@@ -16,8 +16,8 @@ export const ContactStep = ({ form, t }: ContactStepProps) => {
   return (
     <div className="space-y-6 text-left animate-in fade-in-50 duration-500">
       <div className="bg-blue-50/50 p-4 rounded-xl border border-blue-100 mb-6">
-        <h3 className="font-semibold text-blue-900 mb-1">¡Empecemos!</h3>
-        <p className="text-sm text-blue-700">Necesitamos tus datos para poder enviarte el presupuesto detallado al finalizar.</p>
+        <h3 className="font-semibold text-blue-900 mb-1">{commonT.contact.banner.title}</h3>
+        <p className="text-sm text-blue-700">{commonT.contact.banner.description}</p>
       </div>
 
       <div className="grid md:grid-cols-2 gap-6">

@@ -17,7 +17,8 @@ export function initFirebaseAdminApp(): App {
 
         // Production (Vercel/Cloud Run) / Fallback (if using ADC)
         return initializeApp({
-            projectId: process.env.GCLOUD_PROJECT || process.env.FIREBASE_PROJECT_ID
+            projectId: process.env.GCLOUD_PROJECT || process.env.FIREBASE_PROJECT_ID,
+            storageBucket: process.env.FIREBASE_STORAGE_BUCKET
         });
     }
     return getApps()[0];

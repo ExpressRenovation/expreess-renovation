@@ -1,0 +1,348 @@
+'use client';
+
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { useToast } from '@/hooks/use-toast';
+import { Loader2, Wand2, Upload, ImageIcon } from 'lucide-react';
+import { generateRenovationAction } from '@/actions/ai/generate-renovation.action';
+import Image from 'next/image';
+
+import { useRouter } from 'next/navigation';
+import { BudgetRender } from '@/backend/budget/domain/budget';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { ImageComparisonSlider } from '@/components/ui/image-comparison';
+
+interface RenovationGalleryProps {
+    budgetId: string;
+    renders?: BudgetRender[];
+}
+
+export function RenovationGallery({ budgetId, renders = [] }: RenovationGalleryProps) {
+    const { toast } = useToast();
+    const router = useRouter();
+    const [isGenerating, setIsGenerating] = useState(false);
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
+    const [generatedImage, setGeneratedImage] = useState<string | null>(null);
+    const [viewingImage, setViewingImage] = useState<{ url: string, originalUrl?: string, title: string } | null>(null);
+
+    // Form States
+    const [roomType, setRoomType] = useState('Salón');
+    const [style, setStyle] = useState('Moderno');
+    const [requirements, setRequirements] = useState('');
+
+    const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setSelectedImage(reader.result as string);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleGenerate = async () => {
+        if (!selectedImage) return;
+
+        setIsGenerating(true);
+        try {
+            // 1. Generate Image (Server Action returns Base64)
+            const base64Data = selectedImage.split(',')[1];
+            const result = await generateRenovationAction({
+                imageBuffer: base64Data,
+                roomType,
+                style,
+                additionalRequirements: requirements,
+                budgetId
+            });
+
+            if (!result.success || !result.base64) {
+                toast({
+                    title: "Error Generando",
+                    description: result.error || "No se pudo crear la imagen.",
+                    variant: "destructive"
+                });
+                return;
+            }
+
+            // 2. Upload to Firebase Storage (Client Side)
+            const { getSafeStorage } = await import('@/lib/firebase/client'); // Dynamic import to ensure client-side
+            const storage = getSafeStorage();
+            const { ref, uploadString, getDownloadURL } = await import('firebase/storage');
+
+            const timestamp = Date.now();
+
+            // Upload Original
+            const originalRef = ref(storage, `renders/${budgetId}/${timestamp}_original.jpg`);
+            await uploadString(originalRef, selectedImage, 'data_url');
+            const originalUrl = await getDownloadURL(originalRef);
+
+            // Upload Generated
+            const generatedRef = ref(storage, `renders/${budgetId}/${timestamp}_${style}.png`);
+            // result.base64 is raw base64, need to prepend data url prefix if using uploadString with 'data_url', 
+            // OR use 'base64' format. The action returns raw base64.
+            await uploadString(generatedRef, result.base64, 'base64', { contentType: 'image/png' });
+            const generatedUrl = await getDownloadURL(generatedRef);
+
+            // 3. Save Metadata to Budget (Server Action)
+            const { addRenderAction } = await import('@/actions/budget/add-render.action');
+            const saveResult = await addRenderAction({
+                budgetId,
+                render: {
+                    id: `${timestamp}`,
+                    url: generatedUrl,
+                    originalUrl: originalUrl,
+                    prompt: requirements || `Renovación estilo ${style}`,
+                    style,
+                    roomType
+                }
+            });
+
+            if (saveResult.success) {
+                setGeneratedImage(generatedUrl);
+                toast({
+                    title: "¡Transformación Completa!",
+                    description: "La imagen se ha guardado en la galería del presupuesto.",
+                });
+                router.refresh(); // Refresh to show new render in history
+            } else {
+                toast({
+                    title: "Error Guardando",
+                    description: "Se generó la imagen pero falló el guardado.",
+                    variant: "destructive"
+                });
+            }
+
+        } catch (error) {
+            console.error(error);
+            toast({
+                title: "Error",
+                description: "Ocurrió un fallo inesperado.",
+                variant: "destructive"
+            });
+        } finally {
+            setIsGenerating(false);
+        }
+    };
+
+    return (
+        <div className="space-y-6">
+            <Card>
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                        <Wand2 className="h-5 w-5 text-purple-600" />
+                        Dream Renovator
+                    </CardTitle>
+                    <CardDescription>
+                        Genera visualizaciones fotorrealistas para este presupuesto.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        {/* Configuration */}
+                        <div className="space-y-4">
+                            <div className="space-y-2">
+                                <Label>1. Sube la foto actual ("Antes")</Label>
+                                <div className="border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-slate-50 transition-colors relative">
+                                    <Input
+                                        type="file"
+                                        accept="image/*"
+                                        className="absolute inset-0 opacity-0 cursor-pointer"
+                                        onChange={handleImageUpload}
+                                    />
+                                    {selectedImage ? (
+                                        <div className="relative w-full aspect-video rounded-md overflow-hidden">
+                                            <Image
+                                                src={selectedImage}
+                                                alt="Original"
+                                                fill
+                                                className="object-cover"
+                                            />
+                                        </div>
+                                    ) : (
+                                        <>
+                                            <Upload className="h-8 w-8 text-slate-400 mb-2" />
+                                            <span className="text-sm text-slate-500">Haz clic para subir imagen</span>
+                                        </>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label>Estancia</Label>
+                                    <Select value={roomType} onValueChange={setRoomType}>
+                                        <SelectTrigger>
+                                            <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="Salón">Salón</SelectItem>
+                                            <SelectItem value="Cocina">Cocina</SelectItem>
+                                            <SelectItem value="Baño">Baño</SelectItem>
+                                            <SelectItem value="Dormitorio">Dormitorio</SelectItem>
+                                            <SelectItem value="Terraza">Terraza</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                                <div className="space-y-2">
+                                    <Label>Estilo</Label>
+                                    <Select value={style} onValueChange={setStyle}>
+                                        <SelectTrigger>
+                                            <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="Moderno">Moderno</SelectItem>
+                                            <SelectItem value="Rústico">Rústico</SelectItem>
+                                            <SelectItem value="Industrial">Industrial</SelectItem>
+                                            <SelectItem value="Escandinavo">Escandinavo</SelectItem>
+                                            <SelectItem value="Clásico">Clásico</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label>Detalles Adicionales</Label>
+                                <Textarea
+                                    placeholder="Ej: Suelo de madera clara, paredes blancas, mucha luz..."
+                                    value={requirements}
+                                    onChange={(e) => setRequirements(e.target.value)}
+                                />
+                            </div>
+
+                            <Button
+                                className="w-full bg-purple-600 hover:bg-purple-700"
+                                disabled={!selectedImage || isGenerating}
+                                onClick={handleGenerate}
+                            >
+                                {isGenerating ? (
+                                    <>
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                        Generando Sueños...
+                                    </>
+                                ) : (
+                                    <>
+                                        <Wand2 className="mr-2 h-4 w-4" />
+                                        Generar Transformación
+                                    </>
+                                )}
+                            </Button>
+                        </div>
+
+                        {/* Result */}
+                        <div className="space-y-4">
+                            <Label>Resultado ("Después")</Label>
+                            <div className="w-full aspect-video bg-slate-100 rounded-lg flex items-center justify-center border overflow-hidden relative group">
+                                {generatedImage ? (
+                                    <>
+                                        {/* For external URLs we need Next.js config allowed domains, or use standard img tag if simpler for now */}
+                                        <img
+                                            src={generatedImage}
+                                            alt="Renovación Generada"
+                                            className="w-full h-full object-cover"
+                                        />
+                                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                                            <Button variant="secondary" size="sm" onClick={() => setViewingImage({ url: generatedImage, title: 'Resultado Generado' })}>
+                                                Ampliar
+                                            </Button>
+                                            <Button variant="secondary" size="sm" onClick={() => window.open(generatedImage, '_blank')}>
+                                                Descargar / Pestaña
+                                            </Button>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <div className="text-center text-slate-400">
+                                        <ImageIcon className="h-12 w-12 mx-auto mb-2 opacity-50" />
+                                        <p>La imagen generada aparecerá aquí</p>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
+
+            {/* History Gallery */}
+            {renders.length > 0 && (
+                <div className="space-y-4">
+                    <h3 className="text-xl font-semibold text-slate-800">Galería de Transformaciones ({renders.length})</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {renders.map((render) => (
+                            <Card key={render.id} className="overflow-hidden group hover:shadow-lg transition-shadow">
+                                <div className="relative aspect-video">
+                                    <Image
+                                        src={render.url}
+                                        alt={render.prompt}
+                                        fill
+                                        className="object-cover transition-transform duration-700 group-hover:scale-105"
+                                    />
+                                    <div className="absolute top-2 left-2 flex gap-2">
+                                        <span className="bg-black/70 text-white text-xs px-2 py-1 rounded-full backdrop-blur-sm">
+                                            {render.roomType}
+                                        </span>
+                                        <span className="bg-purple-600/90 text-white text-xs px-2 py-1 rounded-full backdrop-blur-sm">
+                                            {render.style}
+                                        </span>
+                                    </div>
+                                    {/* Action Text/Overlay */}
+                                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                                        <Button
+                                            variant="secondary"
+                                            size="sm"
+                                            onClick={() => setViewingImage({
+                                                url: render.url,
+                                                originalUrl: render.originalUrl,
+                                                title: `Resultado: ${render.style} - ${render.roomType}`
+                                            })}
+                                        >
+                                            Ver Comparativa
+                                        </Button>
+                                    </div>
+                                </div>
+                                <div className="p-3">
+                                    <p className="text-xs text-slate-500 line-clamp-2" title={render.prompt}>
+                                        {render.prompt}
+                                    </p>
+                                    <p className="text-[10px] text-slate-400 mt-2 text-right">
+                                        {new Date(render.createdAt).toLocaleDateString()}
+                                    </p>
+                                </div>
+                            </Card>
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            {/* Image Preview Modal */}
+            <Dialog open={!!viewingImage} onOpenChange={(open) => !open && setViewingImage(null)}>
+                <DialogContent className="max-w-4xl p-0 overflow-hidden bg-black/90 border-slate-800">
+                    <DialogHeader className="absolute top-0 left-0 right-0 z-10 bg-black/50 backdrop-blur-sm p-4 text-white">
+                        <DialogTitle>{viewingImage?.title}</DialogTitle>
+                    </DialogHeader>
+                    {viewingImage && viewingImage.originalUrl ? (
+                        <ImageComparisonSlider
+                            beforeImage={viewingImage.originalUrl}
+                            afterImage={viewingImage.url}
+                            className="w-full h-[80vh]"
+                        />
+                    ) : viewingImage && (
+                        <div className="relative w-full h-[80vh]">
+                            <Image
+                                src={viewingImage.url}
+                                alt={viewingImage.title}
+                                fill
+                                className="object-contain"
+                            />
+                        </div>
+                    )}
+                </DialogContent>
+            </Dialog>
+        </div>
+    );
+}

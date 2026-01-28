@@ -1,4 +1,3 @@
-
 {
     "title": "Sol·licita el teu pressupost",
     "description": "Tria el nivell de detall que vols proporcionar i et donarem una estimació.",
@@ -6,14 +5,89 @@
         "title": "Pressupost a l'instant",
         "description": "Omple el nostre formulari ràpid i obté una estimació de costos per al teu projecte en pocs minuts."
     },
-    "selection": {
-        "quick": {
-            "title": "Pressupost Ràpid",
-            "description": "Ideal per tenir una estimació ràpida del cost del teu projecte amb poques dades."
+    "selector": {
+        "title": "Com podem ajudar-te?",
+        "subtitle": "Tria l'opció que millor s'adapti al teu projecte.",
+        "options": {
+            "wizard": {
+                "title": "Pressupost Intel·ligent",
+                "desc": "Anàlisi detallat 360º amb IA",
+                "badge": "Recomanat"
+            },
+            "newBuild": {
+                "title": "Obra Nova",
+                "desc": "Construcció des de zero"
+            },
+            "fast": {
+                "title": "Pressupost Ràpid",
+                "desc": "Estimació express per a reformes"
+            }
+        }
+    },
+    "modal": {
+        "headers": {
+            "newBuild": {
+                "title": "Estudi Obra Nova",
+                "desc": "Deixa'ns analitzar la viabilitat del teu projecte."
+            },
+            "wizard": {
+                "title": "Assistent de Pressupostos",
+                "desc": "Detalla la teva visió pas a pas."
+            },
+            "pool": {
+                "title": "Cotitzador de Piscines",
+                "desc": "Dissenya el teu oasi perfecte."
+            },
+            "fast": {
+                "title": "Calculadora Ràpida",
+                "desc": "Obté una estimació immediata."
+            }
         },
-        "detailed": {
-            "title": "Pressupost Detallat",
-            "description": "Proporciona tots els detalls per obtenir un pressupost preliminar més precís i ajustat a les teves necessitats."
+        "cancel": "Cancel·lar"
+    },
+    "newBuild": {
+        "hasLand": {
+            "label": "Disposes ja d'un terreny o solar?",
+            "yes": "Sí, tinc terreny en propietat",
+            "no": "No, estic buscant",
+            "searching": "Tinc un terreny vist/reservat"
+        },
+        "hasProject": {
+            "label": "Tens ja projecte d'arquitecte?",
+            "yes": "Sí, tinc plànols visats",
+            "no": "No, necessito arquitecte"
+        },
+        "location": {
+            "label": "A quina zona/municipi?",
+            "placeholder": "Ex: Andratx, Son Vida..."
+        },
+        "approxMeters": {
+            "label": "Metres quadrats construïbles aprox"
+        },
+        "details": {
+            "label": "Detalls addicionals (Opcional)",
+            "placeholder": "Estil modern, piscina..."
+        },
+        "submit": "Sol·licitar Estudi"
+    },
+    "multimedia": {
+        "title": "Arxius i Plànols",
+        "description": "Puja plànols o fotos de l'estat actual",
+        "upload": "Pujar arxius",
+        "dragDrop": "Arrossega aquí o fes clic per pujar"
+    },
+    "trigger": {
+        "title": "Pensant en renovar?",
+        "subtitle": "Obté la teva estimació gratuïta en segons.",
+        "mobileSubtitle": "Clic per començar",
+        "modes": {
+            "general": "Sol·licitar Pressupost",
+            "pool": "Cotitzar Piscina",
+            "reform": "Preu Reforma",
+            "new_build": "Estudi Obra Nova",
+            "kitchen": "Pressupost Cuina",
+            "bathroom": "Pressupost Bany",
+            "wizard": "Pressupost 360º"
         }
     },
     "quickForm": {
@@ -30,6 +104,10 @@
         },
         "squareMeters": {
             "label": "Metres quadrats del terra (m²)"
+        },
+        "additionalDetails": {
+            "label": "Descripció Addicional (Opcional)",
+            "placeholder": "Detalls extra..."
         }
     },
     "detailedForm": {

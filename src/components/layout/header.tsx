@@ -1,6 +1,7 @@
 'use client';
 
-import Link from 'next/link';
+import { BudgetWidget } from '@/components/budget-widget';
+import { Link } from '@/i18n/navigation';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/logo';
 import { useAuth } from '@/hooks/use-auth';
@@ -17,6 +18,8 @@ import {
 import React, { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { ThemeSwitcher } from '../theme-switcher';
+import { MegaMenu } from './mega-menu';
+import { MobileMenu } from './mobile-menu';
 
 export function Header({ t }: { t: any }) {
   const { user } = useAuth();
@@ -32,7 +35,7 @@ export function Header({ t }: { t: any }) {
   }, []);
 
   const navLinks = [
-    { href: '/#services', label: t.header.nav.services },
+    { href: { pathname: '/', hash: 'services' }, label: t.header.nav.services },
     { href: '/blog', label: t.header.nav.blog },
     { href: '/contact', label: t.header.nav.contact },
   ];
@@ -44,13 +47,13 @@ export function Header({ t }: { t: any }) {
   return (
     <header
       className={cn(
-        "sticky top-0 z-50 w-full transition-all duration-500 ease-in-out",
+        "sticky top-0 z-50 w-full transition-all duration-500 ease-in-out h-[10vh] flex items-center",
         isScrolled
-          ? "border-b border-primary/10 bg-background/80 backdrop-blur-md shadow-sm py-2"
-          : "bg-transparent border-transparent py-6"
+          ? "border-b border-primary/10 bg-background/80 backdrop-blur-md shadow-sm"
+          : "bg-transparent border-transparent"
       )}
     >
-      <div className="container-limited flex h-[10vh] min-h-[60px] md:h-20 items-center justify-between transition-all duration-300">
+      <div className="w-[85vw] max-w-[1920px] mx-auto flex h-full items-center justify-between transition-all duration-300">
         <div className={cn("transition-transform duration-300", isScrolled ? "scale-90" : "scale-100")}>
           <div className="md:hidden">
             <Logo width={120} height={40} />
@@ -60,20 +63,9 @@ export function Header({ t }: { t: any }) {
           </div>
         </div>
 
-        <nav className="hidden md:flex items-center gap-8 ml-10 text-sm font-medium">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={cn(
-                "relative text-foreground/80 transition-colors hover:text-primary font-headline tracking-wide",
-                "after:content-[''] after:absolute after:left-0 after:bottom-[-4px] after:w-0 after:h-[1px] after:bg-primary after:transition-all after:duration-300 hover:after:w-full"
-              )}
-            >
-              {link.label}
-            </Link>
-          ))}
-        </nav>
+        <div className="hidden md:block ml-10">
+          <MegaMenu t={t} />
+        </div>
         <div className="flex items-center gap-2">
           <ThemeSwitcher />
           <LanguageSwitcher />
@@ -81,9 +73,7 @@ export function Header({ t }: { t: any }) {
             <UserNav t={t.header.userNav} />
           ) : (
             <div className="hidden md:flex items-center gap-2">
-              <Button asChild className="cta-pulse shadow-lg hover:shadow-primary/20 transition-all font-semibold px-6">
-                <Link href="/budget-request">{t.header.nav.budgetRequest}</Link>
-              </Button>
+              <BudgetWidget t={t} />
             </div>
           )}
           <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
@@ -93,30 +83,19 @@ export function Header({ t }: { t: any }) {
                 <span className="sr-only">Open menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="right">
+            <SheetContent side="right" className="w-screen sm:max-w-[100vw] h-full">
               <SheetHeader>
                 <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
                 <div className="py-4">
                   <Logo />
                 </div>
               </SheetHeader>
-              <div className="flex flex-col gap-4 py-8">
-                {navLinks.map((link) => (
-                  <Link key={link.href} href={link.href} onClick={handleLinkClick} className="text-lg font-medium text-foreground transition-colors hover:text-primary font-headline">
-                    {link.label}
-                  </Link>
-                ))}
-                <Link href="/budget-request" onClick={handleLinkClick} className="text-lg font-medium text-primary transition-colors hover:text-primary/80 font-headline">
-                  {t.header.nav.budgetRequest}
-                </Link>
-              </div>
-              <div className="absolute bottom-4 right-4 left-4 flex flex-col gap-2">
-                {user ? null : (
-                  <Button asChild onClick={handleLinkClick} className="w-full">
-                    <Link href="/budget-request">{t.header.nav.budgetRequest}</Link>
-                  </Button>
-                )}
-              </div>
+              <MobileMenu
+                t={t}
+                navLinks={navLinks}
+                onLinkClick={handleLinkClick}
+                user={user}
+              />
             </SheetContent>
           </Sheet>
         </div>

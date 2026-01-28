@@ -1,4 +1,3 @@
-
 {
     "nav": {
         "services": "Dienstleistungen",
@@ -13,5 +12,10 @@
         "newBudget": "Neues Budget",
         "settings": "Einstellungen",
         "logout": "Abmelden"
+    },
+    "megaMenu": {
+        "title": "Dochevi Erlebnis",
+        "description": "Entdecken Sie unser Angebot an Premium-Dienstleistungen, die Ihre Lebensqualität steigern. Vom Fundament bis zum letzten dekorativen Detail.",
+        "viewAll": "Alle Dienstleistungen ansehen"
     }
 }

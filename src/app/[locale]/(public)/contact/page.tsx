@@ -7,10 +7,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import { ArrowRight, Mail, MapPin, Phone } from 'lucide-react';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 
 export default async function ContactPage({ params: { locale } }: { params: { locale: string } }) {
-  const dict = await getDictionary(locale);
+  const dict = await getDictionary(locale as any);
   const t = dict.contact;
   const t_cta = dict.blog.cta;
 
@@ -92,15 +92,15 @@ export default async function ContactPage({ params: { locale } }: { params: { lo
               </Card>
               <div className="aspect-video w-full">
                 <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3075.922543459463!2d2.64836471536968!3d39.5714399794717!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x129792575b6d65c3%3A0x4645b7a37a67f08c!2sCatedral-Bas%C3%ADlica%20de%20Santa%20Mar%C3%ADa%20de%20Mallorca!5e0!3m2!1ses!2ses!4v1678886456789!5m2!1ses!2ses"
-                    width="100%"
-                    height="100%"
-                    style={{ border: 0 }}
-                    allowFullScreen={false}
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                    title="Mapa de ubicación"
-                    className='rounded-lg'
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3075.922543459463!2d2.64836471536968!3d39.5714399794717!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x129792575b6d65c3%3A0x4645b7a37a67f08c!2sCatedral-Bas%C3%ADlica%20de%20Santa%20Mar%C3%ADa%20de%20Mallorca!5e0!3m2!1ses!2ses!4v1678886456789!5m2!1ses!2ses"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  allowFullScreen={false}
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  title="Mapa de ubicación"
+                  className='rounded-lg'
                 ></iframe>
               </div>
             </div>
@@ -108,18 +108,18 @@ export default async function ContactPage({ params: { locale } }: { params: { lo
         </section>
 
         <section className="w-full py-20 md:py-28 bg-secondary/50">
-            <div className="container-limited text-center">
-                <h2 className="font-headline text-3xl md:text-4xl font-bold">{t_cta.title}</h2>
-                <p className="text-lg text-muted-foreground max-w-2xl mx-auto mt-4 mb-8">
-                    {t_cta.subtitle}
-                </p>
-                <Button asChild size="lg" className="font-bold">
-                    <Link href="/budget-request">
-                        {t_cta.button}
-                        <ArrowRight className="ml-2" />
-                    </Link>
-                </Button>
-            </div>
+          <div className="container-limited text-center">
+            <h2 className="font-headline text-3xl md:text-4xl font-bold">{t_cta.title}</h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto mt-4 mb-8">
+              {t_cta.subtitle}
+            </p>
+            <Button asChild size="lg" className="font-bold">
+              <Link href="/budget-request">
+                {t_cta.button}
+                <ArrowRight className="ml-2" />
+              </Link>
+            </Button>
+          </div>
         </section>
       </main>
       <Footer t={dict.home.finalCta} />

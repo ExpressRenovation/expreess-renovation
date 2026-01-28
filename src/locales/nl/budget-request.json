@@ -1,301 +1,424 @@
-
 {
-    "title": "Request Your Quote",
-    "description": "Choose the level of detail you want to provide, and we'll give you an estimate.",
+    "title": "Vraag uw offerte aan",
+    "description": "Kies het detailniveau dat u wilt verstrekken en wij geven u een schatting.",
     "page": {
-        "title": "Instant Quote",
-        "description": "Fill out our quick form and get a cost estimate for your project in just a few minutes."
+        "title": "Directe Offerte",
+        "description": "Vul ons snelle formulier in en ontvang binnen enkele minuten een kostenraming voor uw project."
     },
-    "selection": {
-        "quick": {
-            "title": "Quick Budget",
-            "description": "Ideal for getting a quick estimate of your project's cost with minimal data."
+    "selector": {
+        "title": "Hoe kunnen we u helpen?",
+        "subtitle": "Kies de optie die het beste bij uw project past.",
+        "options": {
+            "wizard": {
+                "title": "Slimme Offerte",
+                "desc": "Gedetailleerde 360°-analyse met AI",
+                "badge": "Aanbevolen"
+            },
+            "newBuild": {
+                "title": "Nieuwbouw",
+                "desc": "Bouwen vanaf de grond"
+            },
+            "fast": {
+                "title": "Snelle Offerte",
+                "desc": "Express schatting voor renovaties"
+            }
+        }
+    },
+    "modal": {
+        "headers": {
+            "newBuild": {
+                "title": "Nieuwbouw Studie",
+                "desc": "Laat ons de haalbaarheid van uw project analyseren."
+            },
+            "wizard": {
+                "title": "Budget Assistent",
+                "desc": "Beschrijf uw visie stap voor stap."
+            },
+            "pool": {
+                "title": "Zwembad Offerte",
+                "desc": "Ontwerp uw perfecte oase."
+            },
+            "fast": {
+                "title": "Snelle Calculator",
+                "desc": "Krijg direct een schatting."
+            }
         },
-        "detailed": {
-            "title": "Detailed Budget",
-            "description": "Provide all the details to get a more accurate and tailored preliminary budget."
+        "cancel": "Annuleren"
+    },
+    "newBuild": {
+        "hasLand": {
+            "label": "Heeft u al een perceel?",
+            "yes": "Ja, ik heb een perceel",
+            "no": "Nee, ik ben nog op zoek",
+            "searching": "Ik heb een perceel op het oog/gereserveerd"
+        },
+        "hasProject": {
+            "label": "Heeft u al een architectenproject?",
+            "yes": "Ja, ik heb goedgekeurde plannen",
+            "no": "Nee, ik heb een architect nodig"
+        },
+        "location": {
+            "label": "In welk gebied/gemeente?",
+            "placeholder": "Bijv. Andratx, Son Vida..."
+        },
+        "approxMeters": {
+            "label": "Geschatte bebouwbare vierkante meters"
+        },
+        "details": {
+            "label": "Aanvullende Details (Optioneel)",
+            "placeholder": "Moderne stijl, zwembad..."
+        },
+        "submit": "Studie Aanvragen"
+    },
+    "multimedia": {
+        "title": "Bestanden en Plannen",
+        "description": "Upload plannen of foto's van de huidige situatie",
+        "upload": "Bestanden uploaden",
+        "dragDrop": "Sleep hierheen of klik om te uploaden"
+    },
+    "trigger": {
+        "title": "Denkt u aan renoveren?",
+        "subtitle": "Krijg uw gratis schatting in seconden.",
+        "mobileSubtitle": "Klik om te starten",
+        "modes": {
+            "general": "Offerte Aanvragen",
+            "pool": "Zwembad Offerte",
+            "reform": "Renovatiekosten",
+            "new_build": "Nieuwbouw Studie",
+            "kitchen": "Keuken Budget",
+            "bathroom": "Badkamer Budget",
+            "wizard": "360º Budget"
         }
     },
     "quickForm": {
-        "title": "Quick Budget Form",
-        "description": "Fill in the following fields to get a rough estimate.",
+        "title": "Snel Offerteformulier",
+        "description": "Vul de volgende velden in om een ruwe schatting te krijgen.",
         "renovationType": {
-            "label": "Type of Renovation",
+            "label": "Type Renovatie",
             "options": {
-                "integral": "Full Renovation",
-                "bathrooms": "Bathroom Renovation",
-                "kitchen": "Kitchen Renovation",
-                "pool": "Pool Construction"
+                "integral": "Volledige Renovatie",
+                "bathrooms": "Badkamerrenovatie",
+                "kitchen": "Keukenrenovatie",
+                "pool": "Zwembadbouw"
             }
         },
         "squareMeters": {
-            "label": "Floor square meters (m²)"
+            "label": "Vloeroppervlakte (m²)"
+        },
+        "additionalDetails": {
+            "label": "Aanvullende Beschrijving (Optioneel)",
+            "placeholder": "Extra details..."
         }
     },
     "detailedForm": {
-        "title": "Detailed Budget",
-        "description": "Provide all the details to get a more accurate preliminary budget."
+        "title": "Gedetailleerde Offerte",
+        "description": "Verstrek alle details om een nauwkeurigere voorlopige offerte te krijgen."
     },
     "steps": {
-        "contact": "Contact Information",
-        "projectDefinition": "Project Definition",
-        "demolition": "Demolition and Preliminary Work",
-        "bathroom": "Bathroom Renovation(s)",
-        "kitchen": "Kitchen Renovation",
-        "workArea": "Workspace Setup",
-        "ceilings": "False Ceilings and Insulation",
-        "electricity": "Electrical Installation",
-        "carpentry": "Carpentry and Painting",
-        "optionals": "Optionals",
-        "summary": "Summary and Submission"
+        "contact": "Contactinformatie",
+        "projectDefinition": "Projectdefinitie",
+        "demolition": "Sloop en Voorbereidende Werkzaamheden",
+        "bathroom": "Badkamerrenovatie(s)",
+        "kitchen": "Keukenrenovatie",
+        "workArea": "Inrichting Werkruimte",
+        "ceilings": "Verlaagde Plafonds en Isolatie",
+        "electricity": "Elektrische Installatie",
+        "carpentry": "Timmerwerk en Schilderwerk",
+        "optionals": "Opties",
+        "summary": "Samenvatting en Verzending"
     },
     "summary": {
-        "title": "Summary of Your Request",
-        "description": "Please review all the details to ensure they are correct before submitting your request. A specialist will contact you to refine the details."
+        "title": "Samenvatting van uw Aanvraag",
+        "description": "Controleer of alle gegevens correct zijn voordat u uw aanvraag indient. Een specialist neemt contact met u op om de details te verfijnen."
     },
     "confirmation": {
-        "title": "Request Received!",
-        "description": "Thank you for completing your request. Our team will review it and contact you within the next 24-48 hours.",
-        "button": "Back to Homepage",
-        "noCostMessage": "This is an indicative and non-contractual price. A specialist will contact you to provide a detailed budget.",
-        "poolMessage": "One of our pool experts will be in touch shortly to detail your project.",
-        "restartForm": "Start Over",
-        "reviewButton": "See our customer reviews"
+        "title": "Aanvraag Ontvangen!",
+        "description": "Bedankt voor het invullen van uw aanvraag. Ons team zal deze beoordelen en binnen 24-48 uur contact met u opnemen.",
+        "button": "Terug naar Home",
+        "noCostMessage": "Dit is een indicatieve en vrijblijvende prijs. Een specialist neemt contact met u op om een gedetailleerde offerte te verstrekken.",
+        "poolMessage": "Een van onze zwembadexperts neemt binnenkort contact met u op om uw project te bespreken.",
+        "restartForm": "Opnieuw beginnen",
+        "reviewButton": "Bekijk beoordelingen van onze klanten"
     },
     "form": {
         "buttons": {
-            "prev": "Previous",
-            "next": "Next",
-            "submit": "Calculate Estimated Price",
-            "loading": "Submitting..."
+            "prev": "Vorige",
+            "next": "Volgende",
+            "submit": "Geschatte Prijs Berekenen",
+            "loading": "Verzenden..."
+        },
+        "contact": {
+            "banner": {
+                "title": "Laten we beginnen!",
+                "description": "We hebben uw gegevens nodig om u na afloop de gedetailleerde offerte te kunnen sturen."
+            }
         },
         "name": {
-            "label": "Full Name",
-            "placeholder": "Your first and last name"
+            "label": "Volledige Naam",
+            "placeholder": "Uw voor- en achternaam"
         },
         "email": {
-            "label": "Email Address",
-            "placeholder": "you@email.com"
+            "label": "E-mailadres",
+            "placeholder": "u@email.com"
         },
         "phone": {
-            "label": "Contact Phone",
-            "placeholder": "+1 123 456 7890"
+            "label": "Telefoonnummer",
+            "placeholder": "+31 6 12345678"
         },
         "address": {
-            "label": "Project Address",
-            "placeholder": "Street, number, city"
+            "label": "Projectadres",
+            "placeholder": "Straat, huisnummer, stad"
         },
         "projectDefinition": {
             "propertyType": {
-                "label": "Property Type",
-                "residential": "Residential (Flat/House)",
-                "commercial": "Commercial Space",
-                "office": "Office"
+                "label": "Type Woning",
+                "residential": "Woning (Appartement/Huis)",
+                "commercial": "Commerciële Ruimte",
+                "office": "Kantoor"
             },
             "projectScope": {
-                "label": "Project Scope",
-                "integral": "Full Renovation",
-                "partial": "Partial Renovation"
+                "label": "Projectomvang",
+                "integral": "Volledige Renovatie",
+                "integralDesc": "Volledige renovatie van het hele pand.",
+                "partial": "Gedeeltelijke Renovatie",
+                "partialDesc": "Alleen specifieke kamers of onderdelen."
             },
             "partialScope": {
-                "label": "Areas to renovate",
-                "description": "Select the areas you want to include in the partial renovation."
+                "label": "Te renoveren ruimtes",
+                "description": "Selecteer de ruimtes die u wilt opnemen in de gedeeltelijke renovatie.",
+                "options": {
+                    "bathroom": "Badkamerrenovatie",
+                    "kitchen": "Keukenrenovatie",
+                    "demolition": "Sloopwerkzaamheden",
+                    "ceilings": "Verlaagde Plafonds",
+                    "electricity": "Elektriciteit",
+                    "carpentry": "Timmer- en Schilderwerk"
+                }
             },
             "totalAreaM2": {
-                "label": "Total Property Area (m²)"
+                "label": "Totale Oppervlakte (m²)"
             },
             "numberOfRooms": {
-                "label": "Number of Rooms"
+                "label": "Aantal Kamers"
             },
             "numberOfBathrooms": {
-                "label": "Number of Bathrooms"
+                "label": "Aantal Badkamers"
             }
         },
         "workArea": {
             "workstations": {
-                "label": "Number of Workstations/Desks"
+                "label": "Aantal Werkplekken/Bureaus"
             },
             "meetingRooms": {
-                "label": "Number of Meeting Rooms"
+                "label": "Aantal Vergaderruimtes"
             }
         },
         "quality": {
-            "label": "Desired Quality Level",
-            "placeholder": "Select a quality level",
+            "label": "Gewenst Kwaliteitsniveau",
+            "placeholder": "Selecteer een kwaliteit",
             "options": {
-                "basic": "Basic",
-                "medium": "Medium",
-                "premium": "Premium"
+                "basic": "Basis",
+                "basicDesc": "Functioneel en economisch, ideaal voor verhuur.",
+                "medium": "Gemiddeld",
+                "mediumDesc": "Goede prijs-kwaliteitverhouding, duurzame materialen.",
+                "premium": "Premium",
+                "premiumDesc": "Luxe afwerking en exclusief design."
             }
         },
         "demolition": {
+            "elevator": "Heeft het gebouw een lift?",
+            "furniture": "Heeft u demontage en verwijdering van bestaande meubels nodig?",
+            "thickWall": {
+                "label": "Type te slopen wand",
+                "thin": "Eenvoudige scheidingswand (Holle baksteen / Gipsplaat)",
+                "thick": "Dikke of dragende muur (Massieve baksteen / Blok)"
+            },
+            "floors": "Sloop van vloeren (m²)",
+            "wallTiles": "Sloop van wandtegels (m²)",
             "demolishPartitions": {
-                "label": "Do you need demolition of interior partitions?"
+                "label": "Is sloop van binnenmuren nodig?"
             },
             "demolishPartitionsM2": {
-                "label": "Square meters (m²) of partition to demolish"
+                "label": "Vierkante meters (m²) te slopen muur"
             },
             "removeDoors": {
-                "label": "Do you need to remove existing interior doors?"
+                "label": "Moeten bestaande binnendeuren worden verwijderd?"
             },
             "removeDoorsAmount": {
-                "label": "Quantity (pcs) of doors to remove"
+                "label": "Aantal (stuks) te verwijderen deuren"
             }
         },
         "bathroom": {
             "bathroomWallTilesM2": {
-                "label": "Do you want to change the wall tiles? (Indicate m²)"
+                "label": "Wilt u de wandtegels vervangen? (Geef m² aan)"
             },
             "bathroomFloorM2": {
-                "label": "Do you want to change the floor? (Indicate m²)"
+                "label": "Wilt u de vloer vervangen? (Geef m² aan)"
             },
             "installShowerTray": {
-                "label": "Do you need a shower tray installation?"
+                "label": "Heeft u installatie van een douchebak nodig?"
             },
             "installShowerScreen": {
-                "label": "Do you need a shower screen installation?"
+                "label": "Heeft u installatie van een douchewand nodig?"
             },
             "bathroomPlumbing": {
-                "label": "Do you want a complete renovation of the bathroom plumbing?"
+                "label": "Wilt u een volledige renovatie van het loodgieterswerk in de badkamer?"
             }
         },
         "kitchen": {
             "renovateKitchen": {
-                "label": "Do you want to renovate the kitchen?"
+                "label": "Wilt u de keuken renoveren?"
             },
             "kitchenDemolition": {
-                "label": "Do you need demolition of furniture or built-in kitchen?"
+                "label": "Is sloop van meubels of ingebouwde keuken nodig?"
             },
             "kitchenWallTilesM2": {
-                "label": "Do you want to change the wall tiles? (Indicate m²)"
+                "label": "Wilt u de wandtegels vervangen? (Geef m² aan)"
             },
             "kitchenFloorM2": {
-                "label": "Do you want to change the floor? (Indicate m²)"
+                "label": "Wilt u de vloer vervangen? (Geef m² aan)"
             },
             "kitchenPlumbing": {
-                "label": "Do you want a complete renovation of the kitchen plumbing?"
+                "label": "Wilt u een volledige renovatie van het loodgieterswerk in de keuken?"
             }
         },
         "ceilings": {
             "installFalseCeiling": {
-                "label": "Do you want to install a false ceiling in the bathroom/kitchen?"
+                "label": "Wilt u een verlaagd plafond installeren in badkamer/keuken?"
             },
             "falseCeilingM2": {
-                "label": "Square meters (m²) of false ceiling"
+                "label": "Vierkante meters (m²) verlaagd plafond"
             },
             "soundproofRoom": {
-                "label": "Do you need room soundproofing (with rock wool and double plasterboard)?"
+                "label": "Heeft u geluidsisolatie voor een kamer nodig (met steenwol en dubbele gipsplaat)?"
             },
             "soundproofRoomM2": {
-                "label": "Square meters (m²) to soundproof"
+                "label": "Te isoleren vierkante meters (m²)"
             }
         },
         "electricity": {
             "renovateElectricalPanel": {
-                "label": "Do you want to renew the main electrical panel and the current installation?"
+                "label": "Wilt u de groepenkast en de huidige installatie vernieuwen?"
             },
             "perRoom": {
-                "kitchen": "Kitchen",
-                "livingRoom": "Living Room",
-                "bedroom": "Bedroom",
-                "sockets": "Socket points to add",
-                "lights": "Switched light points to add",
-                "tv": "Do you want a TV outlet?"
+                "kitchen": "Keuken",
+                "livingRoom": "Woonkamer",
+                "bedroom": "Slaapkamer",
+                "sockets": "Toe te voegen stopcontacten",
+                "lights": "Toe te voegen geschakelde lichtpunten",
+                "tv": "Wilt u een TV-aansluiting?"
+            },
+            "scope": {
+                "label": "Omvang Elektrische Renovatie",
+                "total": "Volledige Renovatie",
+                "totalDesc": "Volledige nieuwe installatie (groepenkast, bedrading en schakelmateriaal). Ideaal voor oudere woningen.",
+                "partial": "Alleen Schakelmateriaal",
+                "partialDesc": "Vervanging van stopcontacten en schakelaars zonder interne bedrading te wijzigen."
+            },
+            "ac": {
+                "label": "Airconditioning",
+                "installLabel": "Airconditioning installeren?",
+                "countLabel": "Aantal units (Splits of Machines)",
+                "typeLabel": "Installatietype",
+                "split": "Wandsplits",
+                "splitDesc": "Zichtbare units aan de muur. Eenvoudigere installatie.",
+                "ducts": "Kanalen (Centraal)",
+                "ductsDesc": "Onzichtbaar via verlaagd plafond. Vereist verbouwing en roosters."
             }
         },
         "carpentry": {
             "renovateInteriorDoors": {
-                "label": "Do you want to renovate the interior passage doors?"
+                "label": "Wilt u de binnendeuren vernieuwen?"
             },
             "interiorDoorsAmount": {
-                "label": "Quantity (pcs) of passage doors"
+                "label": "Aantal (stuks) binnendeuren"
             },
             "installSlidingDoor": {
-                "label": "Do you need a sliding door?"
+                "label": "Heeft u een schuifdeur nodig?"
             },
             "slidingDoorAmount": {
-                "label": "Quantity (pcs) of sliding doors"
+                "label": "Aantal (stuks) schuifdeuren"
             },
             "paintWalls": {
-                "label": "Do you want to paint walls and ceilings white?"
+                "label": "Wilt u muren en plafonds wit schilderen?"
             },
             "paintWallsM2": {
-                "label": "Square meters (m²) of surface to paint"
+                "label": "Vierkante meters (m²) te schilderen oppervlak"
             },
             "removeGotele": {
-                "label": "Do you need to smooth walls (remove stipple)?"
+                "label": "Moeten muren gladgestreken worden (spachtelputz verwijderen)?"
             },
             "removeGoteleM2": {
-                "label": "Square meters (m²) to smooth"
+                "label": "Vierkante meters (m²) glad te strijken"
             }
         },
         "optionals": {
             "installAirConditioning": {
-                "label": "Do you want ducted air conditioning installation?",
-                "description": "Estimate for the entire home."
+                "label": "Wilt u installatie van airconditioning via kanalen?",
+                "description": "Schatting voor de hele woning."
             },
             "renovateExteriorCarpentry": {
-                "label": "Do you want to renovate the PVC exterior carpentry with thermal break?",
-                "description": "Estimate for the entire home."
+                "label": "Wilt u het buitenschrijnwerk (PVC met koudebrugonderbreking) vernieuwen?",
+                "description": "Schatting voor de hele woning."
             }
         },
         "toast": {
             "success": {
-                "title": "Request Sent!",
-                "description": "We have received your request. Our team will contact you shortly."
+                "title": "Aanvraag Verzonden!",
+                "description": "We hebben uw aanvraag ontvangen. Ons team neemt spoedig contact met u op."
             },
             "error": {
-                "title": "Error Sending Request",
-                "description": "Could not process your request. Please try again later."
+                "title": "Fout bij verzenden aanvraag",
+                "description": "Kon uw aanvraag niet verwerken. Probeer het later opnieuw."
             }
         }
     },
     "reformInclusions": {
-        "title": "What a renovation of",
+        "title": "Wat een renovatie van",
         "kitchen": [
-            "Dismantling of kitchen furniture",
-            "Demolition, tiling, electricity, plumbing, flooring.",
-            "Preliminary preparations: chasing, electricity and plumbing, wall rendering.",
-            "Complete plumbing: replacement of hot and cold water installation and drains.",
-            "Wall tiling",
-            "Floor laying",
-            "New electricity: sockets and lighting.",
-            "Moisture-resistant plasterboard false ceiling",
-            "Main stopcocks",
-            "Tiles and ceramics",
-            "LED lighting",
-            "Sockets and switches"
+            "Demontage van keukenmeubilair",
+            "Sloop, tegelwerk, elektriciteit, loodgieterswerk, vloeren.",
+            "Voorbereidingen: sleuven frezen, elektriciteit en loodgieterswerk, muren stuken.",
+            "Volledig loodgieterswerk: vervanging van koud- en warmwaterleidingen en afvoeren.",
+            "Wandtegels",
+            "Vloeren leggen",
+            "Nieuwe elektriciteit: stopcontacten en verlichting.",
+            "Vochtbestendig gipsplaat verlaagd plafond",
+            "Hoofdkranen",
+            "Tegels en keramiek",
+            "LED-verlichting",
+            "Stopcontacten en schakelaars"
         ],
         "bathrooms": [
-            "Dismantling of accessories: shower tray/bathtub, sink and toilet",
-            "Demolition, tiling, electricity, plumbing, flooring.",
-            "Preliminary preparations: chasing, electricity and plumbing, wall rendering.",
-            "Complete plumbing: replacement of hot and cold water installation and drains.",
-            "Wall tiling",
-            "Floor laying",
-            "New electricity: sockets and lighting.",
-            "Moisture-resistant plasterboard false ceiling",
-            "Main stopcocks",
-            "Shower tray or bathtub",
+            "Demontage van accessoires: douchebak/bad, wastafel en toilet",
+            "Sloop, tegelwerk, elektriciteit, loodgieterswerk, vloeren.",
+            "Voorbereidingen: sleuven frezen, elektriciteit en loodgieterswerk, muren stuken.",
+            "Volledig loodgieterswerk: vervanging van koud- en warmwaterleidingen en afvoeren.",
+            "Wandtegels",
+            "Vloeren leggen",
+            "Nieuwe elektriciteit: stopcontacten en verlichting.",
+            "Vochtbestendig gipsplaat verlaagd plafond",
+            "Hoofdkranen",
+            "Douchebak of bad",
             "Toilet",
-            "Bathtub/shower faucet",
-            "Sink faucet",
-            "Sink",
-            "Tiles and ceramics",
-            "LED lighting",
-            "Socket and switch"
+            "Bad-/douchekraan",
+            "Wastafelkraan",
+            "Wastafel",
+            "Tegels en keramiek",
+            "LED-verlichting",
+            "Stopcontact en schakelaar"
         ],
         "integral": [
-            "Demolition of non-structural partitions and elements",
-            "Complete renovation of electrical installation",
-            "Complete renovation of plumbing and sanitation",
-            "New tiling and flooring throughout the home",
-            "New interior carpentry (doors and wardrobes)",
-            "Complete painting of walls and ceilings",
-            "Kitchen renovation (basic furniture and appliances)",
-            "Bathroom renovation (sanitary ware and faucets)",
-            "Installation of false ceiling in wet areas",
-            "Waste management and final cleaning of the site"
+            "Sloop van niet-dragende wanden en elementen",
+            "Volledige renovatie van elektrische installatie",
+            "Volledige renovatie van loodgieterswerk en riolering",
+            "Nieuw tegelwerk en vloeren in de hele woning",
+            "Nieuw binnenschrijnwerk (deuren en kasten)",
+            "Volledig schilderwerk van muren en plafonds",
+            "Keukenrenovatie (basis meubilair en apparatuur)",
+            "Badkamerrenovatie (sanitair en kranen)",
+            "Installatie van verlaagd plafond in natte ruimtes",
+            "Afvalbeheer en eindschoonmaak van de bouwplaats"
         ]
     }
 }

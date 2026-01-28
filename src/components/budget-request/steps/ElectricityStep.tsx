@@ -19,32 +19,18 @@ export const ElectricityStep = ({ form, t, bedroomFields }: ElectricityStepProps
   const propertyType = form.watch('propertyType');
   const installAC = form.watch('installAirConditioning');
 
-  const labels = {
-    scope: "Alcance de la Renovación Eléctrica",
-    scopeTotal: "Renovación Integral",
-    scopeTotalDesc: "Instalación nueva completa (cuadro, cableado y mecanismos). Ideal para pisos antiguos.",
-    scopePartial: "Solo Mecanismos",
-    scopePartialDesc: "Sustitución estética de enchufes e interruptores sin cambiar el cableado interno.",
-    ac: "Climatización / Aire Acondicionado",
-    acCount: "Número de equipos (Splits o Máquinas)",
-    acType: "Tipo de Instalación",
-    acSplit: "Splits de Pared (Mural)",
-    acDucts: "Conductos (Centralizado)"
-  };
-
   return (
     <div className="space-y-8 text-left animate-in fade-in-50 duration-500">
 
       {/* SCOPE SELECTION */}
       <Card>
-        <CardHeader><CardTitle className='text-lg flex items-center gap-2'><Zap className="text-yellow-500" /> Instalación Eléctrica Base</CardTitle></CardHeader>
+        <CardHeader><CardTitle className='text-lg flex items-center gap-2'><Zap className="text-yellow-500" /> {commonT.electricity.scope.label}</CardTitle></CardHeader>
         <CardContent className='space-y-6'>
           <FormField
             control={form.control}
             name="elecScope"
             render={({ field }) => (
               <FormItem className="space-y-3">
-                <FormLabel className='text-base font-semibold'>{labels.scope}</FormLabel>
                 <FormControl>
                   <RadioGroup
                     onValueChange={field.onChange}
@@ -53,14 +39,14 @@ export const ElectricityStep = ({ form, t, bedroomFields }: ElectricityStepProps
                   >
                     <RadioCard
                       value="total"
-                      label={labels.scopeTotal}
-                      description={labels.scopeTotalDesc}
+                      label={commonT.electricity.scope.total}
+                      description={commonT.electricity.scope.totalDesc}
                       icon={<Zap className="w-5 h-5 text-yellow-500" />}
                     />
                     <RadioCard
                       value="partial"
-                      label={labels.scopePartial}
-                      description={labels.scopePartialDesc}
+                      label={commonT.electricity.scope.partial}
+                      description={commonT.electricity.scope.partialDesc}
                       icon={<Plug className="w-5 h-5" />}
                     />
                   </RadioGroup>
@@ -78,7 +64,7 @@ export const ElectricityStep = ({ form, t, bedroomFields }: ElectricityStepProps
           <Card>
             <CardHeader><CardTitle className='text-lg'>{commonT.electricity.perRoom.kitchen}</CardTitle></CardHeader>
             <CardContent className='space-y-4'>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
                   name="electricalKitchen.sockets"
@@ -107,7 +93,7 @@ export const ElectricityStep = ({ form, t, bedroomFields }: ElectricityStepProps
             <Card key={field.id}>
               <CardHeader><CardTitle className='text-lg'>{commonT.electricity.perRoom.bedroom} {index + 1}</CardTitle></CardHeader>
               <CardContent className='space-y-4'>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
                     name={`electricalBedrooms.${index}.sockets`}
@@ -137,14 +123,14 @@ export const ElectricityStep = ({ form, t, bedroomFields }: ElectricityStepProps
 
       {/* CLIMATE CONTROL */}
       <Card className="border-blue-200 bg-blue-50/20">
-        <CardHeader><CardTitle className='text-lg flex items-center gap-2'><ThermometerSnowflake className="text-blue-500" /> {labels.ac}</CardTitle></CardHeader>
+        <CardHeader><CardTitle className='text-lg flex items-center gap-2'><ThermometerSnowflake className="text-blue-500" /> {commonT.electricity.ac.label}</CardTitle></CardHeader>
         <CardContent className='space-y-4'>
           <FormField
             control={form.control}
             name="installAirConditioning"
             render={({ field }) => (
               <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4 bg-white">
-                <FormLabel className="text-base">¿Instalar Aire Acondicionado?</FormLabel>
+                <FormLabel className="text-base">{commonT.electricity.ac.installLabel}</FormLabel>
                 <FormControl><Switch checked={field.value} onCheckedChange={field.onChange} /></FormControl>
               </FormItem>
             )}
@@ -157,7 +143,7 @@ export const ElectricityStep = ({ form, t, bedroomFields }: ElectricityStepProps
                 name="hvacType"
                 render={({ field }) => (
                   <FormItem className="space-y-3">
-                    <FormLabel className="font-semibold">{labels.acType}</FormLabel>
+                    <FormLabel className="font-semibold">{commonT.electricity.ac.typeLabel}</FormLabel>
                     <FormControl>
                       <RadioGroup
                         onValueChange={field.onChange}
@@ -166,14 +152,14 @@ export const ElectricityStep = ({ form, t, bedroomFields }: ElectricityStepProps
                       >
                         <RadioCard
                           value="split"
-                          label={labels.acSplit}
-                          description="Unidades visibles en pared. Instalación más sencilla."
+                          label={commonT.electricity.ac.split}
+                          description={commonT.electricity.ac.splitDesc}
                           icon={<Fan className="w-5 h-5" />}
                         />
                         <RadioCard
                           value="ducts"
-                          label={labels.acDucts}
-                          description="Invisible por falso techo. Requiere obra y rejillas."
+                          label={commonT.electricity.ac.ducts}
+                          description={commonT.electricity.ac.ductsDesc}
                           icon={<Wind className="w-5 h-5" />}
                         />
                       </RadioGroup>
@@ -186,7 +172,7 @@ export const ElectricityStep = ({ form, t, bedroomFields }: ElectricityStepProps
                 name="hvacCount"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{labels.acCount}</FormLabel>
+                    <FormLabel>{commonT.electricity.ac.countLabel}</FormLabel>
                     <FormControl><Input type="number" placeholder="Ej: 3" className="max-w-[150px] bg-white" {...field} value={field.value || ''} /></FormControl>
                     <FormMessage />
                   </FormItem>

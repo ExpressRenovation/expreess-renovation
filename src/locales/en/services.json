@@ -1,4 +1,3 @@
-
 {
   "construccion-y-reformas": {
     "title": "Construction and Renovations",
@@ -10,7 +9,25 @@
       "Complete renovations of homes and commercial premises.",
       "Extensions and redistribution of spaces.",
       "Advice on materials and construction solutions."
-    ]
+    ],
+    "subservices": {
+      "gestion-integral-obra-nueva": {
+        "title": "Comprehensive New Build Management",
+        "description": "We coordinate and execute your building project from earthworks to key handover. Total control of deadlines and costs."
+      },
+      "reformas-integrales-viviendas-locales": {
+        "title": "Comprehensive Home & Commercial Renovations",
+        "description": "Complete renovation of interior and exterior spaces, adapting your property to modern needs of functionality and style."
+      },
+      "ampliaciones-redistribucion": {
+        "title": "Extensions & Redistribution",
+        "description": "We maximize your property's potential by adding square meters or reconfiguring the layout for more open and luminous spaces."
+      },
+      "asesoramiento-materiales-construccion": {
+        "title": "Materials Consultancy",
+        "description": "Expert advice for choosing sustainable, durable materials that aesthetically align with your architectural vision."
+      }
+    }
   },
   "piscinas": {
     "title": "Pool Construction",
@@ -22,7 +39,25 @@
       "Construction with shotcrete (gunite).",
       "Installation of saline chlorination and heating systems.",
       "Maintenance and repair service."
-    ]
+    ],
+    "subservices": {
+      "diseno-personalizado": {
+        "title": "Custom Pool Design",
+        "description": "We create unique pools that perfectly integrate with your home's architecture and landscape. Free forms, infinity pools, and signature designs."
+      },
+      "construccion-gunitado": {
+        "title": "Shotcrete Construction",
+        "description": "We use the shotcrete technique to ensure monolithic, totally watertight, and maximum durability vessels."
+      },
+      "sistemas-cloracion-salina": {
+        "title": "Saline Chlorination & Heating",
+        "description": "Enjoy healthier and crystal-clear water with our saline electrolysis systems. Extend the swimming season with efficient heat pumps."
+      },
+      "mantenimiento-reparacion": {
+        "title": "Maintenance & Repair Service",
+        "description": "We take care of tuning, cleaning, grouting, and leak repair so your pool is always impeccable."
+      }
+    }
   },
   "reformas-de-interiores": {
     "title": "Interior Renovations",
@@ -34,7 +69,25 @@
       "Installation of new plumbing and electricity.",
       "Custom assembly of kitchen and bathroom furniture.",
       "Installation of shower trays, screens, and sanitary ware."
-    ]
+    ],
+    "subservices": {
+      "alicatados-pavimentos": {
+        "title": "Tiling & Flooring Renewal",
+        "description": "Replacement of ceramic coatings, microcement, and wooden floors to modernize the aesthetics of your rooms."
+      },
+      "instalaciones-fontaneria-electricidad": {
+        "title": "Technical Installations",
+        "description": "Complete renovation of plumbing networks and electrical circuits to meet regulations and improve safety."
+      },
+      "mobiliario-medida": {
+        "title": "Custom Furniture",
+        "description": "Design and assembly of kitchen and bathroom furniture that takes advantage of every available centimeter."
+      },
+      "banos-sanitarios": {
+        "title": "Bathroom Equipment",
+        "description": "Expert installation of ultra-flat shower trays, glass screens, and designer suspended sanitary ware."
+      }
+    }
   },
   "paramentos-verticales": {
     "title": "Vertical Walls",
@@ -46,7 +99,25 @@
       "External Thermal Insulation Composite Systems (ETICS).",
       "Repair and rehabilitation of facades.",
       "Exterior painting and waterproofing."
-    ]
+    ],
+    "subservices": {
+      "revestimientos-continuos": {
+        "title": "Continuous Coatings",
+        "description": "Application of technical and decorative mortars to protect and beautify exterior walls."
+      },
+      "aislamiento-sate": {
+        "title": "ETICS Insulation",
+        "description": "External Thermal Insulation Composite System to drastically reduce your home's energy consumption."
+      },
+      "rehabilitacion-fachadas": {
+        "title": "Facade Rehabilitation",
+        "description": "Aesthetic and functional recovery of deteriorated facades, ensuring safety and revaluing the property."
+      },
+      "pintura-impermeabilizacion-exterior": {
+        "title": "Exterior Painting & Waterproofing",
+        "description": "Water-repellent treatments and high-resistance paints for durable protection against the weather."
+      }
+    }
   },
   "electricidad": {
     "title": "Electricity",
@@ -58,7 +129,25 @@
       "Updating and reforming old installations.",
       "Electrical bulletins and certifications.",
       "Installation of low-consumption LED lighting."
-    ]
+    ],
+    "subservices": {
+      "instalaciones-obra-nueva": {
+        "title": "New Build Electrical Installations",
+        "description": "Design and execution of comprehensive electrical projects for new homes and buildings."
+      },
+      "actualizacion-reforma-electrica": {
+        "title": "Electrical Upgrade & Reform",
+        "description": "Replacement of old wiring and electrical panels to adapt the installation to current regulations."
+      },
+      "boletines-certificaciones": {
+        "title": "Bulletins & Certifications",
+        "description": "Issuance of official electrical bulletins and management with supply companies."
+      },
+      "iluminacion-led": {
+        "title": "Efficient LED Lighting",
+        "description": "Technical and decorative lighting projects with LED technology for maximum savings and visual comfort."
+      }
+    }
   },
   "carpinteria": {
     "title": "Wood and Aluminum Carpentry",
@@ -70,7 +159,25 @@
       "Design and assembly of aluminum enclosures, pergolas, and structures.",
       "Installation of wooden passage and entrance doors.",
       "Design and manufacturing of custom wooden wardrobes, dressing rooms, and furniture."
-    ]
+    ],
+    "subservices": {
+      "ventanas-puertas-aluminio-pvc": {
+        "title": "Aluminum/PVC Windows & Doors",
+        "description": "High energy efficiency exterior carpentry with thermal break and double glazing."
+      },
+      "cerramientos-pergolas": {
+        "title": "Enclosures & Pergolas",
+        "description": "Lightweight structures for terraces and gardens, extending your living space to the outside."
+      },
+      "puertas-paso-entrada": {
+        "title": "Passage & Entrance Doors",
+        "description": "Supply and installation of solid, lacquered, or armored wooden doors with premium finishes."
+      },
+      "armarios-vestidores-medida": {
+        "title": "Custom Wardrobes & Walk-in Closets",
+        "description": "Design of personalized wardrobe interiors for maximum organization and elegance."
+      }
+    }
   },
   "fontaneria": {
     "title": "Specialized Plumbing",
@@ -82,7 +189,25 @@
       "Repair of leaks and breakdowns.",
       "Installation of faucets and sanitary ware.",
       "Domestic hot water systems (boilers, heaters)."
-    ]
+    ],
+    "subservices": {
+      "redes-fontaneria-desagues": {
+        "title": "Plumbing & Drainage Networks",
+        "description": "Installation of supply and evacuation pipes with modern materials (multilayer, PPR, soundproof PVC)."
+      },
+      "reparacion-fugas": {
+        "title": "Leak Repair & Breakdowns",
+        "description": "Quick detection and definitive solution of tightness problems and blockages."
+      },
+      "griferia-sanitarios": {
+        "title": "Faucets & Sanitary Ware Installation",
+        "description": "Assembly of bathroom and kitchen elements of all brands, ensuring perfect operation."
+      },
+      "agua-caliente-sanitaria": {
+        "title": "Domestic Hot Water",
+        "description": "Installation and maintenance of electric water heaters, gas heaters, and aerothermal systems."
+      }
+    }
   },
   "pintura": {
     "title": "Professional Painting",
@@ -94,7 +219,25 @@
       "Special coatings and paints for exterior facades.",
       "Wall smoothing and stipple removal.",
       "Moisture treatment and surface preparation."
-    ]
+    ],
+    "subservices": {
+      "pintura-interior-decorativa": {
+        "title": "Interior & Decorative Painting",
+        "description": "Smooth finishes, stucco, wallpaper, and decorative techniques to customize your environments."
+      },
+      "pintura-fachadas": {
+        "title": "Facade Painting",
+        "description": "Elastic and stone coatings to protect the building envelope against the weather."
+      },
+      "alisado-paredes": {
+        "title": "Wall Smoothing & Stipple Removal",
+        "description": "Transformation of old walls into smooth and modern surfaces, ready to paint or wallpaper."
+      },
+      "tratamiento-humedades": {
+        "title": "Moisture Treatment",
+        "description": "Sanitation of surfaces affected by mold, saltpeter, or capillarity before painting."
+      }
+    }
   },
   "impermeabilizacion": {
     "title": "Waterproofing and Roofing",
@@ -106,7 +249,25 @@
       "Repair and maintenance of roofs.",
       "Application of asphalt sheets, PVC, EPDM, and liquid membranes.",
       "Thermal insulation for roofs, improving energy efficiency."
-    ]
+    ],
+    "subservices": {
+      "cubiertas-planas-terrazas": {
+        "title": "Flat Roofs & Terraces",
+        "description": "Walkable waterproofing with finishes in tile, gravel, or artificial grass."
+      },
+      "reparacion-tejados": {
+        "title": "Roof Repair",
+        "description": "Replacement of broken tiles, gutter cleaning, and reinforcement of singular points on pitched roofs."
+      },
+      "laminas-membranas": {
+        "title": "Technical Sheets & Membranes",
+        "description": "Certified installation of EPDM, PVC sheets, and latest generation asphalt fabrics."
+      },
+      "aislamiento-cubiertas": {
+        "title": "Roof Thermal Insulation",
+        "description": "Incorporation of insulating panels under the waterproofing to improve thermal comfort under the roof."
+      }
+    }
   },
   "cta": {
     "title": "Ready to start your {serviceName} project?",
@@ -114,5 +275,45 @@
     "button": "Instant Quote",
     "descriptionTitle": "Service Description",
     "featuresTitle": "Key Features"
+  },
+  "common": {
+    "process": {
+      "title": "Our Work Process",
+      "steps": [
+        {
+          "title": "1. Initial Consultation",
+          "description": "We evaluate your needs and the current state to define the scope."
+        },
+        {
+          "title": "2. Planning",
+          "description": "We design the technical solution and present a detailed budget."
+        },
+        {
+          "title": "3. Expert Execution",
+          "description": "We carry out the work meeting deadlines and with top quality materials."
+        },
+        {
+          "title": "4. Delivery & Warranty",
+          "description": "Joint final review and delivery of documentation and guarantees."
+        }
+      ]
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "items": [
+        {
+          "question": "Do you offer a warranty for the work performed?",
+          "answer": "Yes, all our services come with a full warranty on both labor and materials, in accordance with current regulations and our quality standards."
+        },
+        {
+          "question": "Does the budget include license management?",
+          "answer": "We can manage all the necessary municipal licenses and permits for your work or renovation, so you don't have to worry about the paperwork."
+        },
+        {
+          "question": "How long does it take to start the work?",
+          "answer": "Our response capacity is fast. Once the budget is approved, we agree on an immediate start date according to availability and project complexity."
+        }
+      ]
+    }
   }
 }

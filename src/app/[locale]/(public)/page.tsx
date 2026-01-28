@@ -1,7 +1,7 @@
 import { getDictionary } from '@/lib/dictionaries';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import { VisionSection } from '@/components/home/vision-section';
 import { ServicesGrid } from '@/components/home/services-grid';
 import { TransformationsSection } from '@/components/home/transformations-section';
@@ -12,6 +12,20 @@ import { CtaSection } from '@/components/home/cta-section';
 import { HeroSection } from '@/components/home/hero-section';
 
 
+
+import { constructMetadata } from '@/i18n/seo-utils';
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  const dict = await getDictionary(locale as any);
+
+  return constructMetadata({
+    title: dict.home.hero.title || 'Express Renovation Mallorca',
+    description: dict.home.hero.subtitle || 'Reformas integrales en Mallorca',
+    path: '/',
+    locale
+  });
+}
 
 export default async function Home({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;

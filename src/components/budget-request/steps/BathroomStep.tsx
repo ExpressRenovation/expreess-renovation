@@ -36,12 +36,12 @@ export const BathroomStep = ({ form, bathroomFields, t }: BathroomStepProps) => 
                             name={`bathrooms.${index}.quality`}
                             render={({ field }) => (
                                 <FormItem className="space-y-3">
-                                    <FormLabel className="font-semibold text-sm uppercase tracking-wide text-muted-foreground">Calidad de Acabados</FormLabel>
+                                    <FormLabel className="font-semibold text-sm uppercase tracking-wide text-muted-foreground">{commonT.quality.label}</FormLabel>
                                     <FormControl>
-                                        <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="grid grid-cols-3 gap-3">
-                                            <RadioCard value="basic" label="Básica" className="p-2 text-sm text-center justify-center" />
-                                            <RadioCard value="medium" label="Media" className="p-2 text-sm text-center justify-center border-primary/40 bg-primary/5" />
-                                            <RadioCard value="premium" label="Premium" className="p-2 text-sm text-center justify-center" />
+                                        <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                            <RadioCard value="basic" label={commonT.quality.options.basic} className="p-2 text-sm text-center justify-center" />
+                                            <RadioCard value="medium" label={commonT.quality.options.medium} className="p-2 text-sm text-center justify-center border-primary/40 bg-primary/5" />
+                                            <RadioCard value="premium" label={commonT.quality.options.premium} className="p-2 text-sm text-center justify-center" />
                                         </RadioGroup>
                                     </FormControl>
                                     <FormMessage />

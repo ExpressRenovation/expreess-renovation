@@ -44,9 +44,9 @@ export const KitchenStep = ({ form, t }: KitchenStepProps) => {
                 <FormLabel className="font-semibold">{commonT.quality.label}</FormLabel>
                 <FormControl>
                   <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <RadioCard value="basic" label="Básica" description="Funcional y económica." className="p-3" />
-                    <RadioCard value="medium" label="Media" description="Equilibrio calidad/precio." className="p-3 border-primary/40 bg-primary/5" />
-                    <RadioCard value="premium" label="Premium" description="Acabados de lujo." className="p-3" />
+                    <RadioCard value="basic" label={commonT.quality.options.basic} description={commonT.quality.options.basicDesc} className="p-3" />
+                    <RadioCard value="medium" label={commonT.quality.options.medium} description={commonT.quality.options.mediumDesc} className="p-3 border-primary/40 bg-primary/5" />
+                    <RadioCard value="premium" label={commonT.quality.options.premium} description={commonT.quality.options.premiumDesc} className="p-3" />
                   </RadioGroup>
                 </FormControl>
                 <FormMessage />
@@ -85,7 +85,7 @@ export const KitchenStep = ({ form, t }: KitchenStepProps) => {
           </div>
 
           {/* SURFACES */}
-          <div className="grid grid-cols-2 gap-6 border-t pt-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 border-t pt-4">
             <FormField
               control={form.control}
               name="kitchen.wallTilesM2"

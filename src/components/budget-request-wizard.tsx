@@ -1,6 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { cn } from '@/lib/utils';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
@@ -27,7 +28,7 @@ import { submitBudgetRequest, SubmitBudgetResult } from '@/app/[locale]/budget/a
 import { BudgetGenerationLoading } from './budget-request/BudgetGenerationLoading';
 import { ProvisionalBudgetView } from './budget-request/ProvisionalBudgetView';
 
-export function BudgetRequestWizard({ t, onBack }: { t: any, services: any, onBack: () => void }) {
+export function BudgetRequestWizard({ t, services, onBack, isWidget = false }: { t: any, services: any, onBack: () => void, isWidget?: boolean }) {
   const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
@@ -467,7 +468,7 @@ export function BudgetRequestWizard({ t, onBack }: { t: any, services: any, onBa
   }
 
   return (
-    <div className='w-full max-w-5xl mx-auto'>
+    <div className={isWidget ? 'w-full' : 'w-full max-w-5xl mx-auto'}>
       <div ref={progressContainerRef} className="scroll-mt-24">
         {/* Debug Button */}
         <div className="flex justify-end mb-2">
@@ -481,7 +482,7 @@ export function BudgetRequestWizard({ t, onBack }: { t: any, services: any, onBa
             🎲 Generar datos de prueba
           </Button>
         </div>
-        <Progress value={((currentStep + 1) / activeSteps.length) * 100} className="w-full mb-8 max-w-5xl mx-auto" />
+        <Progress value={((currentStep + 1) / activeSteps.length) * 100} className={cn("w-full mb-8 mx-auto", isWidget ? "" : "max-w-5xl")} />
       </div>
       <Form {...form}>
         <form className="space-y-8">

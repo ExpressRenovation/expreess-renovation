@@ -38,4 +38,11 @@ const nextConfig = {
   serverExternalPackages: ['pdf-parse'],
 };
 
-module.exports = nextConfig;
+const createNextIntlPlugin = require('next-intl/plugin');
+
+const withNextIntl = createNextIntlPlugin(
+  './src/i18n/request.ts'
+);
+
+module.exports = withNextIntl(nextConfig);
+

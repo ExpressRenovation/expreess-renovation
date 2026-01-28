@@ -1,4 +1,3 @@
-
 {
     "title": "Request Your Quote",
     "description": "Choose the level of detail you want to provide, and we'll give you an estimate.",
@@ -6,14 +5,89 @@
         "title": "Instant Quote",
         "description": "Fill out our quick form and get a cost estimate for your project in just a few minutes."
     },
-    "selection": {
-        "quick": {
-            "title": "Quick Budget",
-            "description": "Ideal for getting a quick estimate of your project's cost with minimal data."
+    "selector": {
+        "title": "How can we help you?",
+        "subtitle": "Choose the option that best fits your project.",
+        "options": {
+            "wizard": {
+                "title": "Smart Budget",
+                "desc": "Detailed 360º analysis with AI",
+                "badge": "Recommended"
+            },
+            "newBuild": {
+                "title": "New Build",
+                "desc": "Construction from scratch"
+            },
+            "fast": {
+                "title": "Quick Budget",
+                "desc": "Express estimate for renovations"
+            }
+        }
+    },
+    "modal": {
+        "headers": {
+            "newBuild": {
+                "title": "New Build Study",
+                "desc": "Let us analyze the feasibility of your project."
+            },
+            "wizard": {
+                "title": "Budget Assistant",
+                "desc": "Detail your vision step by step."
+            },
+            "pool": {
+                "title": "Pool Quote",
+                "desc": "Design your perfect oasis."
+            },
+            "fast": {
+                "title": "Quick Calculator",
+                "desc": "Get an immediate estimate."
+            }
         },
-        "detailed": {
-            "title": "Detailed Budget",
-            "description": "Provide all the details to get a more accurate and tailored preliminary budget."
+        "cancel": "Cancel"
+    },
+    "newBuild": {
+        "hasLand": {
+            "label": "Do you already have a plot or land?",
+            "yes": "Yes, I own land",
+            "no": "No, I am looking",
+            "searching": "I have a plot seen/reserved"
+        },
+        "hasProject": {
+            "label": "Do you already have an architect project?",
+            "yes": "Yes, I have stamped plans",
+            "no": "No, I need an architect"
+        },
+        "location": {
+            "label": "In which area/municipality?",
+            "placeholder": "E.g. Andratx, Son Vida..."
+        },
+        "approxMeters": {
+            "label": "Approximate buildable square meters"
+        },
+        "details": {
+            "label": "Additional details (Optional)",
+            "placeholder": "Modern style, pool..."
+        },
+        "submit": "Request Study"
+    },
+    "multimedia": {
+        "title": "Files and Plans",
+        "description": "Upload plans or current state photos",
+        "upload": "Upload files",
+        "dragDrop": "Drag and drop here to upload images or PDFs"
+    },
+    "trigger": {
+        "title": "Thinking of renovating?",
+        "subtitle": "Get your free estimate in seconds.",
+        "mobileSubtitle": "Click to start",
+        "modes": {
+            "general": "Request Quote",
+            "pool": "Pool Quote",
+            "reform": "Renovation Cost",
+            "new_build": "New Build Study",
+            "kitchen": "Kitchen Budget",
+            "bathroom": "Bathroom Budget",
+            "wizard": "360º Budget"
         }
     },
     "quickForm": {
@@ -30,6 +104,10 @@
         },
         "squareMeters": {
             "label": "Floor square meters (m²)"
+        },
+        "additionalDetails": {
+            "label": "Additional Description (Optional)",
+            "placeholder": "Extra details..."
         }
     },
     "detailedForm": {
@@ -69,6 +147,12 @@
             "submit": "Calculate Estimated Price",
             "loading": "Submitting..."
         },
+        "contact": {
+            "banner": {
+                "title": "Let's Get Started!",
+                "description": "We need your details to send you the detailed budget upon completion."
+            }
+        },
         "name": {
             "label": "Full Name",
             "placeholder": "Your first and last name"
@@ -95,11 +179,21 @@
             "projectScope": {
                 "label": "Project Scope",
                 "integral": "Full Renovation",
-                "partial": "Partial Renovation"
+                "integralDesc": "Complete renovation of the entire property.",
+                "partial": "Partial Renovation",
+                "partialDesc": "Only specific rooms or items."
             },
             "partialScope": {
                 "label": "Areas to renovate",
-                "description": "Select the areas you want to include in the partial renovation."
+                "description": "Select the areas you want to include in the partial renovation.",
+                "options": {
+                    "bathroom": "Bathroom Renovation",
+                    "kitchen": "Kitchen Renovation",
+                    "demolition": "Demolition",
+                    "ceilings": "False Ceilings",
+                    "electricity": "Electricity",
+                    "carpentry": "Carpentry and Painting"
+                }
             },
             "totalAreaM2": {
                 "label": "Total Property Area (m²)"
@@ -124,11 +218,23 @@
             "placeholder": "Select a quality level",
             "options": {
                 "basic": "Basic",
+                "basicDesc": "Functional and economic, ideal for rental.",
                 "medium": "Medium",
-                "premium": "Premium"
+                "mediumDesc": "Balance quality/price, durable materials.",
+                "premium": "Premium",
+                "premiumDesc": "Luxury finishes and exclusive design."
             }
         },
         "demolition": {
+            "elevator": "Does the building have an elevator?",
+            "furniture": "Do you need dismantling and removal of existing furniture?",
+            "thickWall": {
+                "label": "Type of Partition to Demolish",
+                "thin": "Simple Partition (Hollow Brick / Simple Plasterboard)",
+                "thick": "Thick or Load-bearing Wall (Solid Brick / Block)"
+            },
+            "floors": "Floor Demolition (m²)",
+            "wallTiles": "Wall Tile Demolition (m²)",
             "demolishPartitions": {
                 "label": "Do you need demolition of interior partitions?"
             },
@@ -201,6 +307,23 @@
                 "sockets": "Socket points to add",
                 "lights": "Switched light points to add",
                 "tv": "Do you want a TV outlet?"
+            },
+            "scope": {
+                "label": "Electrical Renovation Scope",
+                "total": "Full Renovation",
+                "totalDesc": "Complete new installation (panel, wiring, and mechanisms). Ideal for old apartments.",
+                "partial": "Mechanisms Only",
+                "partialDesc": "Aesthetic replacement of sockets and switches without changing internal wiring."
+            },
+            "ac": {
+                "label": "Air Conditioning",
+                "installLabel": "Install Air Conditioning?",
+                "countLabel": "Number of units (Splits or Machines)",
+                "typeLabel": "Installation Type",
+                "split": "Wall Splits",
+                "splitDesc": "Visible units on the wall. Simpler installation.",
+                "ducts": "Ducted (Centralized)",
+                "ductsDesc": "Invisible via false ceiling. Requires work and grilles."
             }
         },
         "carpentry": {

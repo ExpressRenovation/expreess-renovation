@@ -3,13 +3,22 @@
         "title": "Welcome to your Dashboard",
         "description": "Manage your projects and budget requests from here."
     },
+    "sidebar": {
+        "groups": {
+            "management": "Management",
+            "library": "Library",
+            "configuration": "Configuration"
+        }
+    },
     "nav": {
         "dashboard": "Dashboard",
-        "requestBudget": "Request Budget",
+        "requestBudget": "Requests",
         "myBudgets": "My Budgets",
-        "seoGenerator": "SEO Blog Generator",
-        "settings": "Settings",
-        "pricing": "Pricing Config"
+        "seoGenerator": "SEO Generator",
+        "priceBook": "Price Book",
+        "settings": "General",
+        "quickPricing": "Quick Pricing",
+        "financial": "Financial"
     },
     "requestBudget": {
         "title": "Request Budget",
@@ -18,5 +27,10 @@
     "seoGenerator": {
         "title": "SEO Blog Generator",
         "description": "Create SEO-optimized blog articles to attract more clients."
+    },
+    "metrics": {
+        "totalBudgeted": "Total Budgeted",
+        "totalRequests": "Total Requests",
+        "pendingReview": "Pending Review"
     }
 }

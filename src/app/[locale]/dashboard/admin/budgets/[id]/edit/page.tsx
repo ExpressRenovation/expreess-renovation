@@ -1,0 +1,24 @@
+import { getBudgetAction } from '@/actions/budget/get-budget.action';
+import { BudgetEditorWrapper } from '@/components/budget-editor/BudgetEditorWrapper';
+import { notFound } from 'next/navigation';
+
+interface BudgetEditorPageProps {
+    params: {
+        id: string;
+    };
+}
+
+export default async function BudgetEditorPage({ params }: BudgetEditorPageProps) {
+    // Next.js 15 requires awaiting params
+    const { id } = await params;
+
+    const budget = await getBudgetAction(id);
+
+    if (!budget) {
+        notFound();
+    }
+
+    return (
+        <BudgetEditorWrapper budget={budget} />
+    );
+}

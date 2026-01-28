@@ -3,13 +3,22 @@
         "title": "Benvingut al teu Tauler",
         "description": "Gestiona els teus projectes i sol·licituds de pressupost des d'aquí."
     },
+    "sidebar": {
+        "groups": {
+            "management": "Gestió",
+            "library": "Biblioteca",
+            "configuration": "Configuració"
+        }
+    },
     "nav": {
         "dashboard": "Tauler",
-        "requestBudget": "Sol·licitar Pressupost",
+        "requestBudget": "Sol·licituds",
         "myBudgets": "Els meus pressupostos",
         "seoGenerator": "Generador SEO",
-        "settings": "Configuració",
-        "pricing": "Configurar preus"
+        "priceBook": "Llibre de Preus",
+        "settings": "General",
+        "quickPricing": "Preus Ràpids",
+        "financial": "Financera"
     },
     "requestBudget": {
         "title": "Sol·licitar Pressupost",
@@ -18,5 +27,10 @@
     "seoGenerator": {
         "title": "Generador de Blog SEO",
         "description": "Crea articles de blog optimitzats per a SEO per atraure més clients."
+    },
+    "metrics": {
+        "totalBudgeted": "Total Pressupostat",
+        "totalRequests": "Sol·licituds Totals",
+        "pendingReview": "Pendents de Revisió"
     }
 }

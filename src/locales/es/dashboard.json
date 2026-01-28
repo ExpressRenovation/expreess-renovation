@@ -3,13 +3,22 @@
         "title": "Bienvenido a tu Panel",
         "description": "Gestiona tus proyectos y solicitudes de presupuesto desde aquí."
     },
+    "sidebar": {
+        "groups": {
+            "management": "Gestión",
+            "library": "Biblioteca",
+            "configuration": "Configuración"
+        }
+    },
     "nav": {
         "dashboard": "Panel",
-        "requestBudget": "Solicitar Presupuesto",
+        "requestBudget": "Solicitudes",
         "myBudgets": "Mis Presupuestos",
         "seoGenerator": "Generador SEO",
-        "settings": "Ajustes",
-        "pricing": "Configurar Precios"
+        "priceBook": "Libro de Precios",
+        "settings": "General",
+        "quickPricing": "Precios Rápidos",
+        "financial": "Financiera"
     },
     "requestBudget": {
         "title": "Solicitar Presupuesto",
@@ -18,5 +27,10 @@
     "seoGenerator": {
         "title": "Generador de Blog SEO",
         "description": "Crea artículos de blog optimizados para SEO para atraer más clientes."
+    },
+    "metrics": {
+        "totalBudgeted": "Total Presupuestado",
+        "totalRequests": "Solicitudes Totales",
+        "pendingReview": "Pendientes de Revisión"
     }
 }

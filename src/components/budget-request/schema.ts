@@ -23,13 +23,29 @@ const electricalRoomSchema = z.object({
     lights: z.coerce.number().optional(),
 });
 
-export const detailedFormSchema = z.object({
-    // Contact Info
+const contactInfoSchema = z.object({
     name: z.string().min(2, { message: 'El nombre es obligatorio.' }),
     email: z.string().email({ message: 'Por favor, introduce un correo electrónico válido.' }),
     phone: z.string().min(9, { message: 'Por favor, introduce un número de teléfono válido.' }),
     address: z.string().min(5, { message: 'La dirección del proyecto es necesaria.' }),
+});
 
+export const quickBudgetSchema = contactInfoSchema.extend({
+    description: z.string().min(10, { message: 'Por favor, describe brevemente lo que necesitas.' }),
+    files: z.array(z.string()).optional(), // URLs or Base64 strings (Images/Videos)
+});
+
+export const newBuildSchema = contactInfoSchema.extend({
+    description: z.string().optional(),
+    plotArea: z.coerce.number().min(1, 'La superficie de la parcela es obligatoria'),
+    buildingArea: z.coerce.number().min(1, 'La superficie a construir es obligatoria'),
+    floors: z.coerce.number().min(1, 'El número de plantas es obligatorio'),
+    garage: z.boolean().default(false),
+    pool: z.boolean().default(false),
+    files: z.array(z.string()).optional(), // URLs or Base64 strings (Project PDFs, Images)
+});
+
+export const detailedFormSchema = contactInfoSchema.extend({
     // Project Definition
     propertyType: z.enum(['residential', 'commercial', 'office']),
     projectScope: z.enum(['integral', 'partial']),
@@ -103,6 +119,13 @@ export const detailedFormSchema = z.object({
 
     // Uploads
     files: z.array(z.string()).optional(), // URLs or Base64 strings
+    visualizations: z.array(z.object({
+        originalUrl: z.string(),
+        generatedUrl: z.string(),
+        style: z.string(),
+        roomType: z.string(),
+        prompt: z.string(),
+    })).optional(),
 }).superRefine((data, ctx) => {
     // Demolition Step
     if (data.demolishPartitions && (!data.demolishPartitionsM2 || data.demolishPartitionsM2 <= 0)) {
@@ -165,3 +188,7 @@ export const detailedFormSchema = z.object({
 
 
 export type DetailedFormValues = z.infer<typeof detailedFormSchema>;
+export type QuickBudgetFormValues = z.infer<typeof quickBudgetSchema>;
+export type NewBuildFormValues = z.infer<typeof newBuildSchema>;
+
+export type BudgetClientData = DetailedFormValues | QuickBudgetFormValues | NewBuildFormValues;

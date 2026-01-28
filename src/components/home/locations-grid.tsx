@@ -1,19 +1,10 @@
 'use client';
 
 import { MapPin } from 'lucide-react';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import { Button } from '@/components/ui/button';
 
-const locations = [
-    "Son Vida",
-    "Portals Nous",
-    "Bendinat",
-    "Santa Ponsa",
-    "Port d'Andratx",
-    "Camp de Mar",
-    "Palma Centro",
-    "Illetas"
-];
+import { locations } from '@/lib/locations';
 
 export function LocationsGrid({ t }: { t: any }) {
     if (!t) return null;
@@ -31,7 +22,14 @@ export function LocationsGrid({ t }: { t: any }) {
 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
                     {locations.map((loc, index) => (
-                        <Link key={index} href={`/zonas/${loc.toLowerCase().replace(/\s+/g, '-')}`} className="group p-4 bg-muted/50 rounded-lg border border-transparent hover:border-primary/30 hover:bg-white hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2">
+                        <Link
+                            key={index}
+                            href={{
+                                pathname: '/zonas/[zone]',
+                                params: { zone: loc.toLowerCase().replace(/\s+/g, '-') }
+                            }}
+                            className="group p-4 bg-muted/50 rounded-lg border border-transparent hover:border-primary/30 hover:bg-white hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2"
+                        >
                             <MapPin className="h-4 w-4 text-primary group-hover:scale-110 transition-transform" />
                             <span className="font-medium text-foreground group-hover:text-primary transition-colors">{loc}</span>
                         </Link>

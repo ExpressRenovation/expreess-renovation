@@ -224,6 +224,7 @@ export const ProvisionalBudgetView = ({ data, lineItems, totalEstimated, costBre
                                 total: totalEstimated
                             }}
                             date={today}
+                            logoUrl={typeof window !== 'undefined' ? `${window.location.origin}/images/logo.png` : undefined}
                         />
                     }
                     fileName={`Presupuesto-Dochevi-${today.replace(/\//g, '-')}.pdf`}

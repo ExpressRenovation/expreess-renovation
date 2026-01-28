@@ -1,118 +1,319 @@
-
 {
   "construccion-y-reformas": {
-    "title": "Construction and Renovations",
-    "subtitle": "We transform your spaces, from scratch or renovating the existing.",
-    "shortDescription": "New construction, renovations, and extensions for all types of buildings.",
-    "description": "We specialize in executing new constructions, comprehensive renovations, and extensions. Our team of professionals manages each project with the utmost dedication to ensure results that exceed your expectations, paying attention to every detail from the foundation to the final finishes.",
+    "title": "Bouw en Renovaties",
+    "subtitle": "Wij transformeren uw ruimtes, van nul of door renovatie van het bestaande.",
+    "shortDescription": "Nieuwbouw, renovaties en uitbreidingen voor alle soorten gebouwen.",
+    "description": "Wij zijn gespecialiseerd in de uitvoering van nieuwbouw, totaalrenovaties en uitbreidingen. Ons team van professionals beheert elk project met de grootste toewijding om resultaten te garanderen die uw verwachtingen overtreffen, met aandacht voor elk detail van de fundering tot de laatste afwerking.",
     "features": [
-      "Comprehensive management of new construction projects.",
-      "Complete renovations of homes and commercial premises.",
-      "Extensions and redistribution of spaces.",
-      "Advice on materials and construction solutions."
-    ]
+      "Integraal beheer van nieuwbouwprojecten.",
+      "Volledige renovaties van woningen en commerciële panden.",
+      "Uitbreidingen en herindeling van ruimtes.",
+      "Advies over materialen en bouwoplossingen."
+    ],
+    "subservices": {
+      "gestion-integral-obra-nueva": {
+        "title": "Integraal Beheer van Nieuwbouw",
+        "description": "Wij coördineren en voeren uw bouwproject uit van grondverzet tot sleuteloverdracht. Volledige controle over termijnen en kosten."
+      },
+      "reformas-integrales-viviendas-locales": {
+        "title": "Totaalrenovaties van Woningen en Panden",
+        "description": "Volledige vernieuwing van binnen- en buitenruimtes, waarbij uw eigendom wordt aangepast aan de moderne behoeften van functionaliteit en stijl."
+      },
+      "ampliaciones-redistribucion": {
+        "title": "Uitbreidingen en Herindeling",
+        "description": "Wij maximaliseren het potentieel van uw vastgoed door vierkante meters toe te voegen of de indeling opnieuw te configureren voor meer open en lichte ruimtes."
+      },
+      "asesoramiento-materiales-construccion": {
+        "title": "Advies over Materialen",
+        "description": "Deskundig advies voor de keuze van duurzame, slijtvaste materialen die esthetisch aansluiten bij uw architecturale visie."
+      }
+    }
   },
   "piscinas": {
-    "title": "Pool Construction",
-    "subtitle": "The oasis you've always dreamed of, in your own home.",
-    "shortDescription": "Design, construction, and maintenance of swimming pools for you to enjoy the summer.",
-    "description": "We design and build custom-made swimming pools, adapted to your land and your dreams. We use the most advanced techniques and top-quality materials to create unique leisure and relaxation spaces for you and your family.",
+    "title": "Zwembadbouw",
+    "subtitle": "De oase waar u altijd van hebt gedroomd, in uw eigen huis.",
+    "shortDescription": "Ontwerp, bouw en onderhoud van zwembaden om van de zomer te genieten.",
+    "description": "Wij ontwerpen en bouwen bouwkundige zwembaden op maat, aangepast aan uw terrein en uw dromen. Wij gebruiken de meest geavanceerde technieken en materialen van topkwaliteit om unieke vrijetijds- en ontspanningsruimtes voor u en uw gezin te creëren.",
     "features": [
-      "Custom pool design.",
-      "Construction with shotcrete (gunite).",
-      "Installation of saline chlorination and heating systems.",
-      "Maintenance and repair service."
-    ]
+      "Gepersonaliseerd zwembadontwerp.",
+      "Bouw met spuitbeton (gunite).",
+      "Installatie van zoutchlorerings- en verwarmingssystemen.",
+      "Onderhouds- en reparatieservice."
+    ],
+    "subservices": {
+      "diseno-personalizado": {
+        "title": "Gepersonaliseerd Zwembadontwerp",
+        "description": "Wij creëren unieke zwembaden die perfect integreren met de architectuur van uw huis en het landschap. Vrije vormen, infinity pools en designontwerpen."
+      },
+      "construccion-gunitado": {
+        "title": "Bouw met Spuitbeton (Gunite)",
+        "description": "Wij gebruiken de gunite-techniek (spuitbeton) om monolithische kuipen te garanderen, volledig waterdicht en met maximale duurzaamheid."
+      },
+      "sistemas-cloracion-salina": {
+        "title": "Zoutchlorering en Verwarming",
+        "description": "Geniet van gezonder en kristalhelder water met onze zoutelektrolysesystemen. Verleng het badseizoen met efficiënte warmtepompen."
+      },
+      "mantenimiento-reparacion": {
+        "title": "Onderhouds- en Reparatieservice",
+        "description": "Wij zorgen voor het afstellen, schoonmaken, voegen en repareren van lekken zodat uw zwembad altijd onberispelijk is."
+      }
+    }
   },
   "reformas-de-interiores": {
-    "title": "Interior Renovations",
-    "subtitle": "Renew the heart of your home: functional and designer bathrooms and kitchens.",
-    "shortDescription": "Specialists in bathroom and kitchen renovations, optimizing space and style.",
-    "description": "We are experts in renovating bathrooms and kitchens, two of the most important rooms in the home. We optimize the distribution to gain functionality and create modern and cozy environments using state-of-the-art materials.",
+    "title": "Binnenrenovaties",
+    "subtitle": "Vernieuw het hart van uw huis: functionele en design badkamers en keukens.",
+    "shortDescription": "Specialisten in badkamer- en keukenrenovaties, met optimalisatie van ruimte en stijl.",
+    "description": "Wij zijn experts in de renovatie van badkamers en keukens, twee van de belangrijkste ruimtes in huis. Wij optimaliseren de indeling om functionaliteit te winnen en creëren moderne en gezellige omgevingen met behulp van de nieuwste materialen.",
     "features": [
-      "Complete renewal of tiling and flooring.",
-      "Installation of new plumbing and electricity.",
-      "Custom assembly of kitchen and bathroom furniture.",
-      "Installation of shower trays, screens, and sanitary ware."
-    ]
+      "Volledige vernieuwing van tegelwerk en vloeren.",
+      "Installatie van nieuw loodgieterswerk en elektriciteit.",
+      "Montage van keuken- en badkamermeubilair op maat.",
+      "Installatie van douchebakken, schermen en sanitair."
+    ],
+    "subservices": {
+      "alicatados-pavimentos": {
+        "title": "Vernieuwing van Tegelwerk en Vloeren",
+        "description": "Vervanging van keramische wandtegels, microcement en houten vloeren om de esthetiek van uw kamers te moderniseren."
+      },
+      "instalaciones-fontaneria-electricidad": {
+        "title": "Technische Installaties",
+        "description": "Volledige vernieuwing van waterleidingnetwerken en elektrische circuits om aan de voorschriften te voldoen en de veiligheid te verbeteren."
+      },
+      "mobiliario-medida": {
+        "title": "Meubilair op Maat",
+        "description": "Ontwerp en montage van keuken- en badkamermeubels die elke beschikbare centimeter benutten."
+      },
+      "banos-sanitarios": {
+        "title": "Badkameruitrusting",
+        "description": "Deskundige installatie van extra vlakke douchebakken, glazen wanden en hangend design sanitair."
+      }
+    }
   },
   "paramentos-verticales": {
-    "title": "Vertical Walls",
-    "subtitle": "We protect and beautify your facades and walls.",
-    "shortDescription": "Solutions for facades and walls, from cladding to insulation.",
-    "description": "We offer a wide range of solutions for vertical walls, including the application of single-layer mortars, renders, and external thermal insulation systems (ETICS), improving the energy efficiency and aesthetics of your building.",
+    "title": "Verticale Wanden",
+    "subtitle": "Wij beschermen en verfraaien uw gevels en muren.",
+    "shortDescription": "Oplossingen voor gevels en muren, van bekleding tot isolatie.",
+    "description": "Wij bieden een breed scala aan oplossingen voor verticale wanden, waaronder het aanbrengen van eenlaagse mortels, stucwerk en buitengevelisolatiesystemen (SATE), waardoor de energie-efficiëntie en esthetiek van uw gebouw worden verbeterd.",
     "features": [
-      "Application of continuous coatings.",
-      "External Thermal Insulation Composite Systems (ETICS).",
-      "Repair and rehabilitation of facades.",
-      "Exterior painting and waterproofing."
-    ]
+      "Aanbrengen van continue bekledingen.",
+      "Buitengevelisolatiesystemen (SATE).",
+      "Reparatie en rehabilitatie van gevels.",
+      "Buitenschilderwerk en waterdichting."
+    ],
+    "subservices": {
+      "revestimientos-continuos": {
+        "title": "Continue Bekledingen",
+        "description": "Aanbrengen van technische en decoratieve mortels om buitenmuren te beschermen en te verfraaien."
+      },
+      "aislamiento-sate": {
+        "title": "SATE Isolatie",
+        "description": "Thermisch isolatiesysteem voor buitenmuren om het energieverbruik van uw woning drastisch te verminderen."
+      },
+      "rehabilitacion-fachadas": {
+        "title": "Gevelrenovatie",
+        "description": "Esthetisch en functioneel herstel van aangetaste gevels, ter waarborging van veiligheid en waardevermeerdering van het pand."
+      },
+      "pintura-impermeabilizacion-exterior": {
+        "title": "Schilderwerk en Waterdichting van Gevels",
+        "description": "Waterafstotende behandelingen en weerbestendige verf voor langdurige bescherming."
+      }
+    }
   },
   "electricidad": {
-    "title": "Electricity",
-    "subtitle": "Safe and efficient electrical installations for your peace of mind.",
-    "shortDescription": "Wiring, lighting, panel upgrades, and safety inspections.",
-    "description": "We carry out all types of electrical installations, from the complete wiring of a home to the installation of new light points, always complying with current regulations to ensure maximum safety and energy efficiency.",
+    "title": "Elektriciteit",
+    "subtitle": "Veilige en efficiënte elektrische installaties voor uw gemoedsrust.",
+    "shortDescription": "Bedrading, verlichting, paneelupgrades en veiligheidsinspecties.",
+    "description": "Wij voeren alle soorten elektrische installaties uit, van de volledige bedrading van een woning tot de installatie van nieuwe lichtpunten, altijd in overeenstemming met de geldende voorschriften om maximale veiligheid en energie-efficiëntie te garanderen.",
     "features": [
-      "Complete electrical installations in new construction.",
-      "Updating and reforming old installations.",
-      "Electrical bulletins and certifications.",
-      "Installation of low-consumption LED lighting."
-    ]
+      "Volledige elektrische installaties in nieuwbouw.",
+      "Update en renovatie van oude installaties.",
+      "Elektrische keuringsrapporten en certificeringen.",
+      "Installatie van energiezuinige LED-verlichting."
+    ],
+    "subservices": {
+      "instalaciones-obra-nueva": {
+        "title": "Elektrische Installaties Nieuwbouw",
+        "description": "Ontwerp en uitvoering van integrale elektrische projecten voor nieuwe woningen en gebouwen."
+      },
+      "actualizacion-reforma-electrica": {
+        "title": "Update en Renovatie Elektrisch",
+        "description": "Vervanging van oude bedrading en schakelborden om de installatie aan te passen aan de huidige regelgeving."
+      },
+      "boletines-certificaciones": {
+        "title": "Rapporten en Certificeringen",
+        "description": "Uitgifte van officiële elektrische keuringsrapporten en regelingen met nutsbedrijven."
+      },
+      "iluminacion-led": {
+        "title": "Efficiënte LED-verlichting",
+        "description": "Technische en decoratieve verlichtingsprojecten met LED-technologie voor maximale besparing en visueel comfort."
+      }
+    }
   },
   "carpinteria": {
-    "title": "Wood and Aluminum Carpentry",
-    "subtitle": "Artisanal precision and modern durability in your finishes.",
-    "shortDescription": "Expert services in wood and aluminum carpentry for a perfect and long-lasting finish.",
-    "description": "We combine the warmth of traditional wood carpentry with the modernity and resilience of aluminum carpentry. We offer custom solutions for doors, windows, enclosures, pergolas, and furniture, adapting to the aesthetics and functionality of your project. Whether you're looking for a classic touch or a contemporary design, our team masterfully works with both materials.",
+    "title": "Hout- en Aluminium Schrijnwerk",
+    "subtitle": "Ambachtelijke precisie en moderne duurzaamheid in uw afwerkingen.",
+    "shortDescription": "Deskundige diensten in hout- en aluminium schrijnwerk voor een perfecte en duurzame afwerking.",
+    "description": "Wij combineren de warmte van traditioneel houtschrijnwerk met de moderniteit en weerstand van aluminium. Wij bieden oplossingen op maat voor deuren, ramen, behuizingen, pergola's en meubels, aangepast aan de esthetiek en functionaliteit van uw project. Of u nu op zoek bent naar een klassieke touch of een eigentijds ontwerp, ons team bewerkt beide materialen met meesterschap.",
     "features": [
-      "Manufacturing and installation of aluminum and PVC windows and doors with thermal break.",
-      "Design and assembly of aluminum enclosures, pergolas, and structures.",
-      "Installation of wooden passage and entrance doors.",
-      "Design and manufacturing of custom wooden wardrobes, dressing rooms, and furniture."
-    ]
+      "Fabricage en installatie van aluminium en PVC ramen en deuren met thermische onderbreking.",
+      "Ontwerp en montage van behuizingen, pergola's en aluminium constructies.",
+      "Installatie van houten doorgangs- en toegangsdeuren.",
+      "Ontwerp en fabricage van kasten, kleedkamers en meubilair op maat in hout."
+    ],
+    "subservices": {
+      "ventanas-puertas-aluminio-pvc": {
+        "title": "Ramen en Deuren van Aluminium/PVC",
+        "description": "Buitenschrijnwerk met hoge energie-efficiëntie met thermische onderbreking en dubbele beglazing."
+      },
+      "cerramientos-pergolas": {
+        "title": "Behuizingen en Pergola's",
+        "description": "Lichte structuren voor terrassen en tuinen, waardoor uw leefruimte naar buiten wordt uitgebreid."
+      },
+      "puertas-paso-entrada": {
+        "title": "Doorgangs- en Toegangsdeuren",
+        "description": "Levering en installatie van massief houten, gelakte of gepantserde deuren met premium afwerkingen."
+      },
+      "armarios-vestidores-medida": {
+        "title": "Kasten en Kleedkamers op Maat",
+        "description": "Ontwerp van gepersonaliseerde kastinterieurs voor maximale organisatie en elegantie."
+      }
+    }
   },
   "fontaneria": {
-    "title": "Specialized Plumbing",
-    "subtitle": "Durable solutions for the water system of your home or business.",
-    "shortDescription": "Complete plumbing services, from installations to repairs.",
-    "description": "Our qualified plumbers take care of the installation and repair of the entire sanitation and drinking water network. We guarantee fast, clean, and durable work, using the best quality materials.",
+    "title": "Gespecialiseerd Loodgieterswerk",
+    "subtitle": "Duurzame oplossingen voor het watersysteem van uw huis of bedrijf.",
+    "shortDescription": "Complete loodgietersdiensten, van installaties tot reparaties.",
+    "description": "Onze gekwalificeerde loodgieters zorgen voor de installatie en reparatie van het gehele sanitair- en drinkwaternetwerk. Wij garanderen snel, schoon en duurzaam werk, met gebruik van materialen van de beste kwaliteit.",
     "features": [
-      "Complete installation of plumbing and drainage networks.",
-      "Repair of leaks and breakdowns.",
-      "Installation of faucets and sanitary ware.",
-      "Domestic hot water systems (boilers, heaters)."
-    ]
+      "Volledige installatie van waterleiding- en afvoernetwerken.",
+      "Reparatie van lekken en storingen.",
+      "Installatie van kranen en sanitair.",
+      "Systemen voor warm tapwater (boilers, geisers)."
+    ],
+    "subservices": {
+      "redes-fontaneria-desagues": {
+        "title": "Waterleiding- en Afvoernetwerken",
+        "description": "Installatie van toevoer- en afvoerleidingen met moderne materialen (meerlagen, PPR, geluiddicht PVC)."
+      },
+      "reparacion-fugas": {
+        "title": "Reparatie van Lekken en Storingen",
+        "description": "Snelle detectie en definitieve oplossing van dichtheidsproblemen en verstoppingen."
+      },
+      "griferia-sanitarios": {
+        "title": "Installatie van Kranen en Sanitair",
+        "description": "Montage van badkamer- en keukenelementen van alle merken, met garantie voor een perfecte werking."
+      },
+      "agua-caliente-sanitaria": {
+        "title": "Warm Tapwater",
+        "description": "Installatie en onderhoud van elektrische boilers, gasgeisers en warmtepompsystemen."
+      }
+    }
   },
   "pintura": {
-    "title": "Professional Painting",
-    "subtitle": "We bring color and new life to your walls, inside and out.",
-    "shortDescription": "Interior and exterior painting services for homes, communities, and commercial spaces.",
-    "description": "Our team of professional painters transforms any space with a flawless finish. We use high-quality paints to ensure durability and a superior aesthetic result, whether it's for renovating a room or protecting your building's facade.",
+    "title": "Professioneel Schilderwerk",
+    "subtitle": "Wij geven kleur en nieuw leven aan uw muren, binnen en buiten.",
+    "shortDescription": "Binnen- en buitenschilderdiensten voor woningen, gemeenschappen en commerciële ruimtes.",
+    "description": "Ons team van professionele schilders transformeert elke ruimte met een onberispelijke afwerking. Wij gebruiken hoogwaardige verf om duurzaamheid en een superieur esthetisch resultaat te garanderen, of het nu gaat om het renoveren van een kamer of het beschermen van de gevel van uw gebouw.",
     "features": [
-      "Plastic, enamel, and decorative paints for interiors.",
-      "Special coatings and paints for exterior facades.",
-      "Wall smoothing and stipple removal.",
-      "Moisture treatment and surface preparation."
-    ]
+      "Plastic verf, lakken en decoratieve verf voor binnen.",
+      "Speciale coatings en verf voor buitengevels.",
+      "Gladmaken van muren en verwijderen van structuurverf.",
+      "Behandeling van vocht en voorbereiding van oppervlakken."
+    ],
+    "subservices": {
+      "pintura-interior-decorativa": {
+        "title": "Binnen- en Decoratief Schilderwerk",
+        "description": "Gladde afwerkingen, stucwerk, behang en decoratieve technieken om uw omgeving te personaliseren."
+      },
+      "pintura-fachadas": {
+        "title": "Schilderen van Gevels",
+        "description": "Elastische en steenachtige coatings om de gebouwschil te beschermen tegen weersinvloeden."
+      },
+      "alisado-paredes": {
+        "title": "Gladmaken en Verwijderen van Structuurverf",
+        "description": "Transformatie van oude muren in gladde en moderne oppervlakken, klaar om te schilderen of te behangen."
+      },
+      "tratamiento-humedades": {
+        "title": "Behandeling van Vocht",
+        "description": "Sanering van oppervlakken aangetast door schimmel, salpeter of opstijgend vocht voorafgaand aan het schilderen."
+      }
+    }
   },
   "impermeabilizacion": {
-    "title": "Waterproofing and Roofing",
-    "subtitle": "Total protection against leaks and humidity.",
-    "shortDescription": "Expert solutions for roofs, and terraces, ensuring complete watertightness.",
-    "description": "Proper waterproofing is key to the health of any building. We offer comprehensive solutions for flat roofs, terraces, pitched roofs, and walls, using the most advanced systems to prevent and definitively solve problems of leaks and humidity.",
+    "title": "Waterdichting en Dakbedekking",
+    "subtitle": "Totale bescherming tegen lekken en vocht.",
+    "shortDescription": "Deskundige oplossingen voor daken, daken en terrassen, met garantie voor totale waterdichtheid.",
+    "description": "Een correcte waterdichting is essentieel voor de gezondheid van elk gebouw. Wij bieden integrale oplossingen voor platte daken, terrassen, hellende daken en muren, met behulp van de meest geavanceerde systemen om problemen met lekken en vocht definitief te voorkomen en op te lossen.",
     "features": [
-      "Waterproofing of flat roofs and walkable terraces.",
-      "Repair and maintenance of roofs.",
-      "Application of asphalt sheets, PVC, EPDM, and liquid membranes.",
-      "Thermal insulation for roofs, improving energy efficiency."
-    ]
+      "Waterdichting van platte daken en begaanbare terrassen.",
+      "Reparatie en onderhoud van daken.",
+      "Aanbrengen van asfaltlagen, PVC, EPDM en vloeibare membranen.",
+      "Thermische isolatie voor daken, ter verbetering van de energie-efficiëntie."
+    ],
+    "subservices": {
+      "cubiertas-planas-terrazas": {
+        "title": "Platte Daken en Terrassen",
+        "description": "Begaanbare waterdichting met afwerking in tegels, grind of kunstgras."
+      },
+      "reparacion-tejados": {
+        "title": "Reparatie van Daken",
+        "description": "Vervanging van gebroken pannen, reiniging van dakgoten en versterking van singuliere punten op hellende daken."
+      },
+      "laminas-membranas": {
+        "title": "Technische Folies en Membranen",
+        "description": "Gecertificeerde installatie van EPDM, PVC en de nieuwste generatie asfaltlagen."
+      },
+      "aislamiento-cubiertas": {
+        "title": "Thermische Isolatie van Daken",
+        "description": "Integratie van isolatiepanelen onder de waterdichting om het thermisch comfort onder het dak te verbeteren."
+      }
+    }
   },
   "cta": {
-    "title": "Ready to start your {serviceName} project?",
-    "subtitle": "Get a cost estimate for your project right now. It's fast and non-binding.",
-    "button": "Instant Quote",
-    "descriptionTitle": "Service Description",
-    "featuresTitle": "Key Features"
+    "title": "Klaar om uw {serviceName} project te starten?",
+    "subtitle": "Ontvang nu een kostenraming voor uw project. Het is snel en vrijblijvend.",
+    "button": "Directe Offerte",
+    "descriptionTitle": "Servicebeschrijving",
+    "featuresTitle": "Belangrijkste Kenmerken"
+  },
+  "common": {
+    "process": {
+      "title": "Ons Werkproces",
+      "steps": [
+        {
+          "title": "1. Eerste Consultatie",
+          "description": "We evalueren uw behoeften en de huidige staat om de omvang te bepalen."
+        },
+        {
+          "title": "2. Planning",
+          "description": "We ontwerpen de technische oplossing en presenteren een gedetailleerde begroting."
+        },
+        {
+          "title": "3. Deskundige Uitvoering",
+          "description": "We voeren het werk uit binnen de termijnen en met eersteklas materialen."
+        },
+        {
+          "title": "4. Oplevering en Garantie",
+          "description": "Gezamenlijke eindcontrole en overdracht van documentatie en garanties."
+        }
+      ]
+    },
+    "faq": {
+      "title": "Veelgestelde Vragen",
+      "items": [
+        {
+          "question": "Bieden jullie garantie op het uitgevoerde werk?",
+          "answer": "Ja, al onze diensten hebben volledige garantie op zowel arbeid als materialen, conform de geldende regelgeving en onze kwaliteitsnormen."
+        },
+        {
+          "question": "Is het beheer van vergunningen inbegrepen in de offerte?",
+          "answer": "Wij kunnen alle noodzakelijke gemeentelijke vergunningen en toelatingen voor uw werk of renovatie beheren, zodat u zich geen zorgen hoeft te maken over papierwerk."
+        },
+        {
+          "question": "Hoe lang duurt het voordat de werkzaamheden beginnen?",
+          "answer": "Onze reactietijd is snel. Zodra de begroting is goedgekeurd, spreken we een onmiddellijke startdatum af op basis van beschikbaarheid en complexiteit van het project."
+        }
+      ]
+    }
   }
 }

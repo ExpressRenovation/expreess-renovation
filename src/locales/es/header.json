@@ -1,4 +1,3 @@
-
 {
     "nav": {
         "services": "Servicios",
@@ -13,5 +12,10 @@
         "newBudget": "Nuevo Presupuesto",
         "settings": "Ajustes",
         "logout": "Cerrar Sesión"
+    },
+    "megaMenu": {
+        "title": "Experiencia Dochevi",
+        "description": "Descubre nuestra gama de servicios premium diseñados para elevar tu calidad de vida. Desde la cimentación hasta el último detalle decorativo.",
+        "viewAll": "Ver todos los servicios"
     }
 }

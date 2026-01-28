@@ -2,13 +2,18 @@
 
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import Link from 'next/link';
-import { motion, useScroll, useTransform } from 'framer-motion';
-import { useRef } from 'react';
-import { ShieldCheck, MonitorPlay, Clock, Gem } from 'lucide-react';
+
+import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
+import { useRef, useState } from 'react';
+import { ShieldCheck, MonitorPlay, Clock, Gem, Play, X, Maximize2 } from 'lucide-react';
+import { Dialog, DialogContent, DialogTrigger, DialogTitle } from '@/components/ui/dialog';
 
 export function VisionSection({ t }: { t: any }) {
     if (!t) return null;
+
+    const [isVideoOpen, setIsVideoOpen] = useState(false);
+    const videoRef = useRef<HTMLVideoElement>(null);
+    const videoUrl = "https://firebasestorage.googleapis.com/v0/b/local-digital-eye.firebasestorage.app/o/business%2Fdochevi%2Fexpress_corporativo.mp4?alt=media&token=3916f648-aa3a-4b9c-9f62-17e9ff8ff74d"
 
     const ref = useRef(null);
     const { scrollYProgress } = useScroll({
@@ -25,6 +30,10 @@ export function VisionSection({ t }: { t: any }) {
         <Clock className="h-6 w-6 text-primary" key="2" />,
         <Gem className="h-6 w-6 text-primary" key="3" />
     ];
+
+    const handleVideoClick = () => {
+        setIsVideoOpen(true);
+    };
 
     return (
         <section ref={ref} className="py-32 bg-background relative overflow-hidden">
@@ -79,8 +88,8 @@ export function VisionSection({ t }: { t: any }) {
                     </div>
 
                     <div className="pt-6">
-                        <Button asChild className="bg-foreground text-background hover:bg-primary hover:text-white transition-all duration-300 rounded-full px-8 py-6 text-lg shadow-lg hover:shadow-xl hover:-translate-y-1">
-                            <Link href="/about">{t.cta}</Link>
+                        <Button onClick={handleVideoClick} className="bg-foreground text-background hover:bg-primary hover:text-white transition-all duration-300 rounded-full px-8 py-6 text-lg shadow-lg hover:shadow-xl hover:-translate-y-1 gap-2">
+                            <Play className="w-5 h-5 fill-current" /> Ver Historia Completa
                         </Button>
                     </div>
                 </motion.div>
@@ -91,24 +100,41 @@ export function VisionSection({ t }: { t: any }) {
                     {/* Main Image */}
                     <motion.div
                         style={{ y: y1 }}
-                        className="absolute right-0 top-0 w-[85%] h-[80%] rounded-[2rem] overflow-hidden shadow-2xl z-10"
+                        className="absolute right-0 top-0 w-[85%] h-[80%] rounded-[2rem] overflow-hidden shadow-2xl z-10 bg-black"
                     >
-                        <Image
-                            src="/images/luxury-vision.jpg" // Placeholder
-                            alt="Luxury Construction Detail"
-                            fill
-                            className="object-cover hover:scale-105 transition-transform duration-1000"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                        {/* Video Thumbnail / Preview */}
+                        <div className="relative w-full h-full group cursor-pointer" onClick={handleVideoClick}>
+                            <video
+                                src={videoUrl}
+                                className="object-cover w-full h-full opacity-90 group-hover:opacity-100 transition-opacity duration-500"
+                                autoPlay
+                                muted
+                                loop
+                                playsInline
+                            />
+                            <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500" />
+
+                            {/* Play Button Overlay */}
+                            <div className="absolute inset-0 flex items-center justify-center">
+                                <div className="w-20 h-20 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30 group-hover:scale-110 transition-transform duration-300">
+                                    <Play className="w-8 h-8 text-white fill-white ml-1" />
+                                </div>
+                            </div>
+
+                            <div className="absolute bottom-8 left-8 text-white">
+                                <span className="uppercase text-xs font-bold tracking-widest mb-1 block">Corporate Film</span>
+                                <h3 className="text-2xl font-headline font-bold">Nuestra Esencia</h3>
+                            </div>
+                        </div>
                     </motion.div>
 
-                    {/* Secondary Image/Detail */}
+                    {/* Secondary Image/Detail - Replaced with a detail shot but keeping structure */}
                     <motion.div
                         style={{ y: y2 }}
-                        className="absolute left-0 bottom-10 w-[55%] h-[45%] rounded-[1.5rem] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.2)] z-20 border-4 border-background"
+                        className="absolute left-0 bottom-10 w-[55%] h-[45%] rounded-[1.5rem] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.2)] z-20 border-4 border-background bg-zinc-900"
                     >
                         <Image
-                            src="/images/luxury-detail.png" // Placeholder
+                            src="/images/luxury-detail.png" // Still using image here to contrast with video
                             alt="Architectural Plan"
                             fill
                             className="object-cover grayscale hover:grayscale-0 transition-all duration-700"
@@ -130,6 +156,31 @@ export function VisionSection({ t }: { t: any }) {
                     </motion.div>
                 </div>
             </div>
+
+            {/* Full Screen Video Modal */}
+            <AnimatePresence>
+                {isVideoOpen && (
+                    <Dialog open={isVideoOpen} onOpenChange={setIsVideoOpen}>
+                        <DialogContent className="max-w-[90vw] h-[90vh] p-0 border-none bg-black/95 text-white overflow-hidden">
+                            <DialogTitle className="sr-only">Video Corporativo: Nuestra Esencia</DialogTitle>
+                            <div className="relative w-full h-full flex items-center justify-center">
+                                <button
+                                    onClick={() => setIsVideoOpen(false)}
+                                    className="absolute top-4 right-4 z-50 p-2 bg-black/50 rounded-full hover:bg-white/20 transition-colors"
+                                >
+                                    <X className="w-6 h-6" />
+                                </button>
+                                <video
+                                    src={videoUrl}
+                                    className="w-full h-full max-h-screen object-contain"
+                                    controls
+                                    autoPlay
+                                />
+                            </div>
+                        </DialogContent>
+                    </Dialog>
+                )}
+            </AnimatePresence>
         </section>
     );
 }

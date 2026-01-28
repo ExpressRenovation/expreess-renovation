@@ -28,6 +28,8 @@ import { ArrowLeft, Check, Loader2, MailCheck, RotateCw, Star } from 'lucide-rea
 import Link from 'next/link';
 import { addDoc, collection } from 'firebase/firestore';
 import { getSafeDb } from '@/lib/firebase/client';
+import { SimpleFileUpload } from '@/components/ui/simple-file-upload';
+import { createBudgetAction } from '@/actions/budget/create-budget.action';
 
 const pricingConfig = {
   integral: { basic: 400, medium: 600, premium: 800 },
@@ -35,6 +37,7 @@ const pricingConfig = {
   kitchen: { basic: 621, medium: 700, premium: 760 },
 };
 
+// Extend schema with files
 const formSchema = z.object({
   name: z.string().min(2, { message: 'El nombre es obligatorio.' }),
   email: z.string().email({ message: 'Por favor, introduce un correo electrónico válido.' }),
@@ -44,11 +47,13 @@ const formSchema = z.object({
   squareMeters: z.coerce.number().min(1, 'La superficie debe ser de al menos 1 m²'),
   quality: z.enum(['basic', 'medium', 'premium']),
   testEmail: z.string().email({ message: 'Introduce un email de prueba válido.' }).optional().or(z.literal('')),
+  files: z.array(z.string()).optional(),
+  description: z.string().optional(),
 });
 
 type QuickFormValues = z.infer<typeof formSchema>;
 
-export function QuickBudgetForm({ t }: { t: any; }) {
+export function QuickBudgetForm({ t, onBack }: { t: any; onBack?: () => void }) {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -65,6 +70,8 @@ export function QuickBudgetForm({ t }: { t: any; }) {
       squareMeters: 1,
       quality: 'basic',
       testEmail: '',
+      files: [],
+      description: ''
     },
   });
 
@@ -82,6 +89,16 @@ export function QuickBudgetForm({ t }: { t: any; }) {
         budget = values.squareMeters * prices[values.quality as keyof typeof prices];
         setCalculatedBudget(budget);
       }
+
+      // Create Budget in Admin Dashboard
+      await createBudgetAction('quick', {
+        name: values.name,
+        email: values.email,
+        phone: values.phone,
+        address: values.address,
+        description: values.description || `Solicitud Web: ${values.renovationType} - ${values.squareMeters}m2 - ${values.quality}`,
+        files: values.files || []
+      });
 
       const db = getSafeDb();
       const mailCollection = collection(db, 'mail');
@@ -112,6 +129,8 @@ export function QuickBudgetForm({ t }: { t: any; }) {
                     <li><strong>Metros Cuadrados:</strong> ${values.squareMeters} m²</li>
                     ${values.renovationType !== 'pool' ? `<li><strong>Calidad:</strong> ${t.budgetRequest.form.quality.options[values.quality]}</li>` : ''}
                 </ul>
+                ${values.description ? `<p><strong>Descripción:</strong> ${values.description}</p>` : ''}
+                ${values.files && values.files.length > 0 ? `<p><strong>Archivos adjuntos:</strong> ${values.files.length} archivos subidos al dashboard.</p>` : ''}
                 <h2>Presupuesto Estimado:</h2>
                 <p style="font-size: 24px; font-weight: bold;">
                     ${budget ? new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' }).format(budget) : 'A consultar (Piscina)'}
@@ -196,8 +215,18 @@ export function QuickBudgetForm({ t }: { t: any; }) {
   return (
     <div className='w-full max-w-5xl mx-auto text-left'>
       <Card>
-        <CardHeader>
-          <CardTitle className='font-headline text-2xl text-center'>{t.budgetRequest.quickForm.title}</CardTitle>
+        <CardHeader className="relative">
+          {onBack && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onBack}
+              className="absolute left-4 top-4 md:left-6 md:top-6"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+          )}
+          <CardTitle className='font-headline text-2xl text-center pt-2'>{t.budgetRequest.quickForm.title}</CardTitle>
           <CardDescription className='text-center'>{t.budgetRequest.quickForm.description}</CardDescription>
         </CardHeader>
         <CardContent>
@@ -271,6 +300,39 @@ export function QuickBudgetForm({ t }: { t: any; }) {
                   </ul>
                 </div>
               )}
+
+              <div className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t.budgetRequest.quickForm.additionalDetails.label}</FormLabel>
+                      <FormControl><Input placeholder={t.budgetRequest.quickForm.additionalDetails.placeholder} {...field} /></FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="files"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t.budgetRequest.multimedia.title}</FormLabel>
+                      <FormControl>
+                        <SimpleFileUpload
+                          value={field.value}
+                          onChange={field.onChange}
+                          maxFiles={5}
+                          description={t.budgetRequest.multimedia.dragDrop}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
               <div className="flex flex-col sm:flex-row justify-end items-center gap-4 mt-8">
                 <FormField control={form.control} name="testEmail" render={({ field }) => (
