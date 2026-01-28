@@ -3,8 +3,10 @@ import { Footer } from '@/components/layout/footer';
 import { getDictionary } from '@/lib/dictionaries';
 import { ServicesGrid } from '@/components/home/services-grid';
 
+import i18nConfig from '../../../../../i18nConfig';
+
 export async function generateStaticParams() {
-    return [];
+    return i18nConfig.locales.map(locale => ({ locale }));
 }
 
 export default async function ServicesPage({ params }: { params: Promise<{ locale: string }> }) {
