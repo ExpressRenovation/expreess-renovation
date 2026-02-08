@@ -18,19 +18,19 @@ export default async function ContactPage({ params: { locale } }: { params: { lo
     {
       icon: <MapPin className="h-6 w-6 text-primary" />,
       label: t.address.label,
-      value: "Carrer de la Mar, 123, 07001 Palma, Mallorca",
+      value: "Calle Illes Baleares 29, Despacho Nº 13, 07180 (Son Bugadellas)",
     },
     {
       icon: <Phone className="h-6 w-6 text-primary" />,
       label: t.phone.label,
-      value: "+34 626 00 64 61",
-      href: "tel:+34626006461",
+      value: "+34 643 00 30 13",
+      href: "tel:+34643003013",
     },
     {
       icon: <Mail className="h-6 w-6 text-primary" />,
       label: t.email.label,
-      value: "info@yakuconstrucciones.com",
-      href: "mailto:info@yakuconstrucciones.com",
+      value: "info@expressrenovationmallorca.es",
+      href: "mailto:info@expressrenovationmallorca.es",
     }
   ];
 
@@ -92,7 +92,7 @@ export default async function ContactPage({ params: { locale } }: { params: { lo
               </Card>
               <div className="aspect-video w-full">
                 <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3075.922543459463!2d2.64836471536968!3d39.5714399794717!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x129792575b6d65c3%3A0x4645b7a37a67f08c!2sCatedral-Bas%C3%ADlica%20de%20Santa%20Mar%C3%ADa%20de%20Mallorca!5e0!3m2!1ses!2ses!4v1678886456789!5m2!1ses!2ses"
+                  src="https://maps.google.com/maps?q=39.530111,2.503278&z=15&output=embed"
                   width="100%"
                   height="100%"
                   style={{ border: 0 }}
