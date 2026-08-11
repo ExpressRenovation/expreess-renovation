@@ -15,6 +15,13 @@
 
 # next.js
 /.next/
+# alternate build dirs via NEXT_DIST_DIR (e.g. a second dev server)
+/.next-*/
+
+# Cloud Run env files. The `.env*` rule further down does not match these
+# (no leading dot), and services/ai-core/env.yaml holds a live private key.
+env.yaml
+env.*.yaml
 /out/
 
 # production
@@ -39,6 +46,9 @@ next-env.d.ts
 
 .genkit/*
 .env*
+# ...but the template carries no secrets and documents the required vars.
+!.env.example
+!services/*/.env.example
 
 # firebase
 firebase-debug.log

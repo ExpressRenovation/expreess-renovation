@@ -2,7 +2,7 @@ import { QuickBudgetWizard } from '@/components/budget-request/QuickBudgetWizard
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: 'Presupuesto Rápido - Dochevi Costrucciones',
+    title: 'Presupuesto Rápido | Express Renovation Mallorca',
     description: 'Solicita un presupuesto rápido para tu reforma sin complicaciones.',
 };
 

@@ -11,6 +11,13 @@ export interface IngestionJob {
     error?: string;
     logs?: string[];
     totalItems?: number;
+    currentMeta?: {
+        pageNumber?: number;
+        totalPages?: number;
+        currentChapter?: string;
+        currentSection?: string;
+        lastItem?: { code: string; description: string; price: number };
+    };
     createdAt: Date;
     updatedAt: Date;
 }

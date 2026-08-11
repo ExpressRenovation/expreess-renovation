@@ -19,7 +19,7 @@ import { Link } from '@/i18n/navigation';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { getSafeAuth } from '@/lib/firebase/client';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import { getDictionary } from '@/lib/dictionaries';
 
 const formSchema = z.object({
@@ -27,7 +27,8 @@ const formSchema = z.object({
   password: z.string().min(6, { message: 'La contraseña debe tener al menos 6 caracteres.' }),
 });
 
-export default function LoginPage({ params: { locale } }: { params: { locale: any } }) {
+export default function LoginPage({ params }: { params: Promise<{ locale: any }> }) {
+  const { locale } = use(params);
   const { toast } = useToast();
   const router = useRouter();
   const [dict, setDict] = useState<any>(null);

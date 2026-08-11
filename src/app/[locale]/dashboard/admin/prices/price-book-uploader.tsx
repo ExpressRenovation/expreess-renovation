@@ -1,13 +1,14 @@
-
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import { Upload, FileText, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Upload, FileText, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { ingestPriceBookAction } from '@/actions/price-book/ingest-price-book.action';
 import { checkIngestionJobStatus } from '@/actions/price-book/check-job-status.action';
-import { Progress } from "@/components/ui/progress"
+import { IngestionDashboard } from './ingestion-dashboard';
+import { IngestionJob } from '@/backend/price-book/domain/ingestion-job';
+
 interface PriceBookUploaderProps {
     locale: string;
     onUploadComplete?: () => void;
@@ -16,65 +17,43 @@ interface PriceBookUploaderProps {
 export function PriceBookUploader({ locale, onUploadComplete }: PriceBookUploaderProps) {
     const [file, setFile] = useState<File | null>(null);
     const [isUploading, setIsUploading] = useState(false);
-    const [isProcessing, setIsProcessing] = useState(false);
-    const [progress, setProgress] = useState(0);
-    const [jobId, setJobId] = useState<string | null>(null);
-    const [statusMessage, setStatusMessage] = useState<string>('');
-    const [logs, setLogs] = useState<string[]>([]);
-    const [year, setYear] = useState<number>(new Date().getFullYear()); // Default to current
+    const [job, setJob] = useState<IngestionJob | null>(null);
+    const [year, setYear] = useState<number>(new Date().getFullYear());
     const { toast } = useToast();
-    const logsEndRef = useRef<HTMLDivElement>(null);
-
-    // Auto-scroll logs
-    useEffect(() => {
-        logsEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, [logs]);
 
     // Polling Effect
     useEffect(() => {
-        if (!jobId) return;
+        if (!job?.id) return;
 
         const interval = setInterval(async () => {
-            const result = await checkIngestionJobStatus(jobId);
+            const result = await checkIngestionJobStatus(job.id);
             if (result.success && result.job) {
-                const job = result.job;
-                setProgress(job.progress);
+                const updatedJob = {
+                    ...result.job,
+                    createdAt: new Date(result.job.createdAt),
+                    updatedAt: new Date(result.job.updatedAt)
+                };
+                setJob(updatedJob);
 
-                if (job.status === 'processing') {
-                    setStatusMessage(`Procesando: ${job.progress}%`);
-                    if (job.logs && Array.isArray(job.logs)) {
-                        setLogs(job.logs);
-                    }
-                }
-
-                if (job.status === 'completed') {
-                    setJobId(null);
-                    setIsProcessing(false);
-                    setProgress(100);
-                    setStatusMessage('¡Completado!');
+                if (updatedJob.status === 'completed') {
                     toast({
                         title: "Proceso finalizado",
-                        description: `Se han importado ${job.totalItems} partidas.`,
+                        description: `Se han importado ${updatedJob.totalItems} partidas.`,
                     });
                     setFile(null);
+                    setJob(null);
                     if (onUploadComplete) onUploadComplete();
                 }
 
-                if (job.status === 'failed') {
-                    setJobId(null);
-                    setIsProcessing(false);
-                    setStatusMessage('Error');
-                    toast({
-                        title: "Error en el proceso",
-                        description: job.error || "Ocurrió un error desconocido",
-                        variant: "destructive"
-                    });
+                if (updatedJob.status === 'failed') {
+                    toast({ title: "Error", description: updatedJob.error, variant: "destructive" });
+                    setJob(null);
                 }
             }
-        }, 2000); // Check every 2 seconds
+        }, 1000);
 
         return () => clearInterval(interval);
-    }, [jobId, toast, onUploadComplete]);
+    }, [job?.id, toast, onUploadComplete]);
 
 
     const onDrop = (e: any) => {
@@ -96,7 +75,6 @@ export function PriceBookUploader({ locale, onUploadComplete }: PriceBookUploade
 
         try {
             setIsUploading(true);
-            setStatusMessage('Subiendo archivo...');
 
             // 1. Upload to Firebase Storage
             const storage = getStorage();
@@ -105,17 +83,26 @@ export function PriceBookUploader({ locale, onUploadComplete }: PriceBookUploade
             const url = await getDownloadURL(storageRef);
 
             setIsUploading(false);
-            setIsProcessing(true);
-            setStatusMessage('Iniciando proceso de IA...');
 
             // 2. Trigger Server Action (Async Job)
             const result = await ingestPriceBookAction(url, file.name, year);
 
             if (result.success && result.jobId) {
-                setJobId(result.jobId);
+                // Initialize local job state
+                setJob({
+                    id: result.jobId,
+                    status: 'processing',
+                    progress: 0,
+                    fileName: file.name,
+                    fileUrl: url,
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
+                    logs: ['Job started...']
+                } as IngestionJob);
+
                 toast({
                     title: "Proceso iniciado",
-                    description: "La IA está procesando el documento en segundo plano.",
+                    description: "La IA está procesando el documento.",
                 });
             } else {
                 throw new Error(result.error);
@@ -124,7 +111,6 @@ export function PriceBookUploader({ locale, onUploadComplete }: PriceBookUploade
         } catch (error: any) {
             console.error(error);
             setIsUploading(false);
-            setIsProcessing(false);
             toast({
                 title: "Error",
                 description: error.message || "Error al subir el archivo",
@@ -132,6 +118,10 @@ export function PriceBookUploader({ locale, onUploadComplete }: PriceBookUploade
             });
         }
     };
+
+    if (job) {
+        return <IngestionDashboard job={job} onCancel={() => setJob(null)} />;
+    }
 
     return (
         <div className="w-full">
@@ -141,60 +131,33 @@ export function PriceBookUploader({ locale, onUploadComplete }: PriceBookUploade
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={onDrop}
             >
-                {/* Visual State: Processing/Polling */}
-                {(isProcessing || jobId) ? (
-                    <div className="flex flex-col items-center justify-center space-y-4 w-full">
-                        <Loader2 className="h-10 w-10 animate-spin text-primary" />
-                        <div className="space-y-1 w-full text-center">
-                            <p className="font-medium">{statusMessage}</p>
-                            <Progress value={progress} className="w-[80%] mx-auto h-2" />
-                        </div>
-
-                        {/* Status / Logs Area */}
-                        <div className="w-full mt-4 bg-muted/20 p-4 rounded-md h-40 overflow-y-auto text-xs font-mono text-left border">
-                            {logs.length > 0 ? logs.map((log, i) => (
-                                <div key={i} className="py-0.5 border-b border-muted/50 last:border-0">
-                                    <span className="text-muted-foreground mr-2">{new Date().toLocaleTimeString()}</span>
-                                    {log}
-                                </div>
-                            )) : (
-                                <p className="text-muted-foreground italic">Esperando logs...</p>
-                            )}
-                            <div ref={logsEndRef} />
-                        </div>
+                <div className="flex justify-center mb-4">
+                    {file ? <FileText className="h-10 w-10 text-primary" /> : <Upload className="h-10 w-10 text-muted-foreground" />}
+                </div>
+                {file ? (
+                    <div className="space-y-2">
+                        <p className="font-medium text-lg">{file.name}</p>
+                        <p className="text-sm text-muted-foreground">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
                     </div>
                 ) : (
-                    // Default State
-                    <>
-                        <div className="flex justify-center mb-4">
-                            {file ? <FileText className="h-10 w-10 text-primary" /> : <Upload className="h-10 w-10 text-muted-foreground" />}
-                        </div>
-                        {file ? (
-                            <div className="space-y-2">
-                                <p className="font-medium text-lg">{file.name}</p>
-                                <p className="text-sm text-muted-foreground">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
-                            </div>
-                        ) : (
-                            <div className="space-y-1">
-                                <p className="font-medium text-lg">Arrastra tu PDF aquí o haz clic para buscar</p>
-                                <p className="text-sm text-muted-foreground">Soporta archivos PDF</p>
-                            </div>
-                        )}
-                        <input
-                            type="file"
-                            className="hidden"
-                            id="file-upload"
-                            accept=".pdf"
-                            onChange={(e) => {
-                                if (e.target.files) setFile(e.target.files[0]);
-                            }}
-                        />
-                        {!file && (
-                            <label htmlFor="file-upload" className="mt-4 inline-block cursor-pointer px-4 py-2 bg-primary text-primary-foreground hover:bg-primary/90 rounded-md text-sm font-medium">
-                                Seleccionar Archivo
-                            </label>
-                        )}
-                    </>
+                    <div className="space-y-1">
+                        <p className="font-medium text-lg">Arrastra tu PDF aquí o haz clic para buscar</p>
+                        <p className="text-sm text-muted-foreground">Soporta archivos PDF</p>
+                    </div>
+                )}
+                <input
+                    type="file"
+                    className="hidden"
+                    id="file-upload"
+                    accept=".pdf"
+                    onChange={(e) => {
+                        if (e.target.files) setFile(e.target.files[0]);
+                    }}
+                />
+                {!file && (
+                    <label htmlFor="file-upload" className="mt-4 inline-block cursor-pointer px-4 py-2 bg-primary text-primary-foreground hover:bg-primary/90 rounded-md text-sm font-medium">
+                        Seleccionar Archivo
+                    </label>
                 )}
             </div>
 
@@ -210,7 +173,7 @@ export function PriceBookUploader({ locale, onUploadComplete }: PriceBookUploade
             </div>
 
             {/* Upload Button */}
-            {file && !isProcessing && !jobId && (
+            {file && (
                 <div className="mt-6 flex justify-end">
                     <button
                         onClick={handleUpload}
@@ -225,5 +188,3 @@ export function PriceBookUploader({ locale, onUploadComplete }: PriceBookUploade
         </div>
     );
 }
-
-

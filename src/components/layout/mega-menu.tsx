@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import * as React from 'react';
 import { Link } from '@/i18n/navigation';
@@ -27,8 +27,8 @@ export function MegaMenu({ t }: { t: any }) {
             <div className="" onMouseEnter={handleMouseEnter}>
                 <button
                     className={cn(
-                        "flex items-center gap-1 text-sm font-bold transition-colors hover:text-primary font-headline tracking-wide py-2 outline-none",
-                        isOpen ? "text-primary" : "text-foreground/80"
+                        "flex items-center gap-1 text-sm font-bold transition-colors hover:text-primary-onLight font-headline tracking-wide py-2 outline-none",
+                        isOpen ? "text-primary-onLight" : "text-foreground/80"
                     )}
                     aria-expanded={isOpen}
                 >
@@ -44,46 +44,21 @@ export function MegaMenu({ t }: { t: any }) {
                 <AnimatePresence>
                     {isOpen && (
                         <motion.div
-                            initial={{ opacity: 0, y: 10, scale: 0.98 }}
-                            animate={{ opacity: 1, y: 0, scale: 1 }}
-                            exit={{ opacity: 0, y: 10, scale: 0.98 }}
-                            transition={{ duration: 0.2, ease: "easeOut" }}
-                            className="fixed left-0 right-0 top-[10vh] w-full z-50 flex justify-center pointer-events-none"
+                            initial={{ opacity: 0, y: 8 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: 8 }}
+                            transition={{ duration: 0.18, ease: "easeOut" }}
+                            className="fixed left-0 right-0 top-[72px] w-full z-50 flex justify-center pointer-events-none"
                         >
-                            <div className="w-full max-w-7xl mx-auto px-4 pointer-events-auto">
-                                <div className="w-full rounded-2xl border border-white/20 bg-background/95 backdrop-blur-3xl shadow-2xl p-8 overflow-hidden relative">
-                                    {/* Decorative gradient blob */}
-                                    <div className="absolute -top-24 -left-24 w-64 h-64 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
+                            <div className="w-full max-w-6xl mx-auto px-4 pointer-events-auto">
+                                <div className="w-full rounded-2xl border border-border/40 bg-background shadow-2xl shadow-black/10 p-5 overflow-hidden">
+                                    {/* Compact Bento Grid — 5 columns */}
+                                    <div className="grid grid-cols-5 gap-3 auto-rows-[100px]">
+                                        {services.map((service, index) => {
+                                            // First service: featured, spans 2 cols + 2 rows
+                                            const isFeatured = index === 0;
 
-                                    <div className="grid grid-cols-12 gap-12 relative z-10">
-                                        {/* Intro / Featured Side */}
-                                        <div className="col-span-12 md:col-span-3 space-y-6 border-r border-border/50 pr-8">
-                                            <div>
-                                                <h3 className="font-headline text-xl font-bold text-primary mb-2">
-                                                    {t.header?.megaMenu?.title || "Experiencia Dochevi"}
-                                                </h3>
-                                                <p className="text-sm text-muted-foreground leading-relaxed">
-                                                    {t.header?.megaMenu?.description || "Descubre nuestra gama de servicios premium diseñados para elevar tu calidad de vida. Desde la cimentación hasta el último detalle decorativo."}
-                                                </p>
-                                            </div>
-
-                                            <div className="space-y-3">
-                                                <Link
-                                                    href="/services"
-                                                    onClick={() => setIsOpen(false)}
-                                                    className="inline-flex items-center text-sm font-bold text-foreground hover:text-primary transition-colors group"
-                                                >
-                                                    <div className="w-8 h-8 rounded-full bg-secondary/50 flex items-center justify-center mr-3 group-hover:bg-primary group-hover:text-white transition-all">
-                                                        <ArrowRight className="h-4 w-4" />
-                                                    </div>
-                                                    {t.header?.megaMenu?.viewAll || "Ver todos los servicios"}
-                                                </Link>
-                                            </div>
-                                        </div>
-
-                                        {/* Services Grid */}
-                                        <div className="col-span-12 md:col-span-9 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                            {services.map((service) => (
+                                            return (
                                                 <Link
                                                     key={service.id}
                                                     href={{
@@ -94,23 +69,82 @@ export function MegaMenu({ t }: { t: any }) {
                                                         }
                                                     }}
                                                     onClick={() => setIsOpen(false)}
-                                                    className="group flex items-start gap-4 p-3 rounded-xl transition-all hover:bg-muted/50 focus:bg-muted/50 outline-none -ml-3"
+                                                    className={cn(
+                                                        "group relative rounded-xl border transition-all duration-300 overflow-hidden",
+                                                        isFeatured
+                                                            ? "col-span-2 row-span-2 border-primary/20 bg-stone-900 hover:border-primary/50"
+                                                            : "col-span-1 row-span-1 border-border/30 bg-muted/30 hover:bg-muted/60 hover:border-primary/30"
+                                                    )}
                                                 >
-                                                    <div className="mt-1 p-2 rounded-lg bg-secondary/30 text-primary group-hover:bg-primary group-hover:text-white transition-all shadow-sm">
-                                                        {service.icon}
-                                                    </div>
-                                                    <div className="space-y-1">
-                                                        <div className="text-sm font-bold leading-none font-headline group-hover:text-primary transition-colors flex items-center">
-                                                            {t.services?.[service.id]?.title || service.id}
-                                                            <ArrowRight className="h-3 w-3 ml-2 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
+                                                    {/* Background for featured card */}
+                                                    {isFeatured && service.image && (
+                                                        <>
+                                                            <div
+                                                                className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
+                                                                style={{ backgroundImage: `url(${service.image})` }}
+                                                            />
+                                                            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-black/30" />
+                                                        </>
+                                                    )}
+
+                                                    <div className={cn(
+                                                        "relative z-10 h-full flex flex-col p-4",
+                                                        isFeatured ? "justify-end" : "justify-between"
+                                                    )}>
+                                                        {/* Icon */}
+                                                        <div className={cn(
+                                                            "flex items-center justify-between",
+                                                            isFeatured && "hidden"
+                                                        )}>
+                                                            <div className={cn(
+                                                                "p-2 rounded-lg transition-colors duration-200",
+                                                                "text-muted-foreground group-hover:text-primary-onLight bg-background/60 group-hover:bg-primary/10"
+                                                            )}>
+                                                                {service.icon}
+                                                            </div>
+                                                            <ArrowRight className="h-3.5 w-3.5 text-muted-foreground/30 -translate-x-1 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200" />
                                                         </div>
-                                                        <p className="line-clamp-2 text-xs text-muted-foreground leading-relaxed">
-                                                            {t.services?.[service.id]?.shortDescription}
-                                                        </p>
+
+                                                        {/* Title + description */}
+                                                        <div className={isFeatured ? "space-y-1.5" : "mt-auto"}>
+                                                            {isFeatured && (
+                                                                <div className="p-2 rounded-lg bg-white/10 backdrop-blur-sm text-white w-fit mb-3">
+                                                                    {service.icon}
+                                                                </div>
+                                                            )}
+                                                            <h4 className={cn(
+                                                                "font-bold font-headline leading-tight transition-colors",
+                                                                isFeatured
+                                                                    ? "text-xl text-white"
+                                                                    : "text-[13px] group-hover:text-foreground text-foreground/80"
+                                                            )}>
+                                                                {t.services?.[service.id]?.title || service.id}
+                                                            </h4>
+                                                            {isFeatured && (
+                                                                <p className="text-white/70 text-sm line-clamp-2">
+                                                                    {t.services?.[service.id]?.shortDescription}
+                                                                </p>
+                                                            )}
+                                                        </div>
                                                     </div>
                                                 </Link>
-                                            ))}
-                                        </div>
+                                            );
+                                        })}
+                                    </div>
+
+                                    {/* Bottom bar */}
+                                    <div className="mt-4 pt-3 border-t border-border/30 flex justify-between items-center">
+                                        <p className="text-xs text-muted-foreground">
+                                            {t.header?.megaMenu?.description || "Servicios premium de construcción y reformas en Mallorca."}
+                                        </p>
+                                        <Link
+                                            href="/services"
+                                            onClick={() => setIsOpen(false)}
+                                            className="inline-flex items-center text-xs font-bold text-foreground hover:text-primary transition-colors gap-1.5"
+                                        >
+                                            {t.header?.megaMenu?.viewAll || "Ver todos los servicios"}
+                                            <ArrowRight className="h-3.5 w-3.5" />
+                                        </Link>
                                     </div>
                                 </div>
                             </div>
@@ -119,11 +153,11 @@ export function MegaMenu({ t }: { t: any }) {
                 </AnimatePresence>
             </div>
 
-            <Link href="/blog" className="text-sm font-bold text-foreground/80 hover:text-primary transition-colors font-headline tracking-wide">
+            <Link href="/blog" className="text-sm font-bold text-foreground/80 hover:text-primary-onLight transition-colors font-headline tracking-wide">
                 {t.header?.nav?.blog || "Blog"}
             </Link>
 
-            <Link href="/contact" className="text-sm font-bold text-foreground/80 hover:text-primary transition-colors font-headline tracking-wide">
+            <Link href="/contact" className="text-sm font-bold text-foreground/80 hover:text-primary-onLight transition-colors font-headline tracking-wide">
                 {t.header?.nav?.contact || "Contacto"}
             </Link>
         </nav>

@@ -26,10 +26,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useState } from 'react';
 import { ArrowLeft, Check, Loader2, MailCheck, RotateCw, Star } from 'lucide-react';
 import Link from 'next/link';
-import { addDoc, collection } from 'firebase/firestore';
-import { getSafeDb } from '@/lib/firebase/client';
 import { SimpleFileUpload } from '@/components/ui/simple-file-upload';
 import { createBudgetAction } from '@/actions/budget/create-budget.action';
+import { sendLeadNotification } from '@/actions/notifications/send-lead-notification.action';
 
 const pricingConfig = {
   integral: { basic: 400, medium: 600, premium: 800 },
@@ -100,44 +99,38 @@ export function QuickBudgetForm({ t, onBack }: { t: any; onBack?: () => void }) 
         files: values.files || []
       });
 
-      const db = getSafeDb();
-      const mailCollection = collection(db, 'mail');
-
       const isTestEmail = values.testEmail && values.testEmail.trim() !== '';
-      const recipientEmail = isTestEmail ? values.testEmail : 'your-email@example.com';
-      const subject = isTestEmail
-        ? '[EMAIL DE PRUEBA] Nueva Solicitud de Presupuesto Rápido'
-        : 'Nueva Solicitud de Presupuesto Rápido';
-
-      await addDoc(mailCollection, {
-        to: [recipientEmail],
-        message: {
-          subject: subject,
-          html: `
-                <h1>Nueva Solicitud de Presupuesto Rápido</h1>
-                <p>Se ha recibido una nueva solicitud de presupuesto a través del formulario rápido de la web.</p>
-                <h2>Detalles del Cliente:</h2>
-                <ul>
-                    <li><strong>Nombre:</strong> ${values.name}</li>
-                    <li><strong>Email:</strong> ${values.email}</li>
-                    <li><strong>Teléfono:</strong> ${values.phone}</li>
-                    <li><strong>Dirección:</strong> ${values.address}</li>
-                </ul>
-                <h2>Detalles del Proyecto:</h2>
-                <ul>
-                    <li><strong>Tipo de Reforma:</strong> ${t.budgetRequest.quickForm.renovationType.options[values.renovationType]}</li>
-                    <li><strong>Metros Cuadrados:</strong> ${values.squareMeters} m²</li>
-                    ${values.renovationType !== 'pool' ? `<li><strong>Calidad:</strong> ${t.budgetRequest.form.quality.options[values.quality]}</li>` : ''}
-                </ul>
-                ${values.description ? `<p><strong>Descripción:</strong> ${values.description}</p>` : ''}
-                ${values.files && values.files.length > 0 ? `<p><strong>Archivos adjuntos:</strong> ${values.files.length} archivos subidos al dashboard.</p>` : ''}
-                <h2>Presupuesto Estimado:</h2>
-                <p style="font-size: 24px; font-weight: bold;">
-                    ${budget ? new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' }).format(budget) : 'A consultar (Piscina)'}
-                </p>
-                <p>Por favor, ponte en contacto con el cliente para dar seguimiento.</p>
-            `,
-        },
+      await sendLeadNotification({
+        subject: isTestEmail
+          ? '[EMAIL DE PRUEBA] Nueva Solicitud de Presupuesto Rápido'
+          : 'Nueva Solicitud de Presupuesto Rápido',
+        to: isTestEmail ? values.testEmail : undefined,
+        replyTo: values.email,
+        fields: [
+          { label: 'Nombre', value: values.name },
+          { label: 'Email', value: values.email },
+          { label: 'Teléfono', value: values.phone },
+          { label: 'Dirección', value: values.address },
+          { label: 'Tipo de Reforma', value: t.budgetRequest.quickForm.renovationType.options[values.renovationType] },
+          { label: 'Metros Cuadrados', value: `${values.squareMeters} m²` },
+          {
+            label: 'Calidad',
+            value: values.renovationType !== 'pool'
+              ? t.budgetRequest.form.quality.options[values.quality]
+              : undefined,
+          },
+          {
+            label: 'Archivos adjuntos',
+            value: values.files?.length ? `${values.files.length} subidos al dashboard` : undefined,
+          },
+          {
+            label: 'Presupuesto Estimado',
+            value: budget
+              ? new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' }).format(budget)
+              : 'A consultar (Piscina)',
+          },
+        ],
+        notes: values.description,
       });
 
       toast({

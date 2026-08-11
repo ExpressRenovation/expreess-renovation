@@ -1,128 +1,171 @@
 import { getDictionary } from '@/lib/dictionaries';
-import { Header } from '@/components/layout/header';
-import { Footer } from '@/components/layout/footer';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent } from '@/components/ui/card';
-import { ArrowRight, Mail, MapPin, Phone } from 'lucide-react';
+import { ArrowRight, Clock, Mail, MapPin, Phone } from 'lucide-react';
 import { Link } from '@/i18n/navigation';
+import { ContactForm } from '@/components/contact/contact-form';
+import { CONTACT_INFO } from '@/lib/contact-info';
+import { constructMetadata } from '@/i18n/seo-utils';
+import type { Metadata } from 'next';
 
-export default async function ContactPage({ params: { locale } }: { params: { locale: string } }) {
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const dict = await getDictionary(locale as any);
+
+  return constructMetadata({
+    title: `${dict.contact.title} | Express Renovation Mallorca`,
+    description: dict.contact.subtitle,
+    path: '/contact',
+    locale,
+  });
+}
+
+export default async function ContactPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
   const dict = await getDictionary(locale as any);
   const t = dict.contact;
   const t_cta = dict.blog.cta;
 
+  const { address } = CONTACT_INFO;
+
   const contactDetails = [
     {
-      icon: <MapPin className="h-6 w-6 text-primary" />,
-      label: t.address.label,
-      value: "Calle Illes Baleares 29, Despacho Nº 13, 07180 (Son Bugadellas)",
-    },
-    {
-      icon: <Phone className="h-6 w-6 text-primary" />,
+      icon: <Phone className="h-5 w-5" />,
       label: t.phone.label,
-      value: "+34 643 00 30 13",
-      href: "tel:+34643003013",
+      value: CONTACT_INFO.phone,
+      href: CONTACT_INFO.phoneHref,
     },
     {
-      icon: <Mail className="h-6 w-6 text-primary" />,
+      icon: <Mail className="h-5 w-5" />,
       label: t.email.label,
-      value: "info@expressrenovationmallorca.es",
-      href: "mailto:info@expressrenovationmallorca.es",
-    }
+      value: CONTACT_INFO.email,
+      href: `mailto:${CONTACT_INFO.email}`,
+    },
+    {
+      icon: <MapPin className="h-5 w-5" />,
+      label: t.address.label,
+      value: `${address.street}, ${address.postalCode} ${address.locality}`,
+    },
   ];
 
   return (
     <>
-      <Header t={dict} />
-      <main className="flex-1">
-        <section className="w-full py-20 md:py-28 bg-secondary/50">
-          <div className="container-limited text-center">
-            <h1 className="font-headline text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
-              {t.title}
-            </h1>
-            <p className="mt-4 text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
-              {t.subtitle}
-            </p>
-          </div>
-        </section>
+      {/* Hero — quiet, typographic. The form is the point, not a stock photo. */}
+      <section className="relative overflow-hidden bg-stone-950 text-white pt-24 pb-28 md:pt-32 md:pb-36">
+        <div
+          className="pointer-events-none absolute inset-0 opacity-[0.08]"
+          style={{
+            backgroundImage:
+              'radial-gradient(circle at 15% 25%, hsl(var(--primary)) 0, transparent 42%), radial-gradient(circle at 85% 75%, hsl(var(--primary)) 0, transparent 38%)',
+          }}
+        />
+        <div className="relative container-limited">
+          <div className="h-px w-16 bg-primary mb-8" />
+          <h1 className="font-headline text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight max-w-3xl text-balance">
+            {t.title}
+          </h1>
+          <p className="mt-6 text-lg md:text-xl text-white/70 max-w-2xl font-light leading-relaxed">
+            {t.subtitle}
+          </p>
+        </div>
+      </section>
 
-        <section className="w-full py-20 md:py-28 bg-background">
-          <div className="container-limited grid md:grid-cols-2 gap-12">
-            <div className="space-y-8">
-              <h2 className="font-headline text-3xl font-bold">{t.formTitle}</h2>
-              <form className="space-y-6">
-                <div className="space-y-2">
-                  <Label htmlFor="name">{t.form.name}</Label>
-                  <Input id="name" placeholder={t.form.namePlaceholder} />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="email">{t.form.email}</Label>
-                  <Input id="email" type="email" placeholder={t.form.emailPlaceholder} />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="message">{t.form.message}</Label>
-                  <Textarea id="message" placeholder={t.form.messagePlaceholder} className="min-h-[150px]" />
-                </div>
-                <Button type="submit" size="lg">{t.form.button}</Button>
-              </form>
-            </div>
-            <div className="space-y-8">
-              <h2 className="font-headline text-3xl font-bold">{t.infoTitle}</h2>
-              <Card>
-                <CardContent className="pt-6 space-y-6">
-                  {contactDetails.map((item, index) => (
-                    <div key={index} className="flex items-start gap-4">
-                      <div>{item.icon}</div>
-                      <div>
-                        <p className="font-semibold">{item.label}</p>
-                        {item.href ? (
-                          <a href={item.href} className="text-muted-foreground hover:text-primary transition-colors">
+      {/* Form + details, lifted over the hero edge */}
+      <section className="relative -mt-16 md:-mt-20 pb-20 md:pb-28">
+        <div className="container-limited grid lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+
+          <div className="lg:col-span-7 rounded-3xl border bg-background p-8 md:p-10 shadow-[0_8px_60px_-20px_rgba(0,0,0,0.28)]">
+            <h2 className="font-headline text-2xl md:text-3xl font-bold mb-8">{t.formTitle}</h2>
+            <ContactForm t={t} locale={locale} />
+          </div>
+
+          <aside className="lg:col-span-5 lg:mt-20 space-y-8">
+            <div>
+              <h2 className="font-headline text-2xl md:text-3xl font-bold mb-7">{t.infoTitle}</h2>
+
+              <ul className="space-y-1">
+                {contactDetails.map((item) => (
+                  <li key={item.label}>
+                    {item.href ? (
+                      <a
+                        href={item.href}
+                        className="group flex items-start gap-4 -mx-4 px-4 py-4 rounded-2xl hover:bg-muted/50 transition-colors"
+                      >
+                        <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary-onLight">
+                          {item.icon}
+                        </span>
+                        <span className="min-w-0">
+                          <span className="block text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground mb-1">
+                            {item.label}
+                          </span>
+                          <span className="block font-headline text-lg group-hover:text-primary-onLight transition-colors break-words">
                             {item.value}
-                          </a>
-                        ) : (
-                          <p className="text-muted-foreground">{item.value}</p>
-                        )}
+                          </span>
+                        </span>
+                      </a>
+                    ) : (
+                      <div className="flex items-start gap-4 px-4 py-4">
+                        <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary-onLight">
+                          {item.icon}
+                        </span>
+                        <span className="min-w-0">
+                          <span className="block text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground mb-1">
+                            {item.label}
+                          </span>
+                          <span className="block text-muted-foreground leading-relaxed">{item.value}</span>
+                        </span>
                       </div>
-                    </div>
-                  ))}
-                </CardContent>
-              </Card>
-              <div className="aspect-video w-full">
-                <iframe
-                  src="https://maps.google.com/maps?q=39.530111,2.503278&z=15&output=embed"
-                  width="100%"
-                  height="100%"
-                  style={{ border: 0 }}
-                  allowFullScreen={false}
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                  title="Mapa de ubicación"
-                  className='rounded-lg'
-                ></iframe>
-              </div>
-            </div>
-          </div>
-        </section>
+                    )}
+                  </li>
+                ))}
 
-        <section className="w-full py-20 md:py-28 bg-secondary/50">
-          <div className="container-limited text-center">
-            <h2 className="font-headline text-3xl md:text-4xl font-bold">{t_cta.title}</h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto mt-4 mb-8">
-              {t_cta.subtitle}
-            </p>
-            <Button asChild size="lg" className="font-bold">
-              <Link href="/budget-request">
-                {t_cta.button}
-                <ArrowRight className="ml-2" />
-              </Link>
-            </Button>
-          </div>
-        </section>
-      </main>
-      <Footer t={dict.home.finalCta} />
+                <li className="flex items-start gap-4 px-4 py-4">
+                  <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary-onLight">
+                    <Clock className="h-5 w-5" />
+                  </span>
+                  <span>
+                    <span className="block text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground mb-1">
+                      Horario
+                    </span>
+                    <span className="block text-muted-foreground leading-relaxed">
+                      Lunes a viernes, 8:00 &ndash; 18:00
+                    </span>
+                  </span>
+                </li>
+              </ul>
+            </div>
+
+            {/* Map, framed as part of the composition rather than a bare iframe */}
+            <div className="overflow-hidden rounded-3xl border aspect-[4/3]">
+              <iframe
+                src="https://maps.google.com/maps?q=39.530111,2.503278&z=15&output=embed"
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                allowFullScreen={false}
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                title="Mapa de ubicación de Express Renovation Mallorca"
+              />
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      {/* Closing CTA */}
+      <section className="w-full py-20 md:py-28 bg-muted/30 border-t">
+        <div className="container-limited text-center max-w-3xl">
+          <h2 className="font-headline text-3xl md:text-4xl font-bold text-balance">{t_cta.title}</h2>
+          <p className="text-lg text-muted-foreground mt-5 mb-9 font-light leading-relaxed">
+            {t_cta.subtitle}
+          </p>
+          <Button asChild size="lg" className="font-bold text-base px-8">
+            <Link href="/budget-request">
+              {t_cta.button}
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Link>
+          </Button>
+        </div>
+      </section>
     </>
   );
 }

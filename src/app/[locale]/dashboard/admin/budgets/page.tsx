@@ -10,123 +10,146 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Edit, FileText } from 'lucide-react';
+import {
+    FileText,
+    Sparkles,
+    User,
+    Calendar,
+    Folder,
+    ArrowRight,
+    Search,
+    Filter,
+    ShieldCheck,
+    Briefcase
+} from 'lucide-react';
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { Input } from '@/components/ui/input';
+import { BudgetApproveButton } from '@/components/budget/budget-approve-button';
+import { BudgetsTable } from '@/components/budget/admin/BudgetsTable';
 
-export default async function BudgetsListPage() {
+export default async function BudgetsListPage({ params }: { params: Promise<{ locale: string }> }) {
+    const { locale } = await params;
     const budgets = await getAllBudgetsAction();
 
+    // Helper to get source icon and label
+    const getSourceInfo = (source?: string) => {
+        switch (source) {
+            case 'wizard':
+                return { icon: Sparkles, label: 'Asistente IA', color: 'text-purple-600 bg-purple-100 dark:bg-purple-500/10 dark:text-purple-300 border-purple-200 dark:border-purple-800' };
+            case 'pdf_measurement':
+                return { icon: FileText, label: 'Mediciones PDF', color: 'text-amber-600 bg-amber-100 dark:bg-amber-500/10 dark:text-amber-300 border-amber-200 dark:border-amber-800' };
+            default:
+                return { icon: User, label: 'Manual', color: 'text-zinc-600 bg-zinc-100 dark:bg-zinc-500/10 dark:text-zinc-300 border-zinc-200 dark:border-zinc-800' };
+        }
+    };
+
     return (
-        <div className="space-y-6">
-            <div className="flex items-center justify-between">
-                <div>
-                    <h2 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">Presupuestos Generados</h2>
-                    <p className="text-muted-foreground mt-1">
-                        Gestiona, revisa y edita las solicitudes de presupuesto.
-                    </p>
+        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            {/* Hero Section */}
+            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-zinc-900 to-black p-8 text-white shadow-2xl border border-white/5">
+                <div className="absolute top-0 right-0 -mt-20 -mr-20 h-80 w-80 rounded-full bg-blue-500/10 blur-3xl"></div>
+                <div className="absolute bottom-0 left-0 -mb-20 -ml-20 h-80 w-80 rounded-full bg-emerald-500/10 blur-3xl"></div>
+
+                <div className="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+                    <div className="space-y-4">
+                        <Badge className="bg-white/10 text-blue-200 hover:bg-white/20 border-blue-500/30 backdrop-blur-md">
+                            <Briefcase className="w-3 h-3 mr-1 text-blue-300" /> Gestión de Proyectos
+                        </Badge>
+                        <div>
+                            <h1 className="text-3xl md:text-4xl font-bold font-headline tracking-tight text-white">
+                                Presupuestos y Obras
+                            </h1>
+                            <p className="text-zinc-400 max-w-xl mt-2 text-lg">
+                                Centralice el control de sus propuestas. Supervise estados, orígenes y aprobaciones en tiempo real.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                        <Button variant="outline" className="border-white/10 text-white hover:bg-white/10 hover:text-white bg-transparent backdrop-blur-sm hidden md:flex">
+                            <Filter className="mr-2 h-4 w-4" />
+                            Filtrar Vista
+                        </Button>
+                        <Link href="/dashboard/wizard">
+                            <Button className="bg-white text-zinc-950 hover:bg-blue-50 font-semibold shadow-lg shadow-blue-900/20 transition-all duration-300 group">
+                                <Sparkles className="mr-2 h-4 w-4 text-purple-600 group-hover:scale-110 transition-transform" />
+                                Nuevo con IA
+                            </Button>
+                        </Link>
+                    </div>
                 </div>
             </div>
 
-            <Card className="border-0 shadow-lg bg-white/50 backdrop-blur-sm">
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                        <FileText className="w-5 h-5 text-primary" />
-                        Listado de Solicitudes
-                    </CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <Table>
-                        <TableHeader>
-                            <TableRow className="hover:bg-transparent">
-                                <TableHead className="w-[100px]">Ref</TableHead>
-                                <TableHead>Cliente</TableHead>
-                                <TableHead>Tipo</TableHead>
-                                <TableHead>Proyecto</TableHead>
-                                <TableHead>Fecha</TableHead>
-                                <TableHead>Estado</TableHead>
-                                <TableHead>Importe</TableHead>
-                                <TableHead className="text-right">Acciones</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {budgets.length === 0 ? (
-                                <TableRow>
-                                    <TableCell colSpan={7} className="h-24 text-center text-muted-foreground">
-                                        No hay presupuestos registrados todavía.
-                                    </TableCell>
-                                </TableRow>
-                            ) : (
-                                budgets.map((budget) => (
-                                    <TableRow key={budget.id} className="group">
-                                        <TableCell className="font-mono text-xs text-muted-foreground">
-                                            {budget.id.substring(0, 8)}...
-                                        </TableCell>
-                                        <TableCell>
-                                            <div className="font-medium">{budget.clientData.name}</div>
-                                            <div className="text-xs text-muted-foreground">{budget.clientData.email}</div>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Badge variant="outline" className="capitalize">
-                                                {budget.type === 'quick' ? 'Rápido' :
-                                                    budget.type === 'new_build' ? 'Obra Nueva' : 'Reforma'}
-                                            </Badge>
-                                        </TableCell>
-                                        <TableCell>
-                                            {budget.type === 'quick' ? (
-                                                <>
-                                                    <div className="font-medium">Solicitud Rápida</div>
-                                                    <div className="text-xs text-muted-foreground truncate max-w-[200px]">
-                                                        {(budget.clientData as any).description || 'Sin descripción'}
-                                                    </div>
-                                                </>
-                                            ) : budget.type === 'new_build' ? (
-                                                <>
-                                                    <div className="font-medium">Obra Nueva</div>
-                                                    <div className="text-xs text-muted-foreground truncate max-w-[200px]">
-                                                        {(budget.clientData as any).description || 'Sin descripción'}
-                                                    </div>
-                                                </>
+            {/* Metrics Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <Card className="border-none shadow-lg bg-white/60 dark:bg-zinc-900/50 backdrop-blur-md group hover:-translate-y-1 transition-transform duration-300">
+                    <CardHeader className="pb-2">
+                        <CardTitle className="text-sm font-medium text-muted-foreground flex items-center justify-between">
+                            Total Presupuestado
+                            <ShieldCheck className="w-4 h-4 text-emerald-500" />
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-3xl font-bold text-slate-800 dark:text-slate-100">
+                            {budgets.reduce((acc, b) => acc + (b.totalEstimated || 0), 0).toLocaleString('es-ES', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 })}
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-1">Volumen acumulado</p>
+                    </CardContent>
+                </Card>
+                <Card className="border-none shadow-lg bg-white/60 dark:bg-zinc-900/50 backdrop-blur-md group hover:-translate-y-1 transition-transform duration-300">
+                    <CardHeader className="pb-2">
+                        <CardTitle className="text-sm font-medium text-muted-foreground flex items-center justify-between">
+                            Solicitudes Pendientes
+                            <div className="h-2 w-2 rounded-full bg-orange-500 animate-pulse" />
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-3xl font-bold text-orange-600 dark:text-orange-400">
+                            {budgets.filter(b => b.status === 'pending_review' || b.status === 'draft').length}
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-1">Requieren acción</p>
+                    </CardContent>
+                </Card>
+                <Card className="border-none shadow-lg bg-white/60 dark:bg-zinc-900/50 backdrop-blur-md group hover:-translate-y-1 transition-transform duration-300">
+                    <CardHeader className="pb-2">
+                        <CardTitle className="text-sm font-medium text-muted-foreground flex items-center justify-between">
+                            Tasa de Cierre
+                            <Sparkles className="w-4 h-4 text-purple-500" />
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">
+                            {(() => {
+                                const now = new Date();
+                                const currentMonth = now.getMonth();
+                                const currentYear = now.getFullYear();
 
-                                            ) : (
-                                                <>
-                                                    <div className="capitalize">{(budget.clientData as any).propertyType}</div>
-                                                    <div className="text-xs text-muted-foreground truncate max-w-[200px]">
-                                                        {(budget.clientData as any).projectScope === 'integral' ? 'Reforma Integral' : 'Reforma Parcial'}
-                                                    </div>
-                                                </>
-                                            )}
-                                        </TableCell>
-                                        <TableCell className="text-muted-foreground text-sm">
-                                            {format(budget.createdAt, "d MMM yyyy", { locale: es })}
-                                        </TableCell>
-                                        <TableCell>
-                                            <Badge variant={
-                                                budget.status === 'approved' ? 'default' :
-                                                    budget.status === 'sent' ? 'secondary' :
-                                                        budget.status === 'pending_review' ? 'destructive' : 'outline'
-                                            } className="capitalize">
-                                                {budget.status === 'pending_review' ? 'Pendiente' : budget.status}
-                                            </Badge>
-                                        </TableCell>
-                                        <TableCell className="font-medium">
-                                            {budget.totalEstimated.toLocaleString('es-ES', { style: 'currency', currency: 'EUR' })}
-                                        </TableCell>
-                                        <TableCell className="text-right">
-                                            <Link href={`/dashboard/admin/budgets/${budget.id}/edit`}>
-                                                <Button size="sm" variant="ghost" className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                    <span className="sr-only">Editar</span>
-                                                    <Edit className="h-4 w-4" />
-                                                </Button>
-                                            </Link>
-                                        </TableCell>
-                                    </TableRow>
-                                ))
-                            )}
-                        </TableBody>
-                    </Table>
-                </CardContent>
+                                const thisMonthBudgets = budgets.filter(b => {
+                                    const d = new Date(b.createdAt);
+                                    return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+                                });
+
+                                // Consider conversion as Approved vs Total (excluding drafts that are just started)
+                                // Or simple Approved / Total Created this month
+                                const total = thisMonthBudgets.filter(b => b.status !== 'draft').length;
+                                const approved = thisMonthBudgets.filter(b => b.status === 'approved').length;
+
+                                if (total === 0) return '0%';
+                                return `${Math.round((approved / total) * 100)}%`;
+                            })()}
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-1">Conversión mensual</p>
+                    </CardContent>
+                </Card>
+            </div>
+
+            {/* Main Table Card */}
+            <Card className="border-0 shadow-xl shadow-zinc-200/40 dark:shadow-zinc-950/40 overflow-hidden bg-white/80 dark:bg-zinc-900/60 backdrop-blur-xl ring-1 ring-zinc-200 dark:ring-zinc-800">
+                <div className="p-4">
+                    <BudgetsTable budgets={budgets} locale={locale} />
+                </div>
             </Card>
         </div>
     );

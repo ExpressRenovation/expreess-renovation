@@ -32,6 +32,13 @@ export const routing = defineRouting({
             de: '/angebot-anfordern',
             nl: '/offerte-aanvragen'
         },
+        '/services/[category]': {
+            es: '/servicios/[category]',
+            en: '/services/[category]',
+            ca: '/serveis/[category]',
+            de: '/dienstleistungen/[category]',
+            nl: '/diensten/[category]'
+        },
         '/services/[category]/[subcategory]': {
             es: '/servicios/[category]/[subcategory]',
             en: '/services/[category]/[subcategory]',

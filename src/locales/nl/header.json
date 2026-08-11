@@ -1,20 +1,20 @@
 {
     "nav": {
-        "services": "Services",
-        "budgetRequest": "Instant Quote",
+        "services": "Diensten",
+        "budgetRequest": "Direct een offerte",
         "blog": "Blog",
         "contact": "Contact",
-        "login": "Log In",
-        "signup": "Sign Up"
+        "login": "Inloggen",
+        "signup": "Registreren"
     },
     "userNav": {
         "dashboard": "Dashboard",
-        "newBudget": "New Budget",
-        "settings": "Settings",
-        "logout": "Log Out"
+        "newBudget": "Nieuwe offerte",
+        "settings": "Instellingen",
+        "logout": "Uitloggen"
     },
     "megaMenu": {
-        "title": "Dochevi Ervaring",
+        "title": "De Express Renovation-ervaring",
         "description": "Ontdek ons aanbod van premium diensten ontworpen om uw levenskwaliteit te verbeteren. Van de fundering tot het laatste decoratieve detail.",
         "viewAll": "Bekijk alle diensten"
     }

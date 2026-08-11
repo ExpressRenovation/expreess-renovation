@@ -7,28 +7,34 @@ export const PriceBookItemSchema = z.object({
     code: z.string().describe("The unique code of the item from the PDF (e.g., 'D01.05')"),
     description: z.string().describe("Full description of the construction task"),
     unit: z.string().describe("Unit of measurement (e.g., 'm2', 'u', 'ml')"),
-    priceLabor: z.number().describe("Cost of labor per unit"),
-    priceMaterial: z.number().describe("Cost of materials per unit"),
+    priceLabor: z.number().optional().describe("Cost of labor per unit"),
+    priceMaterial: z.number().optional().describe("Cost of materials per unit"),
     priceTotal: z.number().describe("Total execution cost (Material + Labor)"),
-    year: z.number().describe("Year of the price book"),
+    year: z.number().optional().describe("Year of the price book"),
+    chapter: z.string().optional(),
+    section: z.string().optional(),
+    page: z.number().optional(),
     searchKeywords: z.array(z.string()).optional(),
-    // embedding: z.array(z.number()).optional(), // Optional if we handle it in infrastructure specific models
     createdAt: z.date().optional(),
+    updatedAt: z.date().optional(),
 });
+
+/**
+ * Domain Entity: PriceBookComponent
+ */
+export interface PriceBookComponent {
+    code: string;
+    unit?: string;
+    description?: string;
+    quantity: number;
+    price: number;
+    is_variable?: boolean;
+}
 
 /**
  * Domain Entity: PriceBookItem
  */
-export interface PriceBookItem {
-    id?: string;
-    code: string;
-    description: string;
-    unit: string;
-    priceLabor: number;
-    priceMaterial: number;
-    priceTotal: number;
-    year: number;
-    searchKeywords?: string[];
+export type PriceBookItem = z.infer<typeof PriceBookItemSchema> & {
+    breakdown?: PriceBookComponent[];
     embedding?: number[];
-    createdAt?: Date;
 }

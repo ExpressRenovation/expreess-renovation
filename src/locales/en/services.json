@@ -13,19 +13,27 @@
     "subservices": {
       "gestion-integral-obra-nueva": {
         "title": "Comprehensive New Build Management",
-        "description": "We coordinate and execute your building project from earthworks to key handover. Total control of deadlines and costs."
+        "description": "We coordinate and execute your building project from earthworks to key handover. Total control of deadlines and costs.",
+        "priceRange": "€1,400 - €2,200 per built m²",
+        "answer": "Building a new home in Mallorca costs between €1,400 and €2,200 per built m², depending on finishes, site access and structural complexity. That covers construction, site management and permits, but not the land. A 200 m² villa typically runs €280,000 to €440,000."
       },
       "reformas-integrales-viviendas-locales": {
         "title": "Comprehensive Home & Commercial Renovations",
-        "description": "Complete renovation of interior and exterior spaces, adapting your property to modern needs of functionality and style."
+        "description": "Complete renovation of interior and exterior spaces, adapting your property to modern needs of functionality and style.",
+        "priceRange": "€600 - €1,100 per m²",
+        "answer": "A full home renovation in Mallorca costs between €600 and €1,100 per m², depending on finish level and the starting condition. It covers demolition, new plumbing and electrics, tiling, flooring, joinery and painting. A 90 m² property usually lands between €54,000 and €99,000."
       },
       "ampliaciones-redistribucion": {
         "title": "Extensions & Redistribution",
-        "description": "We maximize your property's potential by adding square meters or reconfiguring the layout for more open and luminous spaces."
+        "description": "We maximize your property's potential by adding square meters or reconfiguring the layout for more open and luminous spaces.",
+        "priceRange": "€900 - €1,600 per added m²",
+        "answer": "Extending a property in Mallorca costs €900 to €1,600 per m² of new floor area. The price depends on whether foundations need reinforcing, the roof type and planning permission. Interior reconfiguration without adding area starts at €350 per m² affected."
       },
       "asesoramiento-materiales-construccion": {
         "title": "Materials Consultancy",
-        "description": "Expert advice for choosing sustainable, durable materials that aesthetically align with your architectural vision."
+        "description": "Expert advice for choosing sustainable, durable materials that aesthetically align with your architectural vision.",
+        "priceRange": "Free with contracted works",
+        "answer": "Materials advice is free when you contract the works with us. It includes supplier visits, a technical comparison of alternatives and physical samples. As a standalone consultancy service it starts at €450 for a full-home project."
       }
     }
   },
@@ -43,19 +51,27 @@
     "subservices": {
       "diseno-personalizado": {
         "title": "Custom Pool Design",
-        "description": "We create unique pools that perfectly integrate with your home's architecture and landscape. Free forms, infinity pools, and signature designs."
+        "description": "We create unique pools that perfectly integrate with your home's architecture and landscape. Free forms, infinity pools, and signature designs.",
+        "priceRange": "€2,500 - €6,000 (design)",
+        "answer": "A bespoke pool design in Mallorca costs €2,500 to €6,000 and includes a topographic survey, volumetric proposal, renders and the technical documentation for planning permission. The fee is deducted from the construction quote if we build the pool."
       },
       "construccion-gunitado": {
         "title": "Shotcrete Construction",
-        "description": "We use the shotcrete technique to ensure monolithic, totally watertight, and maximum durability vessels."
+        "description": "We use the shotcrete technique to ensure monolithic, totally watertight, and maximum durability vessels.",
+        "priceRange": "€22,000 - €45,000 (8x4 m)",
+        "answer": "An 8x4 m gunite concrete pool in Mallorca costs €22,000 to €45,000 turnkey. That covers excavation, the sprayed concrete shell, waterproofing, finish, filtration and coping. Free-form shapes, infinity edges or difficult site access push the price up."
       },
       "sistemas-cloracion-salina": {
         "title": "Saline Chlorination & Heating",
-        "description": "Enjoy healthier and crystal-clear water with our saline electrolysis systems. Extend the swimming season with efficient heat pumps."
+        "description": "Enjoy healthier and crystal-clear water with our saline electrolysis systems. Extend the swimming season with efficient heat pumps.",
+        "priceRange": "€1,800 - €4,500",
+        "answer": "Salt chlorination in Mallorca costs €1,800 to €4,500 depending on pool volume, including cell, control unit and commissioning. A heat pump to warm the water adds €3,500 to €8,000 and extends the swimming season by roughly four months."
       },
       "mantenimiento-reparacion": {
         "title": "Maintenance & Repair Service",
-        "description": "We take care of tuning, cleaning, grouting, and leak repair so your pool is always impeccable."
+        "description": "We take care of tuning, cleaning, grouting, and leak repair so your pool is always impeccable.",
+        "priceRange": "€120 - €280 per month",
+        "answer": "Maintaining a private pool in Mallorca costs €120 to €280 a month depending on size and visit frequency. It covers pH and chlorine control, floor and waterline cleaning, filter backwashing and equipment checks. Seasonal opening is billed separately."
       }
     }
   },
@@ -73,19 +89,27 @@
     "subservices": {
       "alicatados-pavimentos": {
         "title": "Tiling & Flooring Renewal",
-        "description": "Replacement of ceramic coatings, microcement, and wooden floors to modernize the aesthetics of your rooms."
+        "description": "Replacement of ceramic coatings, microcement, and wooden floors to modernize the aesthetics of your rooms.",
+        "priceRange": "€45 - €110 per m²",
+        "answer": "Replacing tiling or flooring in Mallorca costs €45 to €110 per m² including materials. Large-format porcelain and microcement sit at the top of the range because of the labour they demand. Removing the old surface adds €12 to €20 per m²."
       },
       "instalaciones-fontaneria-electricidad": {
         "title": "Technical Installations",
-        "description": "Complete renovation of plumbing networks and electrical circuits to meet regulations and improve safety."
+        "description": "Complete renovation of plumbing networks and electrical circuits to meet regulations and improve safety.",
+        "priceRange": "€90 - €180 per m² of property",
+        "answer": "Fully renewing plumbing and electrics in Mallorca costs €90 to €180 per m² of property. It covers a new consumer unit, wiring, switchgear, multilayer pipework, drainage and the official certificate. For a 90 m² home that is €8,100 to €16,200."
       },
       "mobiliario-medida": {
         "title": "Custom Furniture",
-        "description": "Design and assembly of kitchen and bathroom furniture that takes advantage of every available centimeter."
+        "description": "Design and assembly of kitchen and bathroom furniture that takes advantage of every available centimeter.",
+        "priceRange": "€650 - €1,900 per linear metre",
+        "answer": "Bespoke kitchen furniture in Mallorca costs €650 to €1,900 per linear metre depending on fronts, hardware and worktop. Made-to-measure wardrobes and dressing rooms run €400 to €900 per m² of frontage. Design and installation are always included."
       },
       "banos-sanitarios": {
         "title": "Bathroom Equipment",
-        "description": "Expert installation of ultra-flat shower trays, glass screens, and designer suspended sanitary ware."
+        "description": "Expert installation of ultra-flat shower trays, glass screens, and designer suspended sanitary ware.",
+        "priceRange": "€4,500 - €12,000 per bathroom",
+        "answer": "A full bathroom renovation in Mallorca costs €4,500 to €12,000 depending on size and finishes. It covers demolition, plumbing, tiling, flooring, shower tray, screen, sanitaryware, vanity unit and taps. A standard 5 m² bathroom typically lands around €7,000."
       }
     }
   },
@@ -103,19 +127,27 @@
     "subservices": {
       "revestimientos-continuos": {
         "title": "Continuous Coatings",
-        "description": "Application of technical and decorative mortars to protect and beautify exterior walls."
+        "description": "Application of technical and decorative mortars to protect and beautify exterior walls.",
+        "priceRange": "€35 - €75 per m²",
+        "answer": "A continuous render finish in Mallorca costs €35 to €75 per m², excluding scaffolding. Single-coat mortar sits at the low end, lime and polished stucco finishes at the high end. Scaffolding adds €8 to €15 per m² of façade."
       },
       "aislamiento-sate": {
         "title": "ETICS Insulation",
-        "description": "External Thermal Insulation Composite System to drastically reduce your home's energy consumption."
+        "description": "External Thermal Insulation Composite System to drastically reduce your home's energy consumption.",
+        "priceRange": "€90 - €140 per m² of façade",
+        "answer": "External wall insulation (ETICS) in Mallorca costs €90 to €140 per m² of façade, including scaffolding, insulation, mesh, renders and finish. On a detached house with 180 m² of façade that is €16,000 to €25,000. It cuts heating and cooling demand by 30-50%."
       },
       "rehabilitacion-fachadas": {
         "title": "Facade Rehabilitation",
-        "description": "Aesthetic and functional recovery of deteriorated facades, ensuring safety and revaluing the property."
+        "description": "Aesthetic and functional recovery of deteriorated facades, ensuring safety and revaluing the property.",
+        "priceRange": "€60 - €130 per m²",
+        "answer": "Façade refurbishment in Mallorca costs €60 to €130 per m² depending on the level of decay. It covers chipping out hollow areas, treating exposed rebar, repairing cornices, rendering and painting. Listed façades or stone elements need individual assessment."
       },
       "pintura-impermeabilizacion-exterior": {
         "title": "Exterior Painting & Waterproofing",
-        "description": "Water-repellent treatments and high-resistance paints for durable protection against the weather."
+        "description": "Water-repellent treatments and high-resistance paints for durable protection against the weather.",
+        "priceRange": "€18 - €40 per m²",
+        "answer": "Painting and waterproofing a façade in Mallorca costs €18 to €40 per m². Mineral paint sits at the low end, elastomeric coatings with bonding primer at the high end. Coastal locations warrant the elastomeric option: salt and sea humidity shorten service life considerably."
       }
     }
   },
@@ -133,19 +165,27 @@
     "subservices": {
       "instalaciones-obra-nueva": {
         "title": "New Build Electrical Installations",
-        "description": "Design and execution of comprehensive electrical projects for new homes and buildings."
+        "description": "Design and execution of comprehensive electrical projects for new homes and buildings.",
+        "priceRange": "€55 - €95 per m²",
+        "answer": "Wiring a new-build home in Mallorca costs €55 to €95 per m². It covers the consumer unit, cabling, switchgear, lighting points, sockets and the official certificate for the utility connection. Basic home automation adds €15 to €30 per m²."
       },
       "actualizacion-reforma-electrica": {
         "title": "Electrical Upgrade & Reform",
-        "description": "Replacement of old wiring and electrical panels to adapt the installation to current regulations."
+        "description": "Replacement of old wiring and electrical panels to adapt the installation to current regulations.",
+        "priceRange": "€3,500 - €9,000 per property",
+        "answer": "Upgrading a home's electrical installation in Mallorca costs €3,500 to €9,000. It covers a new consumer unit with RCDs and breakers, rewiring, switchgear and certification. It is mandatory if the installation predates 1973 or has no earthing."
       },
       "boletines-certificaciones": {
         "title": "Bulletins & Certifications",
-        "description": "Issuance of official electrical bulletins and management with supply companies."
+        "description": "Issuance of official electrical bulletins and management with supply companies.",
+        "priceRange": "€150 - €450",
+        "answer": "An official electrical certificate in Mallorca costs €150 to €450 depending on contracted power and use. It covers inspection, measurements, issuance by an authorised installer and registration with the regional authority. It is required to connect or upgrade supply."
       },
       "iluminacion-led": {
         "title": "Efficient LED Lighting",
-        "description": "Technical and decorative lighting projects with LED technology for maximum savings and visual comfort."
+        "description": "Technical and decorative lighting projects with LED technology for maximum savings and visual comfort.",
+        "priceRange": "Payback in 18-30 months",
+        "answer": "An LED lighting project in Mallorca costs €25 to €70 per installed light point, materials included. A full swap in a home cuts lighting consumption by 60-80%, with payback typically between 18 and 30 months."
       }
     }
   },
@@ -163,19 +203,27 @@
     "subservices": {
       "ventanas-puertas-aluminio-pvc": {
         "title": "Aluminum/PVC Windows & Doors",
-        "description": "High energy efficiency exterior carpentry with thermal break and double glazing."
+        "description": "High energy efficiency exterior carpentry with thermal break and double glazing.",
+        "priceRange": "€450 - €950 per m² of opening",
+        "answer": "Replacing windows in Mallorca costs €450 to €950 per m² of opening depending on material and performance. uPVC with double glazing sits at the low end; thermally broken aluminium with triple glazing at the high end. Removal, installation and trims are included."
       },
       "cerramientos-pergolas": {
         "title": "Enclosures & Pergolas",
-        "description": "Lightweight structures for terraces and gardens, extending your living space to the outside."
+        "description": "Lightweight structures for terraces and gardens, extending your living space to the outside.",
+        "priceRange": "€300 - €850 per m²",
+        "answer": "A pergola or terrace enclosure in Mallorca costs €300 to €850 per m². Aluminium pergolas with adjustable louvres sit at the high end; fixed structures with lightweight roofing at the low end. Check first whether the work needs municipal planning permission."
       },
       "puertas-paso-entrada": {
         "title": "Passage & Entrance Doors",
-        "description": "Supply and installation of solid, lacquered, or armored wooden doors with premium finishes."
+        "description": "Supply and installation of solid, lacquered, or armored wooden doors with premium finishes.",
+        "priceRange": "€220 - €900 per unit",
+        "answer": "An internal door installed in Mallorca costs €220 to €900 depending on material and finish. White lacquered doors sit at the low end; solid timber or pocket sliders at the high end. A reinforced or armoured entrance door runs €900 to €2,500."
       },
       "armarios-vestidores-medida": {
         "title": "Custom Wardrobes & Walk-in Closets",
-        "description": "Design of personalized wardrobe interiors for maximum organization and elegance."
+        "description": "Design of personalized wardrobe interiors for maximum organization and elegance.",
+        "priceRange": "€400 - €900 per m² of frontage",
+        "answer": "A fitted wardrobe in Mallorca costs €400 to €900 per m² of frontage. Price depends on the opening system, hardware and internal organisation. A full 6 m² dressing room typically lands between €3,500 and €6,500."
       }
     }
   },
@@ -193,19 +241,27 @@
     "subservices": {
       "redes-fontaneria-desagues": {
         "title": "Plumbing & Drainage Networks",
-        "description": "Installation of supply and evacuation pipes with modern materials (multilayer, PPR, soundproof PVC)."
+        "description": "Installation of supply and evacuation pipes with modern materials (multilayer, PPR, soundproof PVC).",
+        "priceRange": "€45 - €90 per m² of property",
+        "answer": "Renewing plumbing and drainage in Mallorca costs €45 to €90 per m² of property. It covers multilayer or PPR pipework, isolation valves per room, acoustic PVC drainage and pressure testing. For a 90 m² home that is €4,000 to €8,100."
       },
       "reparacion-fugas": {
         "title": "Leak Repair & Breakdowns",
-        "description": "Quick detection and definitive solution of tightness problems and blockages."
+        "description": "Quick detection and definitive solution of tightness problems and blockages.",
+        "priceRange": "€120 - €600 depending on location",
+        "answer": "Repairing a water leak in Mallorca costs €120 to €600 depending on where it is and how accessible. Non-destructive detection with acoustic or thermal imaging equipment is billed at €120 to €250, and that amount is deducted if we carry out the repair."
       },
       "griferia-sanitarios": {
         "title": "Faucets & Sanitary Ware Installation",
-        "description": "Assembly of bathroom and kitchen elements of all brands, ensuring perfect operation."
+        "description": "Assembly of bathroom and kitchen elements of all brands, ensuring perfect operation.",
+        "priceRange": "€90 - €250 per fixture",
+        "answer": "Installing taps or sanitaryware in Mallorca costs €90 to €250 per fixture, excluding materials. A wall-hung WC with concealed frame rises to €350-€550 because of the building work involved. A straight tap swap sits at the low end."
       },
       "agua-caliente-sanitaria": {
         "title": "Domestic Hot Water",
-        "description": "Installation and maintenance of electric water heaters, gas heaters, and aerothermal systems."
+        "description": "Installation and maintenance of electric water heaters, gas heaters, and aerothermal systems.",
+        "priceRange": "€450 - €6,500 by system",
+        "answer": "Domestic hot water in Mallorca costs from €450 for an electric cylinder to €6,500 for an aerothermal system. A gas water heater sits between €700 and €1,400. Aerothermal is the most efficient option and performs best in the Balearic climate."
       }
     }
   },
@@ -223,19 +279,27 @@
     "subservices": {
       "pintura-interior-decorativa": {
         "title": "Interior & Decorative Painting",
-        "description": "Smooth finishes, stucco, wallpaper, and decorative techniques to customize your environments."
+        "description": "Smooth finishes, stucco, wallpaper, and decorative techniques to customize your environments.",
+        "priceRange": "€8 - €25 per m²",
+        "answer": "Painting a home interior in Mallorca costs €8 to €25 per m² of painted surface. Flat white emulsion sits at the low end; stucco, glazes and wallpaper at the high end. A 90 m² property usually lands between €1,400 and €3,200."
       },
       "pintura-fachadas": {
         "title": "Facade Painting",
-        "description": "Elastic and stone coatings to protect the building envelope against the weather."
+        "description": "Elastic and stone coatings to protect the building envelope against the weather.",
+        "priceRange": "€14 - €32 per m²",
+        "answer": "Painting a façade in Mallorca costs €14 to €32 per m², excluding scaffolding. It covers cleaning, crack sealing, primer and two finish coats. Coastal locations warrant elastomeric paint with salt protection: it sits at the high end but doubles service life."
       },
       "alisado-paredes": {
         "title": "Wall Smoothing & Stipple Removal",
-        "description": "Transformation of old walls into smooth and modern surfaces, ready to paint or wallpaper."
+        "description": "Transformation of old walls into smooth and modern surfaces, ready to paint or wallpaper.",
+        "priceRange": "€12 - €22 per m²",
+        "answer": "Removing textured 'gotelé' and skimming walls in Mallorca costs €12 to €22 per m², finish paint included. The process is filling, sanding, priming and two coats. It is the single intervention that transforms an older property most for the money."
       },
       "tratamiento-humedades": {
         "title": "Moisture Treatment",
-        "description": "Sanitation of surfaces affected by mold, saltpeter, or capillarity before painting."
+        "description": "Sanitation of surfaces affected by mold, saltpeter, or capillarity before painting.",
+        "priceRange": "€35 - €120 per m² affected",
+        "answer": "Treating damp in Mallorca costs €35 to €120 per m² of affected surface depending on the cause. Surface condensation sits at the low end; rising damp, which needs a chemical barrier or injection, at the high end. The cause must be fixed before painting."
       }
     }
   },
@@ -253,19 +317,27 @@
     "subservices": {
       "cubiertas-planas-terrazas": {
         "title": "Flat Roofs & Terraces",
-        "description": "Walkable waterproofing with finishes in tile, gravel, or artificial grass."
+        "description": "Walkable waterproofing with finishes in tile, gravel, or artificial grass.",
+        "priceRange": "€55 - €120 per m²",
+        "answer": "Waterproofing a flat roof or terrace in Mallorca costs €55 to €120 per m². It covers removing the existing surface, forming falls, membrane, insulation and a trafficable finish. Keeping the current surface with a liquid membrane brings it down to €30-€50 per m²."
       },
       "reparacion-tejados": {
         "title": "Roof Repair",
-        "description": "Replacement of broken tiles, gutter cleaning, and reinforcement of singular points on pitched roofs."
+        "description": "Replacement of broken tiles, gutter cleaning, and reinforcement of singular points on pitched roofs.",
+        "priceRange": "€40 - €95 per m²",
+        "answer": "Repairing a pitched roof in Mallorca costs €40 to €95 per m² depending on scope. Spot tile replacement and valley repairs sit at the low end; full stripping with new battens and underlay at the high end. Gutter cleaning is included."
       },
       "laminas-membranas": {
         "title": "Technical Sheets & Membranes",
-        "description": "Certified installation of EPDM, PVC sheets, and latest generation asphalt fabrics."
+        "description": "Certified installation of EPDM, PVC sheets, and latest generation asphalt fabrics.",
+        "priceRange": "€45 - €85 per m²",
+        "answer": "Installing a waterproofing membrane in Mallorca costs €45 to €85 per m² depending on the system. EPDM and reinforced PVC allow large sheets with fewer welds, which reduces weak points. Every installation we complete is handed over with a flood test."
       },
       "aislamiento-cubiertas": {
         "title": "Roof Thermal Insulation",
-        "description": "Incorporation of insulating panels under the waterproofing to improve thermal comfort under the roof."
+        "description": "Incorporation of insulating panels under the waterproofing to improve thermal comfort under the roof.",
+        "priceRange": "€30 - €60 per m² extra",
+        "answer": "Adding thermal insulation beneath a roof's waterproofing in Mallorca costs €30 to €60 per m² extra. It is the best-returning upgrade in the whole building envelope: the roof accounts for up to 30% of a home's heat loss and gain."
       }
     }
   },
@@ -315,5 +387,30 @@
         }
       ]
     }
+  },
+  "ui": {
+    "breadcrumbHome": "Home",
+    "intro": "At Express Renovation Mallorca we understand that {service} is a significant investment. Our team of specialists handles every detail, guaranteeing premium finishes and durability.",
+    "whyUsTitle": "Why choose us for this service?",
+    "whyUs": [
+      "Certified experts in {category}.",
+      "Guaranteed top-quality materials.",
+      "Completion dates fixed by contract.",
+      "Transparent quotes with no surprises."
+    ],
+    "sidebarTitle": "Interested in {service}?",
+    "sidebarSubtitle": "Get an immediate, tailored price estimate for your project.",
+    "sidebarCta": "Calculate Price Now",
+    "callUs": "Or call us directly",
+    "moreIn": "More in {category}",
+    "closingTitle": "Start your {service} today",
+    "closingCta": "Talk to an Advisor",
+    "categoryAll": "Everything we do in {category}",
+    "viewDetail": "View detail",
+    "faqSubtitle": "Answers to the most common questions about our services.",
+    "zonesTitle": "{service} in Mallorca — Areas we cover",
+    "priceLabel": "Guide price",
+    "priceDisclaimer": "Indicative market range for Mallorca. The final price is fixed after a site visit.",
+    "answerTitle": "How much does {service} cost in Mallorca?"
   }
 }

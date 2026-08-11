@@ -2,6 +2,7 @@
 
 import { useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { HOME_VIDEOS } from '@/lib/site-assets';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Volume2, VolumeX, Play } from 'lucide-react';
@@ -32,7 +33,7 @@ export function TransformationsSection({ t }: { t: any }) {
                         <div className="relative rounded-[2rem] overflow-hidden shadow-2xl border-4 border-white/10 aspect-[9/16] group cursor-pointer" onClick={toggleMute}>
                             <video
                                 ref={videoRef}
-                                src="https://firebasestorage.googleapis.com/v0/b/local-digital-eye.firebasestorage.app/o/business%2Fdochevi%2Ffinal.mp4?alt=media&token=ca374d0a-2ffc-4dc6-a603-99088aef30ec"
+                                src={HOME_VIDEOS.beforeAfter}
                                 autoPlay
                                 loop
                                 muted

@@ -1,6 +1,6 @@
 'use server';
 
-import { generateRenderFlow } from '@/backend/ai/flows/renovation/generate-render.flow';
+import { generateRenderFlow } from '@/backend/ai/private-core/flows/renovation/generate-render.flow';
 
 interface GenerateRenovationParams {
     imageBuffer: string; // Base64 input from client

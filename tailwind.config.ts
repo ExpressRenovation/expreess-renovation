@@ -1,7 +1,10 @@
 import type { Config } from 'tailwindcss';
 
 export default {
-  darkMode: ['class'],
+  // next-themes applies `dark-theme-luxury`, not `dark`. With the default
+  // 'class' strategy Tailwind emitted `.dark .foo`, so every `dark:` utility in
+  // the codebase (650+ of them) was dead CSS that never matched.
+  darkMode: ['selector', '.dark-theme-luxury'],
   content: [
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
@@ -28,6 +31,13 @@ export default {
         primary: {
           DEFAULT: 'hsl(var(--primary))',
           foreground: 'hsl(var(--primary-foreground))',
+          /**
+           * Accessible step for text sitting on a LIGHT background.
+           * `text-primary` is the brand gold and only reaches 2.35:1 there;
+           * use `text-primary-onLight` for prices, links and inline accents.
+           * On dark grounds keep `text-primary` — it is already 8.13:1.
+           */
+          onLight: 'hsl(var(--primary-on-light))',
         },
         secondary: {
           DEFAULT: 'hsl(var(--secondary))',

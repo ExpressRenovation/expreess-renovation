@@ -32,16 +32,10 @@ const dastin = localFont({
   display: 'swap',
 });
 
-const siteConfig = {
-  name: 'Nombre de empresa',
-  description: 'Soluciones expertas de construcción, reformas, piscinas y más. Calidad y confianza para tu hogar o negocio.',
-  url: 'https://example.com', // Replace with your actual domain
-  ogImage: '', // Replace with your actual OG image URL
-};
-
 import { getTranslations } from 'next-intl/server';
 import { routing } from '@/i18n/routing';
 import { constructMetadata } from '@/i18n/seo-utils';
+import { SITE_URL } from '@/lib/contact-info';
 
 export async function generateMetadata({
   params
@@ -57,13 +51,14 @@ export async function generateMetadata({
   */
 
   return {
-    metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://expressrenovationmallorca.com'),
+    metadataBase: new URL(SITE_URL),
     ...constructMetadata({
       title: t('title'),
       description: t('description'),
+      ogTitle: t('ogTitle'),
+      ogDescription: t('ogDescription'),
       path: '/',
       locale,
-      image: '/images/og-home.jpg' // You might want to specific specific home OG image
     }),
     keywords: t('keywords'),
   };
@@ -105,7 +100,7 @@ export default async function RootLayout({
           attribute="class"
           defaultTheme="theme-luxury"
           enableSystem={false}
-          themes={['theme-blue', 'dark-theme-blue', 'theme-green', 'dark-theme-green', 'theme-orange', 'dark-theme-orange', 'theme-purple', 'dark-theme-purple', 'theme-luxury', 'dark-theme-luxury']}
+          themes={['theme-luxury', 'dark-theme-luxury']}
         >
           <NextIntlClientProvider messages={messages}>
             <AuthProvider>

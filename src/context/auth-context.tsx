@@ -3,7 +3,6 @@
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
 import { User, onAuthStateChanged, signOut as firebaseSignOut } from 'firebase/auth';
 import { getSafeAuth } from '@/lib/firebase/client';
-import { Skeleton } from '@/components/ui/skeleton';
 
 interface AuthContextType {
   user: User | null;
@@ -41,22 +40,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  if (loading) {
-    return (
-        <div className="w-full h-screen flex flex-col items-center justify-center space-y-4">
-            <Skeleton className="h-16 w-full" />
-            <div className="container flex-1 p-8">
-                <Skeleton className="h-32 w-full" />
-                <div className="grid grid-cols-3 gap-4 mt-8">
-                    <Skeleton className="h-64" />
-                    <Skeleton className="h-64" />
-                    <Skeleton className="h-64" />
-                </div>
-            </div>
-        </div>
-    )
-  }
-
+  // Children are rendered unconditionally, including while auth is still
+  // resolving.
+  //
+  // This provider wraps the entire app. Returning a skeleton until `loading`
+  // flipped meant the server — where the `useEffect` above never runs, so
+  // `loading` is always true — rendered that skeleton and nothing else. Every
+  // public page was served to crawlers and social scrapers as an empty shell
+  // with no headings, no copy and no structured data.
+  //
+  // Routes that genuinely require a session gate themselves on the `loading`
+  // and `user` values exposed here; see `DashboardLayout`.
   return (
     <AuthContext.Provider value={{ user, loading, signOut }}>
       {children}

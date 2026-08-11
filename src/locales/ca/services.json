@@ -1,4 +1,3 @@
-
 {
   "construccion-y-reformas": {
     "title": "Construcció i Reformes",
@@ -10,7 +9,33 @@
       "Reformes completes d'habitatges i locals comercials.",
       "Ampliacions i redistribució d'espais.",
       "Assessorament en materials i solucions constructives."
-    ]
+    ],
+    "subservices": {
+      "gestion-integral-obra-nueva": {
+        "title": "Gestió Integral d'Obra Nova",
+        "description": "Coordinem i executem el teu projecte d'edificació des del moviment de terres fins al lliurament de claus. Control total de terminis i costos.",
+        "priceRange": "1.400 - 2.200 €/m² construït",
+        "answer": "Construir un habitatge d'obra nova a Mallorca costa entre 1.400 i 2.200 €/m² segons qualitats, accés a la parcel·la i complexitat estructural. Inclou execució material, direcció facultativa i llicències, però no el sòl. Un xalet de 200 m² se situa entre 280.000 i 440.000 €."
+      },
+      "reformas-integrales-viviendas-locales": {
+        "title": "Reformes Integrals d'Habitatges i Locals",
+        "description": "Renovació completa d'espais interiors i exteriors, adaptant la teva propietat a les necessitats modernes de funcionalitat i estil.",
+        "priceRange": "600 - 1.100 €/m²",
+        "answer": "Una reforma integral a Mallorca costa entre 600 i 1.100 €/m² segons el nivell d'acabats i l'estat de partida. Inclou enderroc, instal·lacions noves de lampisteria i electricitat, enrajolats, paviments, fusteria i pintura. Un habitatge de 90 m² sol situar-se entre 54.000 i 99.000 €."
+      },
+      "ampliaciones-redistribucion": {
+        "title": "Ampliacions i Redistribució",
+        "description": "Maximitzem el potencial del teu immoble afegint metres quadrats o reconfigurant la distribució per obtenir espais més oberts i lluminosos.",
+        "priceRange": "900 - 1.600 €/m² ampliat",
+        "answer": "Ampliar un habitatge a Mallorca costa entre 900 i 1.600 €/m² de superfície nova. El preu depèn de si cal reforçar els fonaments, del tipus de coberta i de la tramitació urbanística. La redistribució interior sense ampliar superfície parteix de 350 €/m² afectat."
+      },
+      "asesoramiento-materiales-construccion": {
+        "title": "Assessorament en Materials",
+        "description": "Consultoria experta per a l'elecció de materials sostenibles, duradors i estèticament d'acord amb la teva visió arquitectònica.",
+        "priceRange": "Sense cost amb obra contractada",
+        "answer": "L'assessorament en materials és gratuït quan es contracta l'obra amb nosaltres. Inclou visita a proveïdors, comparativa tècnica d'alternatives i mostres físiques. Com a servei independent de consultoria, parteix de 450 € per a un projecte d'habitatge complet."
+      }
+    }
   },
   "piscinas": {
     "title": "Construcció de Piscines",
@@ -22,7 +47,33 @@
       "Construcció amb formigó projectat (gunitat).",
       "Instal·lació de sistemes de cloració salina i climatització.",
       "Servei de manteniment i reparació."
-    ]
+    ],
+    "subservices": {
+      "diseno-personalizado": {
+        "title": "Disseny Personalitzat de Piscines",
+        "description": "Creem piscines úniques que s'integren perfectament amb l'arquitectura de casa teva i el paisatge. Formes lliures, infinity pools i dissenys d'autor.",
+        "priceRange": "2.500 - 6.000 € (projecte)",
+        "answer": "El disseny personalitzat d'una piscina a Mallorca costa entre 2.500 i 6.000 € i inclou aixecament topogràfic, proposta volumètrica, renders i documentació tècnica per a llicència. L'import es descompta del pressupost de construcció si executem l'obra."
+      },
+      "construccion-gunitado": {
+        "title": "Construcció amb Formigó Gunitat",
+        "description": "Fem servir la tècnica del gunitat (formigó projectat) per garantir vasos monolítics, totalment estancs i de màxima durabilitat.",
+        "priceRange": "22.000 - 45.000 € (8x4 m)",
+        "answer": "Una piscina de formigó gunitat de 8x4 m a Mallorca costa entre 22.000 i 45.000 € clau en mà. Inclou excavació, vas gunitat, impermeabilització, revestiment, depuració i coronació. Les formes lliures, el desbordant o els accessos difícils fan pujar el preu."
+      },
+      "sistemas-cloracion-salina": {
+        "title": "Cloració Salina i Climatització",
+        "description": "Gaudeix d'una aigua més sana i cristal·lina amb els nostres sistemes d'electròlisi salina. Allarga la temporada de bany amb bombes de calor eficients.",
+        "priceRange": "1.800 - 4.500 €",
+        "answer": "Instal·lar cloració salina a Mallorca costa entre 1.800 i 4.500 € segons el volum del vas, i inclou cèl·lula, quadre de control i posada en marxa. Una bomba de calor per climatitzar l'aigua afegeix entre 3.500 i 8.000 € i allarga la temporada uns quatre mesos."
+      },
+      "mantenimiento-reparacion": {
+        "title": "Servei de Manteniment i Reparació",
+        "description": "Ens encarreguem de la posada a punt, neteja, beurada i reparació de fuites perquè la teva piscina estigui sempre impecable.",
+        "priceRange": "120 - 280 €/mes",
+        "answer": "El manteniment d'una piscina privada a Mallorca costa entre 120 i 280 € al mes segons mida i freqüència de visita. Inclou control de pH i clor, neteja de fons i línia de flotació, rentat de filtre i revisió d'equips. La posada a punt de temporada es factura a part."
+      }
+    }
   },
   "reformas-de-interiores": {
     "title": "Reformes d'Interiors",
@@ -34,7 +85,33 @@
       "Instal·lació de lampisteria i electricitat noves.",
       "Muntatge de mobiliari de cuina i bany a mida.",
       "Instal·lació de plats de dutxa, mampares i sanitaris."
-    ]
+    ],
+    "subservices": {
+      "alicatados-pavimentos": {
+        "title": "Renovació d'Enrajolats i Paviments",
+        "description": "Substitució de revestiments ceràmics, microciment i terres de fusta per modernitzar l'estètica de les teves estances.",
+        "priceRange": "45 - 110 €/m²",
+        "answer": "Renovar enrajolat o paviment a Mallorca costa entre 45 i 110 €/m² amb material inclòs. El porcellànic de gran format i el microciment se situen a la franja alta per l'exigència de mà d'obra. Retirar el revestiment antic afegeix entre 12 i 20 €/m²."
+      },
+      "instalaciones-fontaneria-electricidad": {
+        "title": "Instal·lacions Tècniques",
+        "description": "Renovació completa de xarxes de lampisteria i circuits elèctrics per complir normatives i millorar la seguretat.",
+        "priceRange": "90 - 180 €/m² d'habitatge",
+        "answer": "Renovar completament lampisteria i electricitat a Mallorca costa entre 90 i 180 €/m² d'habitatge. Inclou quadre elèctric nou, cablejat, mecanismes, canonada multicapa, desguassos i butlletí oficial. En un habitatge de 90 m² suposa entre 8.100 i 16.200 €."
+      },
+      "mobiliario-medida": {
+        "title": "Mobiliari a Mida",
+        "description": "Disseny i muntatge de mobles de cuina i bany que aprofiten cada centímetre disponible.",
+        "priceRange": "650 - 1.900 €/ml",
+        "answer": "El mobiliari de cuina a mida a Mallorca costa entre 650 i 1.900 € per metre lineal segons front, ferramentes i taulell. Els armaris i vestidors a mida se situen entre 400 i 900 €/m² de front. El disseny i el muntatge sempre van inclosos."
+      },
+      "banos-sanitarios": {
+        "title": "Equipament de Banys",
+        "description": "Instal·lació experta de plats de dutxa extraplans, mampares de vidre i sanitaris suspesos de disseny.",
+        "priceRange": "4.500 - 12.000 € per bany",
+        "answer": "Reformar un bany complet a Mallorca costa entre 4.500 i 12.000 € segons superfície i qualitats. Inclou enderroc, lampisteria, enrajolat, paviment, plat de dutxa, mampara, sanitaris, moble i aixetes. Un bany estàndard de 5 m² se situa habitualment sobre els 7.000 €."
+      }
+    }
   },
   "paramentos-verticales": {
     "title": "Paraments Verticals",
@@ -46,7 +123,33 @@
       "Sistemes d'Aïllament Tèrmic per l'Exterior (SATE).",
       "Reparació i rehabilitació de façanes.",
       "Pintura exterior i impermeabilització."
-    ]
+    ],
+    "subservices": {
+      "revestimientos-continuos": {
+        "title": "Revestiments Continus",
+        "description": "Aplicació de morters tècnics i decoratius per protegir i embellir paraments exteriors.",
+        "priceRange": "35 - 75 €/m²",
+        "answer": "Aplicar un revestiment continu en façana a Mallorca costa entre 35 i 75 €/m², sense comptar bastida. El morter monocapa ocupa la franja baixa i els acabats de calç o estuc l'alta. La bastida afegeix entre 8 i 15 €/m² de façana."
+      },
+      "aislamiento-sate": {
+        "title": "Aïllament SATE",
+        "description": "Sistema d'Aïllament Tèrmic per l'Exterior per reduir dràsticament el consum energètic del teu habitatge.",
+        "priceRange": "90 - 140 €/m² de façana",
+        "answer": "Instal·lar SATE a Mallorca costa entre 90 i 140 €/m² de façana, incloent bastida, aïllant, malla, morters i acabat. En un habitatge unifamiliar amb 180 m² de façana suposa entre 16.000 i 25.000 €. Redueix la demanda de climatització entre un 30 % i un 50 %."
+      },
+      "rehabilitacion-fachadas": {
+        "title": "Rehabilitació de Façanes",
+        "description": "Recuperació estètica i funcional de façanes deteriorades, assegurant la seguretat i revaloritzant l'immoble.",
+        "priceRange": "60 - 130 €/m²",
+        "answer": "Rehabilitar una façana a Mallorca costa entre 60 i 130 €/m² segons el grau de deteriorament. Inclou picat de zones buides, sanejat d'armadures vistes, reparació de cornises, revestiment i pintura. Les façanes catalogades o amb pedra requereixen valoració específica."
+      },
+      "pintura-impermeabilizacion-exterior": {
+        "title": "Pintura i Impermeabilització Exterior",
+        "description": "Tractaments hidròfugs i pintures d'alta resistència a la intempèrie per a una protecció duradora.",
+        "priceRange": "18 - 40 €/m²",
+        "answer": "Pintar i impermeabilitzar una façana a Mallorca costa entre 18 i 40 €/m². La pintura pètria ocupa la franja baixa i els revestiments elàstics amb pont d'adherència l'alta. A zones costaneres convé l'opció elàstica: el salnitre i la humitat marina escurcen molt la vida útil."
+      }
+    }
   },
   "electricidad": {
     "title": "Electricitat",
@@ -58,7 +161,33 @@
       "Actualització i reforma d'instal·lacions antigues.",
       "Butlletins elèctrics i certificacions.",
       "Instal·lació d'il·luminació LED de baix consum."
-    ]
+    ],
+    "subservices": {
+      "instalaciones-obra-nueva": {
+        "title": "Instal·lacions Elèctriques d'Obra Nova",
+        "description": "Disseny i execució de projectes elèctrics integrals per a habitatges i edificis nous.",
+        "priceRange": "55 - 95 €/m²",
+        "answer": "La instal·lació elèctrica d'un habitatge d'obra nova a Mallorca costa entre 55 i 95 €/m². Inclou quadre general, cablejat, mecanismes, punts de llum, preses i butlletí oficial per a l'alta amb la companyia. La domòtica bàsica afegeix entre 15 i 30 €/m²."
+      },
+      "actualizacion-reforma-electrica": {
+        "title": "Actualització i Reforma Elèctrica",
+        "description": "Substitució de cablejat antic i quadres elèctrics per adaptar la instal·lació a la normativa actual.",
+        "priceRange": "3.500 - 9.000 € per habitatge",
+        "answer": "Actualitzar la instal·lació elèctrica d'un habitatge a Mallorca costa entre 3.500 i 9.000 €. Inclou quadre nou amb diferencials i magnetotèrmics, substitució de cablejat, mecanismes i emissió de butlletí. És obligatori si la instal·lació és anterior a 1973 o no té presa de terra."
+      },
+      "boletines-certificaciones": {
+        "title": "Butlletins i Certificacions",
+        "description": "Emissió de butlletins elèctrics oficials i gestions amb companyies subministradores.",
+        "priceRange": "150 - 450 €",
+        "answer": "Un butlletí elèctric oficial a Mallorca costa entre 150 i 450 € segons la potència contractada i l'ús. Inclou inspecció, mesuraments, emissió del certificat per instal·lador autoritzat i registre davant la Conselleria. És imprescindible per donar d'alta o ampliar el subministrament."
+      },
+      "iluminacion-led": {
+        "title": "Il·luminació LED Eficient",
+        "description": "Projectes d'il·luminació tècnica i decorativa amb tecnologia LED per a màxim estalvi i confort visual.",
+        "priceRange": "Amortització en 18-30 mesos",
+        "answer": "Un projecte d'il·luminació LED a Mallorca costa entre 25 i 70 € per punt de llum instal·lat, material inclòs. La substitució completa en un habitatge redueix el consum d'il·luminació entre un 60 % i un 80 %, amb amortització habitual entre 18 i 30 mesos."
+      }
+    }
   },
   "carpinteria": {
     "title": "Fusteria de Fusta i Alumini",
@@ -70,7 +199,33 @@
       "Disseny i muntatge de tancaments, pèrgoles i estructures d'alumini.",
       "Instal·lació de portes de pas i d'entrada de fusta.",
       "Disseny i fabricació d'armaris, vestidors i mobiliari a mida de fusta."
-    ]
+    ],
+    "subservices": {
+      "ventanas-puertas-aluminio-pvc": {
+        "title": "Finestres i Portes d'Alumini/PVC",
+        "description": "Fusteria exterior d'alta eficiència energètica amb trencament de pont tèrmic i doble envidrament.",
+        "priceRange": "450 - 950 €/m² de buit",
+        "answer": "Canviar finestres a Mallorca costa entre 450 i 950 €/m² de buit segons material i prestacions. El PVC amb doble envidrament ocupa la franja baixa i l'alumini amb trencament de pont tèrmic i triple vidre l'alta. Inclou desmuntatge, instal·lació i acabats."
+      },
+      "cerramientos-pergolas": {
+        "title": "Tancaments i Pèrgoles",
+        "description": "Estructures lleugeres per a terrasses i jardins, ampliant el teu espai habitable cap a l'exterior.",
+        "priceRange": "300 - 850 €/m²",
+        "answer": "Una pèrgola o tancament de terrassa a Mallorca costa entre 300 i 850 €/m². La pèrgola d'alumini amb lamel·les orientables se situa a la franja alta; les estructures fixes amb coberta lleugera a la baixa. Convé verificar abans si cal llicència municipal."
+      },
+      "puertas-paso-entrada": {
+        "title": "Portes de Pas i d'Entrada",
+        "description": "Subministrament i instal·lació de portes de fusta massissa, lacades o blindades amb acabats premium.",
+        "priceRange": "220 - 900 € per unitat",
+        "answer": "Una porta de pas instal·lada a Mallorca costa entre 220 i 900 € segons material i acabat. Les lacades blanques ocupen la franja baixa i la fusta massissa o les correderes encastades l'alta. Una porta d'entrada blindada o cuirassada va de 900 a 2.500 €."
+      },
+      "armarios-vestidores-medida": {
+        "title": "Armaris i Vestidors a Mida",
+        "description": "Disseny d'interiors d'armari personalitzats per a la màxima organització i elegància.",
+        "priceRange": "400 - 900 €/m² de front",
+        "answer": "Un armari a mida a Mallorca costa entre 400 i 900 € per metre quadrat de front. El preu depèn del sistema d'obertura, les ferramentes i l'organització interior. Un vestidor complet de 6 m² se situa habitualment entre 3.500 i 6.500 €."
+      }
+    }
   },
   "fontaneria": {
     "title": "Lampisteria Especialitzada",
@@ -82,7 +237,33 @@
       "Reparació de fuites i avaries.",
       "Instal·lació d'aixetes i sanitaris.",
       "Sistemes d'aigua calenta sanitària (termos, calderes)."
-    ]
+    ],
+    "subservices": {
+      "redes-fontaneria-desagues": {
+        "title": "Xarxes de Lampisteria i Desguassos",
+        "description": "Instal·lació de canonades d'alimentació i evacuació amb materials moderns (multicapa, PPR, PVC insonoritzat).",
+        "priceRange": "45 - 90 €/m² d'habitatge",
+        "answer": "Renovar la xarxa de lampisteria i desguassos a Mallorca costa entre 45 i 90 €/m² d'habitatge. Inclou canonada multicapa o PPR, claus de pas per estança, desguassos en PVC insonoritzat i proves d'estanquitat. En un habitatge de 90 m² suposa entre 4.000 i 8.100 €."
+      },
+      "reparacion-fugas": {
+        "title": "Reparació de Fuites i Avaries",
+        "description": "Detecció ràpida i solució definitiva de problemes d'estanquitat i embussos.",
+        "priceRange": "120 - 600 € segons localització",
+        "answer": "Reparar una fuita d'aigua a Mallorca costa entre 120 i 600 € segons la localització i l'accessibilitat. La detecció no destructiva amb geòfon o càmera termogràfica es factura entre 120 i 250 €, i aquest import es descompta si s'executa la reparació."
+      },
+      "griferia-sanitarios": {
+        "title": "Instal·lació d'Aixetes i Sanitaris",
+        "description": "Muntatge d'elements de bany i cuina de totes les marques, assegurant un funcionament perfecte.",
+        "priceRange": "90 - 250 € per element",
+        "answer": "Instal·lar aixetes o sanitaris a Mallorca costa entre 90 i 250 € per element, sense comptar el material. Un inodor suspès amb bastiment encastat puja a 350-550 € per l'obra que requereix. La substitució simple d'una aixeta es resol a la franja baixa."
+      },
+      "agua-caliente-sanitaria": {
+        "title": "Aigua Calenta Sanitària",
+        "description": "Instal·lació i manteniment de termos elèctrics, escalfadors de gas i sistemes d'aerotèrmia.",
+        "priceRange": "450 - 6.500 € segons sistema",
+        "answer": "Instal·lar aigua calenta sanitària a Mallorca costa entre 450 € per a un termo elèctric i 6.500 € per a un sistema d'aerotèrmia. L'escalfador de gas se situa entre 700 i 1.400 €. L'aerotèrmia és l'opció més eficient i la que millor rendiment dona al clima balear."
+      }
+    }
   },
   "pintura": {
     "title": "Pintura Professional",
@@ -94,7 +275,33 @@
       "Revestiments i pintures especials per a façanes exteriors.",
       "Allisat de parets i eliminació de gotelé.",
       "Tractament d'humitats i preparació de superfícies."
-    ]
+    ],
+    "subservices": {
+      "pintura-interior-decorativa": {
+        "title": "Pintura Interior i Decorativa",
+        "description": "Acabats llisos, estucs, papers pintats i tècniques decoratives per personalitzar els teus ambients.",
+        "priceRange": "8 - 25 €/m²",
+        "answer": "Pintar l'interior d'un habitatge a Mallorca costa entre 8 i 25 €/m² de superfície pintada. El plàstic llis en blanc ocupa la franja baixa; els estucs, veladures i papers pintats l'alta. Un habitatge de 90 m² se situa habitualment entre 1.400 i 3.200 €."
+      },
+      "pintura-fachadas": {
+        "title": "Pintura de Façanes",
+        "description": "Revestiments elàstics i petris per protegir l'envolupant de l'edifici contra la intempèrie.",
+        "priceRange": "14 - 32 €/m²",
+        "answer": "Pintar una façana a Mallorca costa entre 14 i 32 €/m², sense bastida. Inclou neteja, segellat de fissures, imprimació i dues mans d'acabat. A zones costaneres convé pintura elàstica amb protecció davant el salnitre, que ocupa la franja alta però dobla la vida útil."
+      },
+      "alisado-paredes": {
+        "title": "Allisat i Eliminació de Gotelé",
+        "description": "Transformació de parets antigues en superfícies llises i modernes, llestes per pintar o empaperar.",
+        "priceRange": "12 - 22 €/m²",
+        "answer": "Treure el gotelé i allisar parets a Mallorca costa entre 12 i 22 €/m², amb la pintura d'acabat inclosa. El procés consisteix en plastit, poliment, imprimació i dues mans. És la intervenció que més transforma un habitatge antic per menys diners."
+      },
+      "tratamiento-humedades": {
+        "title": "Tractament d'Humitats",
+        "description": "Sanejament de superfícies afectades per floridura, salnitre o capil·laritat abans del pintat.",
+        "priceRange": "35 - 120 €/m² afectat",
+        "answer": "Tractar humitats a Mallorca costa entre 35 i 120 €/m² de superfície afectada segons l'origen. La condensació superficial es resol a la franja baixa; la humitat per capil·laritat, que exigeix barrera química o injecció, a l'alta. Cal corregir la causa abans de pintar."
+      }
+    }
   },
   "impermeabilizacion": {
     "title": "Impermeabilització i Cobertes",
@@ -106,7 +313,33 @@
       "Reparació i manteniment de teulades.",
       "Aplicació de làmines asfàltiques, PVC, EPDM i membranes líquides.",
       "Aïllament tèrmic per a cobertes, millorant l'eficiència energètica."
-    ]
+    ],
+    "subservices": {
+      "cubiertas-planas-terrazas": {
+        "title": "Cobertes Planes i Terrasses",
+        "description": "Impermeabilització transitable amb acabats en rajola, grava o gespa artificial.",
+        "priceRange": "55 - 120 €/m²",
+        "answer": "Impermeabilitzar una coberta plana o terrassa a Mallorca costa entre 55 i 120 €/m². Inclou enderroc del paviment existent, formació de pendents, làmina impermeable, aïllament i acabat transitable. Mantenir el paviment actual amb làmina líquida baixa el cost a 30-50 €/m²."
+      },
+      "reparacion-tejados": {
+        "title": "Reparació de Teulades",
+        "description": "Substitució de teules trencades, neteja de canalons i reforç de punts singulars en cobertes inclinades.",
+        "priceRange": "40 - 95 €/m²",
+        "answer": "Reparar una teulada inclinada a Mallorca costa entre 40 i 95 €/m² segons l'abast. La substitució puntual de teules i el repàs de limahoies ocupen la franja baixa; el desmuntatge complet amb reforç de llates i làmina sota teula, l'alta. Inclou neteja de canalons."
+      },
+      "laminas-membranas": {
+        "title": "Làmines i Membranes Tècniques",
+        "description": "Instal·lació certificada de làmines EPDM, PVC i teles asfàltiques d'última generació.",
+        "priceRange": "45 - 85 €/m²",
+        "answer": "Instal·lar una làmina impermeabilitzant a Mallorca costa entre 45 i 85 €/m² segons el sistema. L'EPDM i el PVC armat permeten peces de gran format amb menys soldadures, cosa que redueix els punts febles. Totes les nostres instal·lacions s'entreguen amb prova d'inundació."
+      },
+      "aislamiento-cubiertas": {
+        "title": "Aïllament Tèrmic de Cobertes",
+        "description": "Incorporació de panells aïllants sota la impermeabilització per millorar el confort tèrmic sota coberta.",
+        "priceRange": "30 - 60 €/m² addicionals",
+        "answer": "Afegir aïllament tèrmic sota la impermeabilització d'una coberta a Mallorca costa entre 30 i 60 €/m² addicionals. És la millora amb millor retorn de tot l'envolupant: la coberta concentra fins al 30 % de les pèrdues i guanys tèrmics d'un habitatge."
+      }
+    }
   },
   "cta": {
     "title": "A punt per començar el teu projecte de {serviceName}?",
@@ -114,5 +347,70 @@
     "button": "Pressupost al instant",
     "descriptionTitle": "Descripció del Servei",
     "featuresTitle": "Característiques Clau"
+  },
+  "ui": {
+    "breadcrumbHome": "Inici",
+    "intro": "A Express Renovation Mallorca entenem que {service} és una inversió important. El nostre equip d'especialistes s'ocupa de cada detall, garantint acabats de luxe i durabilitat.",
+    "whyUsTitle": "Per què triar-nos per a aquest servei?",
+    "whyUs": [
+      "Experts certificats en {category}.",
+      "Materials de primera qualitat garantits.",
+      "Terminis d'execució tancats per contracte.",
+      "Pressupostos transparents sense sorpreses."
+    ],
+    "sidebarTitle": "Interessat en {service}?",
+    "sidebarSubtitle": "Obtén una estimació de preu immediata i personalitzada per al teu projecte.",
+    "sidebarCta": "Calcular preu ara",
+    "callUs": "O truca'ns directament",
+    "moreIn": "Més a {category}",
+    "closingTitle": "Comença el teu {service} avui mateix",
+    "closingCta": "Contactar amb un agent",
+    "categoryAll": "Tot el que fem en {category}",
+    "viewDetail": "Veure detall",
+    "faqSubtitle": "Respostes als dubtes més habituals sobre els nostres serveis.",
+    "zonesTitle": "{service} a Mallorca — Zones d'actuació",
+    "priceLabel": "Preu orientatiu",
+    "priceDisclaimer": "Rang orientatiu de mercat a Mallorca. El preu final es tanca després de la visita tècnica.",
+    "answerTitle": "Quant costa {service} a Mallorca?"
+  },
+  "common": {
+    "process": {
+      "title": "El Nostre Procés de Treball",
+      "steps": [
+        {
+          "title": "1. Consulta Inicial",
+          "description": "Avaluem les teves necessitats i l'estat actual per definir l'abast."
+        },
+        {
+          "title": "2. Planificació",
+          "description": "Dissenyem la solució tècnica i presentem un pressupost detallat."
+        },
+        {
+          "title": "3. Execució Experta",
+          "description": "Realitzem l'obra complint terminis i amb materials de primera qualitat."
+        },
+        {
+          "title": "4. Lliurament i Garantia",
+          "description": "Revisió final conjunta i garantia per escrit de tots els treballs."
+        }
+      ]
+    },
+    "faq": {
+      "title": "Preguntes Freqüents",
+      "items": [
+        {
+          "question": "Quant de temps triga una reforma integral?",
+          "answer": "Depèn de la superfície i de l'abast, però una reforma integral estàndard sol oscil·lar entre 3 i 5 mesos. Tanquem els terminis per contracte gràcies a la planificació prèvia."
+        },
+        {
+          "question": "Oferiu garantia dels treballs?",
+          "answer": "Sí. Tots els nostres treballs inclouen garantia per escrit, a més de les garanties pròpies dels fabricants dels materials instal·lats."
+        },
+        {
+          "question": "Us encarregueu dels permisos i llicències?",
+          "answer": "Sí. Gestionem la documentació tècnica i les llicències d'obra davant l'ajuntament corresponent, així com les altes amb les companyies subministradores."
+        }
+      ]
+    }
   }
 }

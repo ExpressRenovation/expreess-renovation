@@ -125,5 +125,98 @@
         "buttonPrimary": "Solicitar Presupuesto Ahora",
         "buttonSecondary": "Hablar con un Agente",
         "note": "Plazas limitadas por mes para garantizar calidad"
+    },
+    "basis": {
+        "wizard": {
+            "title": "Tu próximo presupuesto, en piloto automático.",
+            "description": "Dile a Express Renovation qué necesitas presupuestar. Nuestra IA estructura partidas detalladas y cruza precios de mercado en segundos.",
+            "examples": {
+                "kitchen": "Reforma Integral de Cocina",
+                "roof": "Impermeabilización de Cubierta"
+            },
+            "placeholder": "Ej: Tengo que presupuestar un baño en Palma centro, calidades medias, plato de ducha de resina, fontanería multicapa nueva...",
+            "analyze": "Analizador semántico activado",
+            "generateBtn": "Generar Presupuesto",
+            "loadingTitle": "Extrayendo partidas...",
+            "loadingDesc": "Cruzando mermas, rendimientos y bases de precios.",
+            "proposalTitle": "Resumen de Propuesta",
+            "proposalDesc": "Estimación automática de IA",
+            "estimatedBudget": "Presupuesto Estimado",
+            "readyTitle": "¡Tu desglose técnico está listo!",
+            "readyDesc": "Hemos redactado 14 partidas detalladas completas. ¿A qué correo te enviamos el PDF profesional listo para enseñar a tu cliente?",
+            "emailPlaceholder": "Tu email...",
+            "sendBtn": "Enviarme PDF",
+            "successTitle": "PDF enviado con éxito.",
+            "successDesc": "Este generador usa medias. ¿Te imaginas hacer esto con tus tarifas y tu margen real?",
+            "upsellTitle": "Con Express Renovation:",
+            "upsellFeatures": [
+                "Integración de tus propios Excels o tarifas en PDF.",
+                "Paneles de desviación de costes en tiempo real.",
+                "Facturas y certificaciones auto-generadas."
+            ],
+            "demoBtn": "Agendar Demo A Medida"
+        },
+        "wizardChat": {
+            "header": {
+                "title": "Arquitecto IA",
+                "subtitle": "Asistente Inteligente",
+                "clearTooltip": "Borrar conversación y empezar de nuevo"
+            },
+            "emptyState": {
+                "title": "¿En qué puedo ayudarte hoy?",
+                "subtitle": "Puedo ayudarte a estimar costos, definir materiales o planificar tu reforma integral.",
+                "suggestions": [
+                    {
+                        "title": "Reforma de cocina",
+                        "text": "Quiero reformar la cocina completa, con cambio de muebles y electrodomésticos."
+                    },
+                    {
+                        "title": "Baño completo",
+                        "text": "Cambio de bañera por plato de ducha, alicatado y sanitarios nuevos."
+                    },
+                    {
+                        "title": "Reforma integral",
+                        "text": "Presupuesto para reformar un piso completo de 90m2."
+                    },
+                    {
+                        "title": "Suelos y pintura",
+                        "text": "Necesito cambiar el suelo a tarima flotante y pintar todo el piso liso."
+                    }
+                ]
+            },
+            "input": {
+                "placeholder": "Describe tu proyecto...",
+                "analyzingDocs": "Analizando documentos... esto puede tardar unos segundos 🧠",
+                "transcribing": "Transcribiendo audio...",
+                "recordingInfo": "Grabando...",
+                "keyboardHint": "Presiona Enter para enviar. Shift + Enter para línea nueva.",
+                "analyzingText": "Analizando..."
+            },
+            "panel": {
+                "title": "Datos del Proyecto",
+                "status": "En curso",
+                "completed": "Completado",
+                "deepGenTitle": "Generación Profunda",
+                "deepGenDesc": "Desglosan por capítulos y partidas (más lento)."
+            },
+            "progress": {
+                "generatingMsg": "(Generando presupuesto detallado...)",
+                "extracting": "Extrayendo partidas...",
+                "searching": "Buscando coincidencias...",
+                "calculating": "Calculando totales...",
+                "generateBtn": "Generar Presupuesto"
+            },
+            "pdfDownloadCard": {
+                "title": "Presupuesto Creado",
+                "subtitle": "Tu presupuesto se ha generado y descargado correctamente.",
+                "nextStep": "¿Quieres automatizar esto o tener el asistente integrado?",
+                "benefits": "Nuestra plataforma te permite invitar a subcontratistas, firmar digitalmente y conectar tu obra con precios reales.",
+                "button": "Planifica Tu Obra"
+            },
+            "errors": {
+                "resetConfirm": "¿Estás seguro de que quieres borrar la conversación? Esto no se puede deshacer.",
+                "generateError": "No se pudo generar el presupuesto. "
+            }
+        }
     }
 }

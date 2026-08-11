@@ -4,8 +4,6 @@ export default async function PriceBookAdminPage({ params }: { params: Promise<{
     const { locale } = await params;
 
     return (
-        <div className="p-8">
-            <PriceBookAdminView locale={locale} />
-        </div>
+        <PriceBookAdminView locale={locale} />
     );
 }

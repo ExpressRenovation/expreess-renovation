@@ -2,7 +2,17 @@ import { Building } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 
-export function Logo({ className, width = 60, height = 20 }: { className?: string, width?: number, height?: number }) {
+export function Logo({
+  className,
+  width = 60,
+  height = 20,
+}: {
+  className?: string;
+  width?: number;
+  height?: number;
+  /** Accepted for call-site compatibility; the mark reads on both grounds. */
+  variant?: 'light' | 'dark';
+}) {
   return (
     <Link href="/" className={cn("block relative", className)}>
       {/* Use a standard img for simplicity with external URLs unless domains are configured in next.config.js, 
@@ -12,7 +22,7 @@ export function Logo({ className, width = 60, height = 20 }: { className?: strin
            or just standard img tag. */}
       <img
         src="/images/logo.png"
-        alt="Dochevi Construction"
+        alt="Express Renovation Mallorca"
         style={{ width: width, height: 'auto', maxHeight: height * 2, objectFit: 'contain' }}
       />
     </Link>

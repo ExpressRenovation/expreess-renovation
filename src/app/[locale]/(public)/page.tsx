@@ -14,25 +14,52 @@ import { HeroSection } from '@/components/home/hero-section';
 
 
 import { constructMetadata } from '@/i18n/seo-utils';
+import { getTranslations } from 'next-intl/server';
+import { JsonLd } from '@/components/seo/json-ld';
+import { absoluteUrl, buildHomeGraph } from '@/lib/structured-data';
+import { services } from '@/lib/services';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
-  const dict = await getDictionary(locale as any);
+  // Read from the `metadata` namespace, not from `home.hero`: the hero heading
+  // carries layout markup (<br/>, <span>) that was being served verbatim as the
+  // page <title> and og:title.
+  const t = await getTranslations({ locale, namespace: 'metadata' });
 
-  return constructMetadata({
-    title: dict.home.hero.title || 'Express Renovation Mallorca',
-    description: dict.home.hero.subtitle || 'Reformas integrales en Mallorca',
-    path: '/',
-    locale
-  });
+  return {
+    ...constructMetadata({
+      title: t('title'),
+      description: t('description'),
+      ogTitle: t('ogTitle'),
+      ogDescription: t('ogDescription'),
+      path: '/',
+      locale,
+    }),
+    keywords: t('keywords'),
+  };
 }
 
 export default async function Home({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const dict = await getDictionary(locale as any); // Cast because 'nl' might not be fully inferred yet in some IDEs or strict check
 
+  const serviceList = services.map((service) => ({
+    name: dict.services?.[service.id]?.title ?? service.id,
+    description: dict.services?.[service.id]?.shortDescription ?? '',
+    url: absoluteUrl('/services/[category]', locale, { category: service.id }),
+  }));
+
   return (
-    <main className="flex-1">
+    <>
+      <JsonLd
+        data={buildHomeGraph({
+          locale,
+          siteDescription: dict.home?.hero?.subtitle ?? '',
+          services: serviceList,
+          faqItems: dict.home?.faq?.items,
+        })}
+      />
+
       {/* Hero Section */}
       <HeroSection t={dict.home.hero} />
 
@@ -50,6 +77,6 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
 
       <CtaSection t={dict.home.cta} />
 
-    </main>
+    </>
   );
 }

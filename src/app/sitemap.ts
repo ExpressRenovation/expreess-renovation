@@ -3,9 +3,10 @@ import { routing } from '@/i18n/routing';
 import { services } from '@/lib/services';
 import { blogPosts } from '@/lib/blog-posts';
 import { locations } from '@/lib/locations';
+import { SITE_URL } from '@/lib/contact-info';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://expressrenovationmallorca.es';
+    const baseUrl = SITE_URL;
     const entries: MetadataRoute.Sitemap = [];
 
     // Helper to get localized path
@@ -55,7 +56,19 @@ export default function sitemap(): MetadataRoute.Sitemap {
         });
     });
 
-    // 2. Dynamic Services
+    // 2. Service category hubs — the pages that target the head terms.
+    services.forEach(service => {
+        routing.locales.forEach(locale => {
+            entries.push({
+                url: `${baseUrl}${getLocalizedPath('/services/[category]', locale, { category: service.id })}`,
+                lastModified: new Date(),
+                changeFrequency: 'weekly',
+                priority: 0.9,
+            });
+        });
+    });
+
+    // 3. Dynamic Services
     services.forEach(service => {
         if (service.subservices) {
             service.subservices.forEach(sub => {
@@ -83,7 +96,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
             });
             entries.push({
                 url: `${baseUrl}${path}`,
-                lastModified: new Date(), // Ideally create date from post
+                lastModified: new Date(post.publishedAt),
                 changeFrequency: 'monthly',
                 priority: 0.7,
             });

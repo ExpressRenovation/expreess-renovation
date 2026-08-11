@@ -23,11 +23,10 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
 import { Loader2, ArrowRight, ArrowLeft } from 'lucide-react';
-import { addDoc, collection } from 'firebase/firestore';
-import { getSafeDb } from '@/lib/firebase/client';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SimpleFileUpload } from '@/components/ui/simple-file-upload';
 import { createBudgetAction } from '@/actions/budget/create-budget.action';
+import { sendLeadNotification } from '@/actions/notifications/send-lead-notification.action';
 
 // Schema
 const newBuildSchema = z.object({
@@ -83,8 +82,6 @@ export function NewBuildForm({ t, onSuccess, onBack }: { t: any, onSuccess?: () 
     async function onSubmit(values: NewBuildValues) {
         setIsLoading(true);
         try {
-            const db = getSafeDb();
-
             // Create Budget in Admin Dashboard
             await createBudgetAction('new_build', {
                 name: values.name,
@@ -98,22 +95,21 @@ export function NewBuildForm({ t, onSuccess, onBack }: { t: any, onSuccess?: () 
                 files: values.files || []
             });
 
-            // Send email via Firebase Extension (mail collection)
-            await addDoc(collection(db, 'mail'), {
-                to: ['info@expressrenovationmallorca.com'], // Replace with real admin email
-                message: {
-                    subject: '🎯 Nuevo Lead: OBRA NUEVA',
-                    html: `
-                        <h1>Solicitud Obra Nueva</h1>
-                        <p><strong>Cliente:</strong> ${values.name} (${values.email}, ${values.phone})</p>
-                        <p><strong>Zona:</strong> ${values.location}</p>
-                        <p><strong>Terreno:</strong> ${values.hasLand}</p>
-                        <p><strong>Proyecto Arq:</strong> ${values.hasProject || 'N/A'}</p>
-                        <p><strong>Metros aprox:</strong> ${values.approxMeters} m2</p>
-                        <p><strong>Detalles:</strong> ${values.details}</p>
-                        ${values.files && values.files.length > 0 ? `<p><strong>Archivos:</strong> ${values.files.length} adjuntos.</p>` : ''}
-                    `
-                }
+            await sendLeadNotification({
+                subject: '🎯 Nuevo Lead: OBRA NUEVA',
+                replyTo: values.email,
+                fields: [
+                    { label: 'Cliente', value: `${values.name} (${values.email}, ${values.phone})` },
+                    { label: 'Zona', value: values.location },
+                    { label: 'Terreno', value: values.hasLand },
+                    { label: 'Proyecto Arq.', value: values.hasProject },
+                    { label: 'Metros aprox.', value: `${values.approxMeters} m²` },
+                    {
+                        label: 'Archivos',
+                        value: values.files?.length ? `${values.files.length} adjuntos` : undefined,
+                    },
+                ],
+                notes: values.details,
             });
 
             toast({

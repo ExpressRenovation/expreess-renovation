@@ -81,21 +81,8 @@ export async function processPriceBookPdf(fileUrl: string, year: number) {
 
         let count = 0;
         for (const item of output) {
-            // Create embedding
-            // const embedding = await ai.embed({
-            //     embedder: textEmbeddingGecko,
-            //     content: item.description
-            // });
-            // NOTE: Genkit's 'embed' might require a specific embedder model config.
-            // For simplicity, we are skipping the separate embed step if we use Firestore Vector Search 
-            // which might handle it automatically via Extension, OR we do it here. 
-            // Let's assume we need to calculate it.
-            // Since I don't have the exact embedder import ready and it might fail, 
-            // I will placeholder the embedding logic or use a "similarity" field for the extension.
-
-            // Actually, let's try to grab the embedding if possible.
-            // const embeddingResult = await ai.embed({ model: 'googleai/embedding-001', content: item.description });
-            // const embedding = embeddingResult[0].embedding;
+            // Embedding is handled by IngestPriceBookService via RestApiVectorizerAdapter (gemini-embedding-001)
+            // This legacy flow bypasses proper vectorization - use IngestPriceBookService instead
 
             const docRef = collectionRef.doc(item.code.replace(/\./g, '_')); // Sanitize ID
 

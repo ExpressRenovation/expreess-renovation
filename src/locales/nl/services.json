@@ -13,19 +13,27 @@
     "subservices": {
       "gestion-integral-obra-nueva": {
         "title": "Integraal Beheer van Nieuwbouw",
-        "description": "Wij coördineren en voeren uw bouwproject uit van grondverzet tot sleuteloverdracht. Volledige controle over termijnen en kosten."
+        "description": "Wij coördineren en voeren uw bouwproject uit van grondverzet tot sleuteloverdracht. Volledige controle over termijnen en kosten.",
+        "priceRange": "1.400 - 2.200 €/m² bebouwd",
+        "answer": "Een nieuwbouwwoning op Mallorca kost tussen 1.400 en 2.200 € per bebouwde m², afhankelijk van afwerking, bereikbaarheid van het perceel en constructieve complexiteit. Uitvoering, directievoering en vergunningen zitten erbij, de grond niet. Een villa van 200 m² komt meestal op 280.000 tot 440.000 €."
       },
       "reformas-integrales-viviendas-locales": {
         "title": "Totaalrenovaties van Woningen en Panden",
-        "description": "Volledige vernieuwing van binnen- en buitenruimtes, waarbij uw eigendom wordt aangepast aan de moderne behoeften van functionaliteit en stijl."
+        "description": "Volledige vernieuwing van binnen- en buitenruimtes, waarbij uw eigendom wordt aangepast aan de moderne behoeften van functionaliteit en stijl.",
+        "priceRange": "600 - 1.100 €/m²",
+        "answer": "Een totaalrenovatie op Mallorca kost tussen 600 en 1.100 € per m², afhankelijk van het afwerkingsniveau en de begintoestand. Sloop, nieuwe leidingen en elektra, tegelwerk, vloeren, schrijnwerk en schilderwerk zitten erbij. Een woning van 90 m² komt doorgaans op 54.000 tot 99.000 €."
       },
       "ampliaciones-redistribucion": {
         "title": "Uitbreidingen en Herindeling",
-        "description": "Wij maximaliseren het potentieel van uw vastgoed door vierkante meters toe te voegen of de indeling opnieuw te configureren voor meer open en lichte ruimtes."
+        "description": "Wij maximaliseren het potentieel van uw vastgoed door vierkante meters toe te voegen of de indeling opnieuw te configureren voor meer open en lichte ruimtes.",
+        "priceRange": "900 - 1.600 €/m² uitbreiding",
+        "answer": "Een aanbouw op Mallorca kost 900 tot 1.600 € per m² nieuwe vloeroppervlakte. De prijs hangt af van eventuele funderingsversterking, het daktype en de vergunningsprocedure. Alleen de indeling wijzigen zonder uit te breiden begint bij 350 € per betrokken m²."
       },
       "asesoramiento-materiales-construccion": {
         "title": "Advies over Materialen",
-        "description": "Deskundig advies voor de keuze van duurzame, slijtvaste materialen die esthetisch aansluiten bij uw architecturale visie."
+        "description": "Deskundig advies voor de keuze van duurzame, slijtvaste materialen die esthetisch aansluiten bij uw architecturale visie.",
+        "priceRange": "Gratis bij gegunde werken",
+        "answer": "Materiaaladvies is gratis wanneer u de werken bij ons onderbrengt. Inbegrepen zijn bezoeken aan leveranciers, een technische vergelijking van alternatieven en fysieke stalen. Als losse adviesdienst begint het bij 450 € voor een volledig woningproject."
       }
     }
   },
@@ -43,19 +51,27 @@
     "subservices": {
       "diseno-personalizado": {
         "title": "Gepersonaliseerd Zwembadontwerp",
-        "description": "Wij creëren unieke zwembaden die perfect integreren met de architectuur van uw huis en het landschap. Vrije vormen, infinity pools en designontwerpen."
+        "description": "Wij creëren unieke zwembaden die perfect integreren met de architectuur van uw huis en het landschap. Vrije vormen, infinity pools en designontwerpen.",
+        "priceRange": "2.500 - 6.000 € (ontwerp)",
+        "answer": "Een zwembadontwerp op maat kost op Mallorca 2.500 tot 6.000 € en omvat een topografische opmeting, volumevoorstel, renders en de technische documentatie voor de vergunning. Het bedrag wordt verrekend met de bouwofferte als wij het zwembad uitvoeren."
       },
       "construccion-gunitado": {
         "title": "Bouw met Spuitbeton (Gunite)",
-        "description": "Wij gebruiken de gunite-techniek (spuitbeton) om monolithische kuipen te garanderen, volledig waterdicht en met maximale duurzaamheid."
+        "description": "Wij gebruiken de gunite-techniek (spuitbeton) om monolithische kuipen te garanderen, volledig waterdicht en met maximale duurzaamheid.",
+        "priceRange": "22.000 - 45.000 € (8x4 m)",
+        "answer": "Een gespoten betonnen zwembad van 8x4 m kost op Mallorca 22.000 tot 45.000 € sleutelklaar. Uitgraving, betonschaal, waterdichting, afwerking, filterinstallatie en boordstenen zitten erbij. Vrije vormen, overloopranden of moeilijke bereikbaarheid drijven de prijs op."
       },
       "sistemas-cloracion-salina": {
         "title": "Zoutchlorering en Verwarming",
-        "description": "Geniet van gezonder en kristalhelder water met onze zoutelektrolysesystemen. Verleng het badseizoen met efficiënte warmtepompen."
+        "description": "Geniet van gezonder en kristalhelder water met onze zoutelektrolysesystemen. Verleng het badseizoen met efficiënte warmtepompen.",
+        "priceRange": "1.800 - 4.500 €",
+        "answer": "Zoutelektrolyse kost op Mallorca 1.800 tot 4.500 € afhankelijk van het badvolume, inclusief cel, besturing en inbedrijfstelling. Een warmtepomp om het water te verwarmen komt er met 3.500 tot 8.000 € bij en verlengt het zwemseizoen met ongeveer vier maanden."
       },
       "mantenimiento-reparacion": {
         "title": "Onderhouds- en Reparatieservice",
-        "description": "Wij zorgen voor het afstellen, schoonmaken, voegen en repareren van lekken zodat uw zwembad altijd onberispelijk is."
+        "description": "Wij zorgen voor het afstellen, schoonmaken, voegen en repareren van lekken zodat uw zwembad altijd onberispelijk is.",
+        "priceRange": "120 - 280 €/maand",
+        "answer": "Onderhoud van een privézwembad kost op Mallorca 120 tot 280 € per maand, afhankelijk van grootte en bezoekfrequentie. Controle van pH en chloor, reiniging van bodem en waterlijn, filterspoeling en controle van de installatie zitten erbij. De seizoensopstart wordt apart gefactureerd."
       }
     }
   },
@@ -73,19 +89,27 @@
     "subservices": {
       "alicatados-pavimentos": {
         "title": "Vernieuwing van Tegelwerk en Vloeren",
-        "description": "Vervanging van keramische wandtegels, microcement en houten vloeren om de esthetiek van uw kamers te moderniseren."
+        "description": "Vervanging van keramische wandtegels, microcement en houten vloeren om de esthetiek van uw kamers te moderniseren.",
+        "priceRange": "45 - 110 €/m²",
+        "answer": "Tegelwerk of vloeren vernieuwen kost op Mallorca 45 tot 110 € per m² inclusief materiaal. Grootformaat keramiek en microcement zitten in de hoge marge vanwege de arbeidsintensiteit. De oude bekleding verwijderen komt er met 12 tot 20 € per m² bij."
       },
       "instalaciones-fontaneria-electricidad": {
         "title": "Technische Installaties",
-        "description": "Volledige vernieuwing van waterleidingnetwerken en elektrische circuits om aan de voorschriften te voldoen en de veiligheid te verbeteren."
+        "description": "Volledige vernieuwing van waterleidingnetwerken en elektrische circuits om aan de voorschriften te voldoen en de veiligheid te verbeteren.",
+        "priceRange": "90 - 180 €/m² woning",
+        "answer": "Leidingwerk en elektra volledig vernieuwen kost op Mallorca 90 tot 180 € per m² woning. Nieuwe verdeelkast, bekabeling, schakelmateriaal, meerlagenbuis, afvoeren en het officiële attest zitten erbij. Bij een woning van 90 m² is dat 8.100 tot 16.200 €."
       },
       "mobiliario-medida": {
         "title": "Meubilair op Maat",
-        "description": "Ontwerp en montage van keuken- en badkamermeubels die elke beschikbare centimeter benutten."
+        "description": "Ontwerp en montage van keuken- en badkamermeubels die elke beschikbare centimeter benutten.",
+        "priceRange": "650 - 1.900 €/lm",
+        "answer": "Keukenmeubilair op maat kost op Mallorca 650 tot 1.900 € per strekkende meter, afhankelijk van fronten, beslag en werkblad. Kasten en inloopkasten op maat liggen op 400 tot 900 € per m² frontoppervlak. Ontwerp en montage zitten er altijd bij."
       },
       "banos-sanitarios": {
         "title": "Badkameruitrusting",
-        "description": "Deskundige installatie van extra vlakke douchebakken, glazen wanden en hangend design sanitair."
+        "description": "Deskundige installatie van extra vlakke douchebakken, glazen wanden en hangend design sanitair.",
+        "priceRange": "4.500 - 12.000 € per badkamer",
+        "answer": "Een volledige badkamerrenovatie kost op Mallorca 4.500 tot 12.000 €, afhankelijk van oppervlakte en afwerking. Sloop, leidingwerk, tegels, vloer, douchebak, wand, sanitair, meubel en kranen zitten erbij. Een standaardbadkamer van 5 m² komt meestal rond 7.000 € uit."
       }
     }
   },
@@ -103,19 +127,27 @@
     "subservices": {
       "revestimientos-continuos": {
         "title": "Continue Bekledingen",
-        "description": "Aanbrengen van technische en decoratieve mortels om buitenmuren te beschermen en te verfraaien."
+        "description": "Aanbrengen van technische en decoratieve mortels om buitenmuren te beschermen en te verfraaien.",
+        "priceRange": "35 - 75 €/m²",
+        "answer": "Een doorlopende gevelbepleistering kost op Mallorca 35 tot 75 € per m², zonder stelling. Eenlaagse mortel zit in de lage marge, kalk- en stucafwerkingen in de hoge. De stelling komt er met 8 tot 15 € per m² gevel bij."
       },
       "aislamiento-sate": {
         "title": "SATE Isolatie",
-        "description": "Thermisch isolatiesysteem voor buitenmuren om het energieverbruik van uw woning drastisch te verminderen."
+        "description": "Thermisch isolatiesysteem voor buitenmuren om het energieverbruik van uw woning drastisch te verminderen.",
+        "priceRange": "90 - 140 €/m² gevel",
+        "answer": "Buitengevelisolatie kost op Mallorca 90 tot 140 € per m² gevel, inclusief stelling, isolatie, wapeningsnet, mortels en afwerking. Bij een vrijstaande woning met 180 m² gevel is dat 16.000 tot 25.000 €. De klimatiseringsvraag daalt met 30 tot 50 %."
       },
       "rehabilitacion-fachadas": {
         "title": "Gevelrenovatie",
-        "description": "Esthetisch en functioneel herstel van aangetaste gevels, ter waarborging van veiligheid en waardevermeerdering van het pand."
+        "description": "Esthetisch en functioneel herstel van aangetaste gevels, ter waarborging van veiligheid en waardevermeerdering van het pand.",
+        "priceRange": "60 - 130 €/m²",
+        "answer": "Gevelrenovatie kost op Mallorca 60 tot 130 € per m², afhankelijk van de mate van aantasting. Hol klinkende zones afkappen, blootliggende wapening behandelen, kroonlijsten herstellen, bepleisteren en schilderen zitten erbij. Beschermde gevels vragen een aparte beoordeling."
       },
       "pintura-impermeabilizacion-exterior": {
         "title": "Schilderwerk en Waterdichting van Gevels",
-        "description": "Waterafstotende behandelingen en weerbestendige verf voor langdurige bescherming."
+        "description": "Waterafstotende behandelingen en weerbestendige verf voor langdurige bescherming.",
+        "priceRange": "18 - 40 €/m²",
+        "answer": "Gevel schilderen en waterdicht maken kost op Mallorca 18 tot 40 € per m². Minerale verf zit in de lage marge, elastische coatings met hechtprimer in de hoge. Aan de kust is de elastische optie aan te raden: zout en zeevocht bekorten de levensduur sterk."
       }
     }
   },
@@ -133,19 +165,27 @@
     "subservices": {
       "instalaciones-obra-nueva": {
         "title": "Elektrische Installaties Nieuwbouw",
-        "description": "Ontwerp en uitvoering van integrale elektrische projecten voor nieuwe woningen en gebouwen."
+        "description": "Ontwerp en uitvoering van integrale elektrische projecten voor nieuwe woningen en gebouwen.",
+        "priceRange": "55 - 95 €/m²",
+        "answer": "De elektrische installatie van een nieuwbouwwoning kost op Mallorca 55 tot 95 € per m². Hoofdverdeler, bekabeling, schakelmateriaal, lichtpunten, stopcontacten en het officiële attest voor de netaansluiting zitten erbij. Basisdomotica komt er met 15 tot 30 € per m² bij."
       },
       "actualizacion-reforma-electrica": {
         "title": "Update en Renovatie Elektrisch",
-        "description": "Vervanging van oude bedrading en schakelborden om de installatie aan te passen aan de huidige regelgeving."
+        "description": "Vervanging van oude bedrading en schakelborden om de installatie aan te passen aan de huidige regelgeving.",
+        "priceRange": "3.500 - 9.000 € per woning",
+        "answer": "De elektrische installatie van een woning moderniseren kost op Mallorca 3.500 tot 9.000 €. Nieuwe verdeelkast met aardlek- en automaten, nieuwe bekabeling, schakelmateriaal en attest zitten erbij. Het is verplicht als de installatie van vóór 1973 is of geen aarding heeft."
       },
       "boletines-certificaciones": {
         "title": "Rapporten en Certificeringen",
-        "description": "Uitgifte van officiële elektrische keuringsrapporten en regelingen met nutsbedrijven."
+        "description": "Uitgifte van officiële elektrische keuringsrapporten en regelingen met nutsbedrijven.",
+        "priceRange": "150 - 450 €",
+        "answer": "Een officieel elektrisch attest kost op Mallorca 150 tot 450 €, afhankelijk van het aansluitvermogen en het gebruik. Keuring, metingen, afgifte door een erkend installateur en registratie bij de overheid zitten erbij. Het is vereist om de aansluiting te activeren of te verzwaren."
       },
       "iluminacion-led": {
         "title": "Efficiënte LED-verlichting",
-        "description": "Technische en decoratieve verlichtingsprojecten met LED-technologie voor maximale besparing en visueel comfort."
+        "description": "Technische en decoratieve verlichtingsprojecten met LED-technologie voor maximale besparing en visueel comfort.",
+        "priceRange": "Terugverdientijd 18-30 maanden",
+        "answer": "Een ledverlichtingsproject kost op Mallorca 25 tot 70 € per geïnstalleerd lichtpunt, materiaal inbegrepen. Een volledige vervanging in een woning verlaagt het verlichtingsverbruik met 60 tot 80 %, met een terugverdientijd van doorgaans 18 tot 30 maanden."
       }
     }
   },
@@ -163,19 +203,27 @@
     "subservices": {
       "ventanas-puertas-aluminio-pvc": {
         "title": "Ramen en Deuren van Aluminium/PVC",
-        "description": "Buitenschrijnwerk met hoge energie-efficiëntie met thermische onderbreking en dubbele beglazing."
+        "description": "Buitenschrijnwerk met hoge energie-efficiëntie met thermische onderbreking en dubbele beglazing.",
+        "priceRange": "450 - 950 €/m² opening",
+        "answer": "Ramen vervangen kost op Mallorca 450 tot 950 € per m² opening, afhankelijk van materiaal en prestaties. Pvc met dubbele beglazing zit in de lage marge, aluminium met thermische onderbreking en drievoudige beglazing in de hoge. Demontage, plaatsing en afwerking zitten erbij."
       },
       "cerramientos-pergolas": {
         "title": "Behuizingen en Pergola's",
-        "description": "Lichte structuren voor terrassen en tuinen, waardoor uw leefruimte naar buiten wordt uitgebreid."
+        "description": "Lichte structuren voor terrassen en tuinen, waardoor uw leefruimte naar buiten wordt uitgebreid.",
+        "priceRange": "300 - 850 €/m²",
+        "answer": "Een pergola of terrasoverkapping kost op Mallorca 300 tot 850 € per m². Aluminium pergola's met verstelbare lamellen zitten in de hoge marge, vaste constructies met lichte bedekking in de lage. Ga vooraf na of er een gemeentelijke vergunning nodig is."
       },
       "puertas-paso-entrada": {
         "title": "Doorgangs- en Toegangsdeuren",
-        "description": "Levering en installatie van massief houten, gelakte of gepantserde deuren met premium afwerkingen."
+        "description": "Levering en installatie van massief houten, gelakte of gepantserde deuren met premium afwerkingen.",
+        "priceRange": "220 - 900 € per stuk",
+        "answer": "Een geplaatste binnendeur kost op Mallorca 220 tot 900 €, afhankelijk van materiaal en afwerking. Wit gelakte deuren zitten in de lage marge, massief hout of ingebouwde schuifdeuren in de hoge. Een beveiligde of gepantserde voordeur ligt op 900 tot 2.500 €."
       },
       "armarios-vestidores-medida": {
         "title": "Kasten en Kleedkamers op Maat",
-        "description": "Ontwerp van gepersonaliseerde kastinterieurs voor maximale organisatie en elegantie."
+        "description": "Ontwerp van gepersonaliseerde kastinterieurs voor maximale organisatie en elegantie.",
+        "priceRange": "400 - 900 €/m² frontoppervlak",
+        "answer": "Een kast op maat kost op Mallorca 400 tot 900 € per m² frontoppervlak. De prijs hangt af van het openingssysteem, het beslag en de binnenindeling. Een volledige inloopkast van 6 m² komt doorgaans op 3.500 tot 6.500 €."
       }
     }
   },
@@ -193,19 +241,27 @@
     "subservices": {
       "redes-fontaneria-desagues": {
         "title": "Waterleiding- en Afvoernetwerken",
-        "description": "Installatie van toevoer- en afvoerleidingen met moderne materialen (meerlagen, PPR, geluiddicht PVC)."
+        "description": "Installatie van toevoer- en afvoerleidingen met moderne materialen (meerlagen, PPR, geluiddicht PVC).",
+        "priceRange": "45 - 90 €/m² woning",
+        "answer": "Water- en afvoerleidingen vernieuwen kost op Mallorca 45 tot 90 € per m² woning. Meerlagen- of PPR-buis, afsluitkranen per ruimte, geluidsgedempte pvc-afvoeren en een dichtheidsproef zitten erbij. Bij een woning van 90 m² is dat 4.000 tot 8.100 €."
       },
       "reparacion-fugas": {
         "title": "Reparatie van Lekken en Storingen",
-        "description": "Snelle detectie en definitieve oplossing van dichtheidsproblemen en verstoppingen."
+        "description": "Snelle detectie en definitieve oplossing van dichtheidsproblemen en verstoppingen.",
+        "priceRange": "120 - 600 € naargelang locatie",
+        "answer": "Een waterlek herstellen kost op Mallorca 120 tot 600 €, afhankelijk van de locatie en bereikbaarheid. Niet-destructieve opsporing met geofoon of warmtebeeldcamera wordt aangerekend aan 120 tot 250 €, en dat bedrag wordt verrekend als wij de herstelling uitvoeren."
       },
       "griferia-sanitarios": {
         "title": "Installatie van Kranen en Sanitair",
-        "description": "Montage van badkamer- en keukenelementen van alle merken, met garantie voor een perfecte werking."
+        "description": "Montage van badkamer- en keukenelementen van alle merken, met garantie voor een perfecte werking.",
+        "priceRange": "90 - 250 € per element",
+        "answer": "Kranen of sanitair plaatsen kost op Mallorca 90 tot 250 € per element, exclusief materiaal. Een hangtoilet met inbouwreservoir stijgt naar 350 tot 550 € vanwege het bijkomende bouwwerk. Een eenvoudige kraanvervanging zit in de lage marge."
       },
       "agua-caliente-sanitaria": {
         "title": "Warm Tapwater",
-        "description": "Installatie en onderhoud van elektrische boilers, gasgeisers en warmtepompsystemen."
+        "description": "Installatie en onderhoud van elektrische boilers, gasgeisers en warmtepompsystemen.",
+        "priceRange": "450 - 6.500 € naargelang systeem",
+        "answer": "Sanitair warm water kost op Mallorca vanaf 450 € voor een elektrische boiler tot 6.500 € voor een warmtepompsysteem. Een gasgeiser ligt tussen 700 en 1.400 €. De warmtepomp is de meest efficiënte optie en presteert het best in het Balearische klimaat."
       }
     }
   },
@@ -223,19 +279,27 @@
     "subservices": {
       "pintura-interior-decorativa": {
         "title": "Binnen- en Decoratief Schilderwerk",
-        "description": "Gladde afwerkingen, stucwerk, behang en decoratieve technieken om uw omgeving te personaliseren."
+        "description": "Gladde afwerkingen, stucwerk, behang en decoratieve technieken om uw omgeving te personaliseren.",
+        "priceRange": "8 - 25 €/m²",
+        "answer": "Een woning binnen schilderen kost op Mallorca 8 tot 25 € per m² geschilderd oppervlak. Vlakke witte muurverf zit in de lage marge, stuc, lazuren en behang in de hoge. Een woning van 90 m² komt doorgaans op 1.400 tot 3.200 €."
       },
       "pintura-fachadas": {
         "title": "Schilderen van Gevels",
-        "description": "Elastische en steenachtige coatings om de gebouwschil te beschermen tegen weersinvloeden."
+        "description": "Elastische en steenachtige coatings om de gebouwschil te beschermen tegen weersinvloeden.",
+        "priceRange": "14 - 32 €/m²",
+        "answer": "Een gevel schilderen kost op Mallorca 14 tot 32 € per m², zonder stelling. Reiniging, scheuren dichten, primer en twee afwerklagen zitten erbij. Aan de kust is elastische verf met zoutbescherming aan te raden: hoge marge, maar dubbele levensduur."
       },
       "alisado-paredes": {
         "title": "Gladmaken en Verwijderen van Structuurverf",
-        "description": "Transformatie van oude muren in gladde en moderne oppervlakken, klaar om te schilderen of te behangen."
+        "description": "Transformatie van oude muren in gladde en moderne oppervlakken, klaar om te schilderen of te behangen.",
+        "priceRange": "12 - 22 €/m²",
+        "answer": "Structuurpleister verwijderen en muren glad maken kost op Mallorca 12 tot 22 € per m², inclusief afwerkverf. Het proces bestaat uit plamuren, schuren, primeren en twee lagen. Het is de ingreep die een oudere woning voor het minste geld het sterkst verandert."
       },
       "tratamiento-humedades": {
         "title": "Behandeling van Vocht",
-        "description": "Sanering van oppervlakken aangetast door schimmel, salpeter of opstijgend vocht voorafgaand aan het schilderen."
+        "description": "Sanering van oppervlakken aangetast door schimmel, salpeter of opstijgend vocht voorafgaand aan het schilderen.",
+        "priceRange": "35 - 120 €/m² aangetast",
+        "answer": "Vochtbestrijding kost op Mallorca 35 tot 120 € per m² aangetast oppervlak, afhankelijk van de oorzaak. Oppervlaktecondensatie zit in de lage marge, opstijgend vocht met chemische barrière of injectie in de hoge. De oorzaak moet vóór het schilderen weg zijn."
       }
     }
   },
@@ -253,19 +317,27 @@
     "subservices": {
       "cubiertas-planas-terrazas": {
         "title": "Platte Daken en Terrassen",
-        "description": "Begaanbare waterdichting met afwerking in tegels, grind of kunstgras."
+        "description": "Begaanbare waterdichting met afwerking in tegels, grind of kunstgras.",
+        "priceRange": "55 - 120 €/m²",
+        "answer": "Een plat dak of terras waterdicht maken kost op Mallorca 55 tot 120 € per m². Verwijderen van de bestaande vloer, hellingen aanbrengen, dakbaan, isolatie en beloopbare afwerking zitten erbij. De bestaande vloer behouden met een vloeibare coating brengt het terug naar 30 tot 50 € per m²."
       },
       "reparacion-tejados": {
         "title": "Reparatie van Daken",
-        "description": "Vervanging van gebroken pannen, reiniging van dakgoten en versterking van singuliere punten op hellende daken."
+        "description": "Vervanging van gebroken pannen, reiniging van dakgoten en versterking van singuliere punten op hellende daken.",
+        "priceRange": "40 - 95 €/m²",
+        "answer": "Een hellend dak herstellen kost op Mallorca 40 tot 95 € per m², afhankelijk van de omvang. Losse pannen vervangen en kilgoten nakijken zit in de lage marge, volledig afdekken met nieuwe panlatten en onderdak in de hoge. Reiniging van de dakgoten zit erbij."
       },
       "laminas-membranas": {
         "title": "Technische Folies en Membranen",
-        "description": "Gecertificeerde installatie van EPDM, PVC en de nieuwste generatie asfaltlagen."
+        "description": "Gecertificeerde installatie van EPDM, PVC en de nieuwste generatie asfaltlagen.",
+        "priceRange": "45 - 85 €/m²",
+        "answer": "Een waterdichtingsmembraan plaatsen kost op Mallorca 45 tot 85 € per m², afhankelijk van het systeem. EPDM en gewapend pvc laten grote banen met minder lassen toe, wat het aantal zwakke punten verlaagt. Al onze plaatsingen worden opgeleverd met een waterproef."
       },
       "aislamiento-cubiertas": {
         "title": "Thermische Isolatie van Daken",
-        "description": "Integratie van isolatiepanelen onder de waterdichting om het thermisch comfort onder het dak te verbeteren."
+        "description": "Integratie van isolatiepanelen onder de waterdichting om het thermisch comfort onder het dak te verbeteren.",
+        "priceRange": "30 - 60 €/m² extra",
+        "answer": "Thermische isolatie onder de dakwaterdichting kost op Mallorca 30 tot 60 € per m² extra. Het is de ingreep met het beste rendement van de hele gebouwschil: via het dak gaat tot 30 % van het warmteverlies en de warmtewinst van een woning."
       }
     }
   },
@@ -315,5 +387,30 @@
         }
       ]
     }
+  },
+  "ui": {
+    "breadcrumbHome": "Home",
+    "intro": "Bij Express Renovation Mallorca begrijpen we dat {service} een belangrijke investering is. Ons team van specialisten verzorgt elk detail en garandeert hoogwaardige afwerking en duurzaamheid.",
+    "whyUsTitle": "Waarom voor ons kiezen bij deze dienst?",
+    "whyUs": [
+      "Gecertificeerde experts in {category}.",
+      "Gegarandeerd materialen van topkwaliteit.",
+      "Opleveringstermijnen contractueel vastgelegd.",
+      "Transparante offertes zonder verrassingen."
+    ],
+    "sidebarTitle": "Interesse in {service}?",
+    "sidebarSubtitle": "Ontvang direct een op maat gemaakte prijsindicatie voor uw project.",
+    "sidebarCta": "Bereken nu de prijs",
+    "callUs": "Of bel ons direct",
+    "moreIn": "Meer in {category}",
+    "closingTitle": "Begin vandaag nog met {service}",
+    "closingCta": "Spreek met een adviseur",
+    "categoryAll": "Alles wat wij doen op het gebied van {category}",
+    "viewDetail": "Bekijk details",
+    "faqSubtitle": "Antwoorden op de meest gestelde vragen over onze diensten.",
+    "zonesTitle": "{service} op Mallorca — Onze werkgebieden",
+    "priceLabel": "Richtprijs",
+    "priceDisclaimer": "Indicatieve marktrange voor Mallorca. De definitieve prijs wordt vastgelegd na het plaatsbezoek.",
+    "answerTitle": "Wat kost {service} op Mallorca?"
   }
 }

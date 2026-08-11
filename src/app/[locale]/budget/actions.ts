@@ -1,17 +1,11 @@
 'use server';
 
 import { DetailedFormValues, detailedFormSchema } from '@/components/budget-request/schema';
-import { buildBudgetNarrative } from '@/backend/budget/domain/budget-narrative-builder';
-import { generateBudgetFlow } from '@/backend/ai/flows/budget/generate-budget.flow';
+import { BudgetNarrativeBuilder } from '@/backend/budget/domain/budget-narrative-builder';
+import { FormToSpecsMapper } from '@/backend/budget/application/mappers/form-to-specs.mapper';
 import { BudgetRepositoryFirestore } from '@/backend/budget/infrastructure/budget-repository-firestore';
 import { Budget } from '@/backend/budget/domain/budget';
-// import { auth } from '@/backend/shared/infrastructure/auth';
 
-// Assuming some auth helper exists or we use currentUser from clerk/next-auth,
-// but for now let's leave userId optional or check header if available.
-// Ideally, we should use a session helper. Let's use a dummy ID or null for now if no auth.
-
-// We need a simple ID generator since uuid might not be available
 const generateId = () => Math.random().toString(36).substr(2, 9) + Date.now().toString(36);
 
 export type SubmitBudgetResult = {
@@ -29,7 +23,7 @@ export type SubmitBudgetResult = {
             globalAdjustment: number;
             total: number;
         };
-        id?: string; // Return the ID of the saved budget
+        id?: string;
     };
     errors?: any;
 };
@@ -38,7 +32,6 @@ const budgetRepository = new BudgetRepositoryFirestore();
 
 export async function submitBudgetRequest(data: DetailedFormValues): Promise<SubmitBudgetResult> {
     try {
-        // 1. Validate Data on Server
         const parsed = detailedFormSchema.safeParse(data);
         if (!parsed.success) {
             return { success: false, errors: parsed.error.flatten() };
@@ -46,45 +39,49 @@ export async function submitBudgetRequest(data: DetailedFormValues): Promise<Sub
 
         const validData = parsed.data;
 
-        // 2. Build Narrative
-        const narrative = buildBudgetNarrative(validData);
+        // Map form values to domain specs
+        const specs = FormToSpecsMapper.map(validData);
+        // Build narrative from specs
+        const narrative = BudgetNarrativeBuilder.build(specs);
         console.log('--- Generated Budget Narrative ---');
         console.log(narrative);
         console.log('----------------------------------');
 
-        // 3. Call AI Flow
-        // Calls the orchestrator: Extraction -> Search -> Pricing
-        const budgetResult = await generateBudgetFlow({ userRequest: narrative });
-
-        // 4. Persist Budget
+        // Persist Budget (Skipping AI generation as per new workflow)
         const budgetId = generateId();
 
-        // TODO: Get actual logged in user ID if available
-        // const session = await auth(); 
-        const userId = undefined;
+        const clientSnapshot = {
+            name: validData.name,
+            email: validData.email,
+            phone: validData.phone,
+            address: validData.address
+        };
 
         const newBudget: Budget = {
             id: budgetId,
-            ...(userId ? { userId } : {}),
-            status: 'draft', // Initial status
+            leadId: generateId(),
+            clientSnapshot,
+            status: 'draft', // Initial status, ready for admin to trigger AI
             createdAt: new Date(),
             updatedAt: new Date(),
             version: 1,
-            clientData: validData,
-            lineItems: budgetResult.lineItems.map((item, index) => ({
-                ...item,
-                id: generateId(), // Ensure items have IDs
-                isEditing: false
-            })),
-            costBreakdown: budgetResult.costBreakdown || {
+            specs,
+            chapters: [{
+                id: generateId(),
+                name: "Presupuesto Base (A generar por IA)",
+                order: 0,
+                items: [],
+                totalPrice: 0
+            }],
+            costBreakdown: {
                 materialExecutionPrice: 0,
                 overheadExpenses: 0,
                 industrialBenefit: 0,
                 tax: 0,
                 globalAdjustment: 0,
-                total: budgetResult.totalEstimated
+                total: 0
             },
-            totalEstimated: budgetResult.totalEstimated
+            totalEstimated: 0
         };
 
         await budgetRepository.save(newBudget);
@@ -95,8 +92,9 @@ export async function submitBudgetRequest(data: DetailedFormValues): Promise<Sub
             message: 'Presupuesto preliminar generado correctamente.',
             narrative,
             budgetResult: {
-                ...budgetResult,
-                id: budgetId // Return ID to client so we can redirect/edit if needed
+                lineItems: [],
+                totalEstimated: 0,
+                id: budgetId
             }
         };
 

@@ -2,11 +2,12 @@
 
 import { BudgetWidget } from '@/components/budget-widget';
 import { Link } from '@/i18n/navigation';
-import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/logo';
+import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/use-auth';
 import { UserNav } from '@/components/auth/user-nav';
 import { LanguageSwitcher } from '@/components/language-switcher';
+import { ThemeSwitcher } from '@/components/theme-switcher';
 import { Menu } from 'lucide-react';
 import {
   Sheet,
@@ -17,7 +18,6 @@ import {
 } from '@/components/ui/sheet';
 import React, { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
-import { ThemeSwitcher } from '../theme-switcher';
 import { MegaMenu } from './mega-menu';
 import { MobileMenu } from './mobile-menu';
 
@@ -35,9 +35,9 @@ export function Header({ t }: { t: any }) {
   }, []);
 
   const navLinks = [
-    { href: { pathname: '/', hash: 'services' }, label: t.header.nav.services },
-    { href: '/blog', label: t.header.nav.blog },
-    { href: '/contact', label: t.header.nav.contact },
+    { href: { pathname: '/', hash: 'services' }, label: t?.header?.nav?.services ?? 'Servicios' },
+    { href: '/blog', label: t?.header?.nav?.blog ?? 'Blog' },
+    { href: '/contact', label: t?.header?.nav?.contact ?? 'Contacto' },
   ];
 
   const handleLinkClick = () => {
@@ -54,23 +54,22 @@ export function Header({ t }: { t: any }) {
       )}
     >
       <div className="w-[85vw] max-w-[1920px] mx-auto flex h-full items-center justify-between transition-all duration-300">
-        <div className={cn("transition-transform duration-300", isScrolled ? "scale-90" : "scale-100")}>
-          <div className="md:hidden">
-            <Logo width={120} height={40} />
-          </div>
-          <div className="hidden md:block">
-            <Logo width={180} height={60} /> {/* Adjusted size for better visibility */}
-          </div>
+        <div className={cn("transition-transform duration-300 flex-shrink-0", isScrolled ? "scale-90" : "scale-100")}>
+          {/* Two sizes: the mark needs more presence on desktop, but the mobile
+              header only has 10vh of height to spend. */}
+          <Logo className="md:hidden flex items-center" width={150} height={50} />
+          <Logo className="hidden md:flex items-center" width={215} height={72} />
         </div>
 
         <div className="hidden md:block ml-10">
           <MegaMenu t={t} />
         </div>
+
         <div className="flex items-center gap-2">
           <ThemeSwitcher />
           <LanguageSwitcher />
           {user ? (
-            <UserNav t={t.header.userNav} />
+            <UserNav t={t?.header?.userNav} />
           ) : (
             <div className="hidden md:flex items-center gap-2">
               <BudgetWidget t={t} />

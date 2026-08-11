@@ -1,69 +1,181 @@
-import { BudgetClientData } from '@/components/budget-request/schema';
+import { ProjectSpecs } from './project-specs';
+import { PersonalInfo } from '@/backend/lead/domain/lead';
 
-export interface BudgetLineItem {
+export type BudgetLineItemType = 'PARTIDA' | 'MATERIAL';
+
+export interface BudgetPartida {
+  type: 'PARTIDA';
+  id: string;
   order: number;
-  originalTask: string;
-  found: boolean;
-  item?: {
-    code: string;
-    description: string;
-    unit: string;
-    price?: number;
-    quantity?: number;
-    unitPrice?: number;
-    totalPrice?: number;
-  };
+  code: string; // From PriceBook
+  description: string;
+  unit: string;
+  quantity: number;
+  unitPrice: number; // Includes labor + materials
+  totalPrice: number;
+  originalTask?: string; // The user intent that generated this
   note?: string;
-  id?: string; // Added for editor
-  isEditing?: boolean; // For editor state
-  chapter?: string; // Grouping category (e.g., "Demoliciones")
-  originalState?: { // Snapshot for comparison/ghost mode
+  ai_justification?: string; // Telemetry logic from the Judge Agent
+  sourceDatabase?: string; // e.g. '2025_catalog'
+  isEstimate?: boolean;
+  isRealCost?: boolean; // True if recalculated by Construction Analyst
+  matchConfidence?: number; // 0-100 Score from Vector Search
+  alternativeCandidates?: any[]; // Unselected candidates from Vector Search
+  reasoning?: string; // AI Chain of Thought
+  needsHumanReview?: boolean; // Flag if AI failed to calculate properly
+  aiResolution?: any; // The raw AI decision payload
+  breakdown?: BudgetBreakdownComponent[]; // Detailed cost structure
+  relatedMaterial?: {
+    sku: string;
+    name: string;
+    merchant: string;
     unitPrice: number;
-    quantity: number;
-    description: string;
-    unit: string;
+    url?: string;
   };
 }
 
+export interface BudgetBreakdownComponent {
+  code?: string;
+  concept: string; // e.g. "Mano de obra", "Material: Keraben Forest"
+  type: 'LABOR' | 'MATERIAL' | 'MACHINERY' | 'OTHER';
+  price: number; // Unit price of this component
+  yield?: number; // Rendimiento (e.g. 0.05 h/m2)
+  waste?: number; // Merma % (only for materials)
+  total: number; // price * yield * (1+waste)
+  isSubstituted?: boolean; // True if this component was swapped by AI
+}
+
+export interface BudgetMaterial {
+  type: 'MATERIAL';
+  id: string;
+  order: number;
+  sku: string; // From MaterialCatalog (e.g. Obramat)
+  name: string;
+  description: string;
+  merchant: string;
+  unit: string;
+  quantity: number;
+  unitPrice: number; // Product cost only
+  totalPrice: number;
+  deliveryTime?: string;
+  originalTask?: string;
+  note?: string;
+  isEstimate?: boolean;
+}
+
+export type BudgetLineItem = BudgetPartida | BudgetMaterial;
+
+export interface BudgetChapter {
+  id: string;
+  name: string; // e.g. "01. Demoliciones"
+  order: number;
+  items: BudgetLineItem[];
+  totalPrice: number;
+}
+
 export interface BudgetCostBreakdown {
-  materialExecutionPrice: number;
-  overheadExpenses: number;
-  industrialBenefit: number;
-  tax: number;
+  materialExecutionPrice: number; // PEM (Sum of chapters)
+  overheadExpenses: number; // Gastos Generales (e.g. 13%)
+  industrialBenefit: number; // Beneficio Industrial (e.g. 6%)
+  tax: number; // IVA
   globalAdjustment: number;
-  total: number;
+  total: number; // PEC + IVA
+}
+
+export interface BudgetTelemetryMetrics {
+  generationTimeMs: number;
+  tokens: {
+    inputTokens: number;
+    outputTokens: number;
+    totalTokens: number;
+  };
+  costs: {
+    fiatAmount: number; // EUR
+    fiatCurrency: string; // 'EUR'
+  };
+}
+
+export interface BudgetTelemetry {
+  blueprint?: {
+    originalRequest: string;
+    decomposedTasks: {
+      chapter: string;
+      task: string;
+      reasoning: string;
+      estimatedParametricQuantity: number;
+      estimatedParametricUnit?: string;
+    }[];
+  };
+  executionLog?: {
+    timestamp: Date;
+    agent: 'Architect' | 'Surveyor' | 'Judge' | 'System';
+    action: string;
+    details: string;
+  }[];
+  metrics?: BudgetTelemetryMetrics;
 }
 
 /**
  * Represents the core Budget entity in the domain layer.
+ * Now supports Chapters and Distinct Item Types.
  */
 export interface Budget {
   id: string;
-  userId?: string; // Optional if guest
+
+  // Owner Reference (Linked to Lead Module)
+  leadId: string;
+
+  // Snapshot of client data at budget creation time (Immutable record)
+  clientSnapshot: PersonalInfo;
 
   // Metadata
   status: 'draft' | 'pending_review' | 'approved' | 'sent';
   createdAt: Date;
   updatedAt: Date;
   version: number;
-  type?: 'renovation' | 'quick' | 'new_build'; // Discriminator
+  type?: 'renovation' | 'quick' | 'new_build';
 
-  // Client & Project Info (from form)
-  clientData: BudgetClientData;
+  // Domain Project Data
+  specs: ProjectSpecs;
+
+  // Structure
+  chapters: BudgetChapter[];
 
   // Financials
-  lineItems: BudgetLineItem[];
   costBreakdown: BudgetCostBreakdown;
-  totalEstimated: number;
+  config?: {
+    marginGG: number;
+    marginBI: number;
+    tax: number;
+  };
+  totalEstimated: number; // Deprecated, use costBreakdown.total
 
-  // AI Renders (Dream Renovator)
+  // Origin & Metadata
+  source?: 'wizard' | 'pdf_measurement' | 'manual';
+  pricingMetadata?: {
+    uploadedFileName?: string;
+    pageCount?: number;
+    extractionConfidence?: number;
+  };
+
+  // Quick Consultation Response
+  quickQuote?: {
+    price: number;
+    message: string;
+    answeredAt: Date;
+  };
+
+  // AI Renders
   renders?: BudgetRender[];
+
+  // AI Telemetry & Traceability
+  telemetry?: BudgetTelemetry;
 }
 
 export interface BudgetRender {
   id: string;
   url: string;
-  originalUrl?: string; // Optional: store the "before" image too
+  originalUrl?: string;
   prompt: string;
   style: string;
   roomType: string;
@@ -75,7 +187,8 @@ export interface BudgetRender {
  */
 export interface BudgetRepository {
   findById(id: string): Promise<Budget | null>;
-  findByUserId(userId: string): Promise<Budget[]>;
-  findAll(): Promise<Budget[]>; // For admin list
+  findByLeadId(leadId: string): Promise<Budget[]>;
+  findAll(): Promise<Budget[]>;
   save(budget: Budget): Promise<void>;
+  delete(id: string): Promise<void>;
 }

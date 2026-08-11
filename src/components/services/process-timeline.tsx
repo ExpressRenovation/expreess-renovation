@@ -32,7 +32,7 @@ export function ProcessTimeline({ className, t }: ProcessTimelineProps) {
                         return (
                             <div key={index} className="flex flex-col items-center text-center group">
                                 <div className="w-24 h-24 rounded-full bg-background border-4 border-secondary flex items-center justify-center mb-6 shadow-sm group-hover:border-primary/50 group-hover:scale-105 transition-all duration-300 relative z-10">
-                                    <Icon className="h-10 w-10 text-primary" />
+                                    <Icon className="h-10 w-10 text-primary-onLight" />
                                     <div className="absolute -bottom-2 -right-2 bg-primary text-primary-foreground text-sm font-bold w-8 h-8 rounded-full flex items-center justify-center shadow-md">
                                         {index + 1}
                                     </div>

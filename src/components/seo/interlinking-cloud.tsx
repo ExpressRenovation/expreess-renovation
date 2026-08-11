@@ -1,32 +1,46 @@
-import Link from 'next/link';
-import { cn } from '@/lib/utils'; // Assuming utils exists, if not I'll remove it
-
-const LOCATIONS = [
-    'Palma', 'Calvià', 'Andratx', 'Santa Ponsa', 'Llucmajor',
-    'Inca', 'Manacor', 'Soller', 'Portals Nous', 'Son Vida'
-];
+import { Link } from '@/i18n/navigation';
+import { cn } from '@/lib/utils';
+import { locations } from '@/lib/locations';
 
 interface InterlinkingCloudProps {
     serviceName: string;
     categorySlug: string;
+    /** Localized heading with a `{service}` placeholder. */
+    title?: string;
     className?: string;
 }
 
-export function InterlinkingCloud({ serviceName, categorySlug, className }: InterlinkingCloudProps) {
+/** `"Port d'Andratx"` -> `"port-d-andratx"`, matching the zone route params. */
+function toZoneSlug(name: string): string {
+    return name
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[̀-ͯ]/g, '')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)/g, '');
+}
+
+export function InterlinkingCloud({ serviceName, title, className }: InterlinkingCloudProps) {
+    const heading = (title ?? '{service} en Mallorca — Zonas de actuación').replace(
+        '{service}',
+        serviceName
+    );
+
     return (
-        <section className={cn("py-12 border-t bg-slate-50", className)}>
+        <section className={cn('py-12 border-t bg-muted/30', className)}>
             <div className="container-limited text-center">
                 <h3 className="text-sm font-bold text-muted-foreground uppercase tracking-widest mb-6">
-                    {serviceName} en Mallorca - Zonas de Actuación
+                    {heading}
                 </h3>
                 <div className="flex flex-wrap justify-center gap-3">
-                    {LOCATIONS.map((loc) => (
+                    {locations.map((loc) => (
                         <Link
                             key={loc}
-                            href={`/contact?subject=${encodeURIComponent(serviceName + ' en ' + loc)}`}
-                            // For now linking to contact or a search page. 
-                            // Ideal: href={`/zonas/${loc.toLowerCase().replace(' ', '-')}/${categorySlug}`}
-                            className="text-xs sm:text-sm text-slate-500 hover:text-primary hover:underline transition-colors border rounded-full px-3 py-1 bg-white"
+                            // Points at the real zone pages, which are indexed and in the
+                            // sitemap. These used to all link to /contact with a query
+                            // string, so the block carried no internal link value.
+                            href={{ pathname: '/zonas/[zone]', params: { zone: toZoneSlug(loc) } }}
+                            className="text-xs sm:text-sm text-muted-foreground hover:text-primary-onLight hover:border-primary/40 transition-colors border rounded-full px-3 py-1 bg-background"
                         >
                             {serviceName} en {loc}
                         </Link>

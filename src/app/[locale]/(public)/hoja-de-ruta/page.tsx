@@ -4,6 +4,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { CheckCircle, Users, GitMerge, Bot, BarChart } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import Image from 'next/image';
+import { BRAND_ASSETS } from '@/lib/site-assets';
 
 const phases = [
     {
@@ -11,7 +12,7 @@ const phases = [
         title: "Fase 1: Cimientos y Plataforma de Control",
         startDate: "12/12/2025",
         endDate: "19/12/2025",
-        icon: <GitMerge className="h-8 w-8 text-primary" />,
+        icon: <GitMerge className="h-8 w-8 text-primary-onLight" />,
         objectives: [
             "Despliegue del Web Site Pro optimizado para SEO con la estructura base.",
             "Desarrollo del núcleo de la Plataforma de Control (Backend).",
@@ -28,7 +29,7 @@ const phases = [
         title: "Fase 2: Inteligencia Artificial y Automatización de Presupuestos",
         startDate: "20/12/2025",
         endDate: "27/12/2025",
-        icon: <Bot className="h-8 w-8 text-primary" />,
+        icon: <Bot className="h-8 w-8 text-primary-onLight" />,
         objectives: [
             "Integración de la IA para la generación de presupuestos inteligentes.",
             "Desarrollo del Sistema de Presupuestos Ágiles (Full) en el frontend.",
@@ -46,7 +47,7 @@ const phases = [
         title: "Fase 3: Proyectos WOW y Reputación Online",
         startDate: "28/12/2025",
         endDate: "03/01/2026",
-        icon: <Users className="h-8 w-8 text-primary" />,
+        icon: <Users className="h-8 w-8 text-primary-onLight" />,
         objectives: [
             "Implementación de la IA generativa para la creación de renders de proyectos.",
             "Desarrollo del Sistema de Reseñas Inteligente y Respondedor Automático.",
@@ -64,7 +65,7 @@ const phases = [
         title: "Fase 4: Optimización, Informes y Entrega Final",
         startDate: "04/01/2026",
         endDate: "11/01/2026",
-        icon: <BarChart className="h-8 w-8 text-primary" />,
+        icon: <BarChart className="h-8 w-8 text-primary-onLight" />,
         objectives: [
             "Desarrollo de los Informes de Rendimiento Automatizados.",
             "Implementación de las automatizaciones de seguimiento de presupuestos.",
@@ -83,11 +84,11 @@ const phases = [
 export default async function RoadmapPage({ params }: { params: Promise<{ locale: string }> }) {
     const { locale } = await params;
     const dict = await getDictionary(locale as any);
-    const logoUrl = "https://firebasestorage.googleapis.com/v0/b/local-digital-eye.firebasestorage.app/o/business%2Fdochevi%2FLogo-Express-web-276w.webp?alt=media&token=70fcace5-1efc-4999-867c-6d933be5cada";
+    const logoUrl = BRAND_ASSETS.logo;
 
     return (
         <>
-            <main className="flex-1 bg-gray-50 dark:bg-gray-900">
+            <div className="flex-1 bg-gray-50 dark:bg-gray-900">
                 <section className="w-full py-16 md:py-24 bg-secondary/50">
                     <div className="container-limited text-center">
                         <div className="relative w-64 h-auto mx-auto mb-8">
@@ -174,7 +175,7 @@ export default async function RoadmapPage({ params }: { params: Promise<{ locale
                     </div>
                 </section>
 
-            </main>
+            </div>
         </>
     );
 }

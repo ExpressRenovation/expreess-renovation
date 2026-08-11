@@ -2,12 +2,17 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    
-    // Allow client to send emails
-    match /mail/{mailId} {
-      allow create: if true;
-    }
 
+    // Everything is server-only. The app reaches Firestore through the Admin
+    // SDK inside Next.js server actions and the ai-core Cloud Run service, and
+    // the Admin SDK bypasses these rules entirely.
+    //
+    // `/mail` used to allow unauthenticated `create` so the public budget forms
+    // could queue notification emails straight from the browser. With the
+    // repository public and the Firebase web API key visible in its history,
+    // that let anyone queue mail from the company's sender — an open relay.
+    // Those writes now go through `sendLeadNotification`, so nothing needs
+    // client-side write access.
     match /{document=**} {
       allow read, write: if false;
     }

@@ -31,5 +31,23 @@ export interface PriceBookRepository {
      * @param limit Number of results to return.
      * @param year Optional filter by year.
      */
-    searchByVector(embedding: number[], limit: number, year?: number): Promise<PriceBookItem[]>;
+    searchByVector(embedding: number[], limit: number, year?: number, keywordFilter?: string): Promise<PriceBookItem[]>;
+
+    /**
+     * Performs a hybrid search: Vector Similarity + Structured Filters.
+     * requires Firestore Composite Indexes.
+     */
+    searchByVectorWithFilters(
+        embedding: number[],
+        filters: SearchFilters,
+        limit?: number
+    ): Promise<PriceBookItem[]>;
+}
+
+export interface SearchFilters {
+    chapter?: string;
+    section?: string;
+    minPrice?: number;
+    maxPrice?: number;
+    year?: number;
 }

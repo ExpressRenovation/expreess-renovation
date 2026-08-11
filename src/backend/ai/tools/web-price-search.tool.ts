@@ -39,7 +39,7 @@ export const webPriceSearchTool = ai.defineTool(
         `;
 
         const result = await ai.generate({
-            model: 'googleai/gemini-2.0-flash', // Use a fast/smart model
+            model: 'googleai/gemini-2.5-flash', // Use a fast/smart model
             prompt: prompt,
             output: {
                 format: 'json',

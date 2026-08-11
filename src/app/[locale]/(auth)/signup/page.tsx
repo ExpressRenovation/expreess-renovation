@@ -19,7 +19,7 @@ import { Link } from '@/i18n/navigation';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { getSafeAuth } from '@/lib/firebase/client';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import { getDictionary } from '@/lib/dictionaries';
 
 const formSchema = z
@@ -33,7 +33,8 @@ const formSchema = z
     path: ['confirmPassword'],
   });
 
-export default function SignupPage({ params: { locale } }: { params: { locale: any } }) {
+export default function SignupPage({ params }: { params: Promise<{ locale: any }> }) {
+  const { locale } = use(params);
   const { toast } = useToast();
   const router = useRouter();
   const [dict, setDict] = useState<any>(null);

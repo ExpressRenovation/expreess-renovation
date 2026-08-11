@@ -13,19 +13,27 @@
     "subservices": {
       "gestion-integral-obra-nueva": {
         "title": "Ganzheitliches Neubau-Management",
-        "description": "Wir koordinieren und führen Ihr Bauprojekt vom Erdaushub bis zur Schlüsselübergabe durch. Volle Kontrolle über Termine und Kosten."
+        "description": "Wir koordinieren und führen Ihr Bauprojekt vom Erdaushub bis zur Schlüsselübergabe durch. Volle Kontrolle über Termine und Kosten.",
+        "priceRange": "1.400 - 2.200 €/m² Wohnfläche",
+        "answer": "Ein Neubau auf Mallorca kostet je nach Ausstattung, Grundstückszugang und statischer Komplexität 1.400 bis 2.200 € pro gebautem m². Enthalten sind Bauausführung, Bauleitung und Genehmigungen, nicht jedoch das Grundstück. Eine Villa mit 200 m² liegt üblicherweise zwischen 280.000 und 440.000 €."
       },
       "reformas-integrales-viviendas-locales": {
         "title": "Komplette Wohn- und Geschäftsrenovierungen",
-        "description": "Vollständige Renovierung von Innen- und Außenbereichen, Anpassung Ihrer Immobilie an moderne Bedürfnisse von Funktionalität und Stil."
+        "description": "Vollständige Renovierung von Innen- und Außenbereichen, Anpassung Ihrer Immobilie an moderne Bedürfnisse von Funktionalität und Stil.",
+        "priceRange": "600 - 1.100 €/m²",
+        "answer": "Eine Kernsanierung auf Mallorca kostet je nach Ausstattungsniveau und Ausgangszustand 600 bis 1.100 € pro m². Enthalten sind Abbruch, neue Sanitär- und Elektroinstallation, Fliesen, Böden, Schreinerarbeiten und Malerarbeiten. Eine Wohnung mit 90 m² liegt meist zwischen 54.000 und 99.000 €."
       },
       "ampliaciones-redistribucion": {
         "title": "Erweiterungen und Umverteilung",
-        "description": "Wir maximieren das Potenzial Ihrer Immobilie durch Hinzufügen von Quadratmetern oder Neukonfiguration des Grundrisses für offenere und hellere Räume."
+        "description": "Wir maximieren das Potenzial Ihrer Immobilie durch Hinzufügen von Quadratmetern oder Neukonfiguration des Grundrisses für offenere und hellere Räume.",
+        "priceRange": "900 - 1.600 €/m² Erweiterung",
+        "answer": "Ein Anbau auf Mallorca kostet 900 bis 1.600 € pro m² neuer Fläche. Der Preis hängt davon ab, ob das Fundament verstärkt werden muss, von der Dachart und vom Genehmigungsverfahren. Eine reine Grundrissänderung ohne Flächenzuwachs beginnt bei 350 € pro betroffenem m²."
       },
       "asesoramiento-materiales-construccion": {
         "title": "Materialberatung",
-        "description": "Expertenberatung für die Wahl nachhaltiger, langlebiger Materialien, die ästhetisch mit Ihrer architektonischen Vision übereinstimmen."
+        "description": "Expertenberatung für die Wahl nachhaltiger, langlebiger Materialien, die ästhetisch mit Ihrer architektonischen Vision übereinstimmen.",
+        "priceRange": "Kostenlos bei beauftragter Ausführung",
+        "answer": "Die Materialberatung ist kostenlos, wenn Sie die Bauarbeiten bei uns beauftragen. Enthalten sind Lieferantenbesuche, ein technischer Vergleich der Alternativen und physische Muster. Als eigenständige Beratungsleistung beginnt sie bei 450 € für ein komplettes Wohnprojekt."
       }
     }
   },
@@ -43,19 +51,27 @@
     "subservices": {
       "diseno-personalizado": {
         "title": "Individuelles Pool-Design",
-        "description": "Wir schaffen einzigartige Pools, die sich perfekt in die Architektur Ihres Hauses und die Landschaft integrieren. Freiformen, Infinity-Pools und Designer-Entwürfe."
+        "description": "Wir schaffen einzigartige Pools, die sich perfekt in die Architektur Ihres Hauses und die Landschaft integrieren. Freiformen, Infinity-Pools und Designer-Entwürfe.",
+        "priceRange": "2.500 - 6.000 € (Planung)",
+        "answer": "Eine individuelle Poolplanung auf Mallorca kostet 2.500 bis 6.000 € und umfasst Vermessung, Volumenentwurf, Renderings und die technischen Unterlagen für die Genehmigung. Der Betrag wird vom Bauangebot abgezogen, wenn wir den Pool ausführen."
       },
       "construccion-gunitado": {
         "title": "Spritzbetonbau",
-        "description": "Wir verwenden die Spritzbetontechnik (Gunite), um monolithische, absolut wasserdichte und maximal langlebige Becken zu gewährleisten."
+        "description": "Wir verwenden die Spritzbetontechnik (Gunite), um monolithische, absolut wasserdichte und maximal langlebige Becken zu gewährleisten.",
+        "priceRange": "22.000 - 45.000 € (8x4 m)",
+        "answer": "Ein Spritzbetonpool von 8x4 m kostet auf Mallorca schlüsselfertig 22.000 bis 45.000 €. Enthalten sind Aushub, Betonschale, Abdichtung, Belag, Filteranlage und Randsteine. Freiformen, Überlaufkanten oder schwieriger Grundstückszugang erhöhen den Preis."
       },
       "sistemas-cloracion-salina": {
         "title": "Salzelektrolyse und Heizung",
-        "description": "Genießen Sie gesünderes und kristallklares Wasser mit unseren Salzelektrolysesystemen. Verlängern Sie die Badesaison mit effizienten Wärmepumpen."
+        "description": "Genießen Sie gesünderes und kristallklares Wasser mit unseren Salzelektrolysesystemen. Verlängern Sie die Badesaison mit effizienten Wärmepumpen.",
+        "priceRange": "1.800 - 4.500 €",
+        "answer": "Eine Salzelektrolyse kostet auf Mallorca je nach Beckenvolumen 1.800 bis 4.500 €, inklusive Zelle, Steuerung und Inbetriebnahme. Eine Wärmepumpe zur Wassererwärmung kommt mit 3.500 bis 8.000 € hinzu und verlängert die Badesaison um etwa vier Monate."
       },
       "mantenimiento-reparacion": {
         "title": "Wartungs- und Reparaturservice",
-        "description": "Wir kümmern uns um die Instandsetzung, Reinigung, Verfugung und Reparatur von Lecks, damit Ihr Pool immer tadellos ist."
+        "description": "Wir kümmern uns um die Instandsetzung, Reinigung, Verfugung und Reparatur von Lecks, damit Ihr Pool immer tadellos ist.",
+        "priceRange": "120 - 280 €/Monat",
+        "answer": "Die Wartung eines privaten Pools kostet auf Mallorca je nach Größe und Besuchsfrequenz 120 bis 280 € im Monat. Enthalten sind pH- und Chlorkontrolle, Boden- und Wasserlinienreinigung, Filterrückspülung und Anlagenprüfung. Die Saisoninbetriebnahme wird separat berechnet."
       }
     }
   },
@@ -73,19 +89,27 @@
     "subservices": {
       "alicatados-pavimentos": {
         "title": "Erneuerung von Fliesen & Böden",
-        "description": "Austausch von Keramikbelägen, Mikrozement und Holzböden zur Modernisierung der Ästhetik Ihrer Räume."
+        "description": "Austausch von Keramikbelägen, Mikrozement und Holzböden zur Modernisierung der Ästhetik Ihrer Räume.",
+        "priceRange": "45 - 110 €/m²",
+        "answer": "Fliesen oder Bodenbeläge zu erneuern kostet auf Mallorca 45 bis 110 € pro m² inklusive Material. Großformatiges Feinsteinzeug und Mikrozement liegen wegen des Arbeitsaufwands im oberen Bereich. Der Ausbau des alten Belags kommt mit 12 bis 20 € pro m² hinzu."
       },
       "instalaciones-fontaneria-electricidad": {
         "title": "Technische Installationen",
-        "description": "Komplette Erneuerung von Sanitär- und Elektroleitungen zur Einhaltung von Vorschriften und Verbesserung der Sicherheit."
+        "description": "Komplette Erneuerung von Sanitär- und Elektroleitungen zur Einhaltung von Vorschriften und Verbesserung der Sicherheit.",
+        "priceRange": "90 - 180 €/m² Wohnfläche",
+        "answer": "Die komplette Erneuerung von Sanitär- und Elektroinstallation kostet auf Mallorca 90 bis 180 € pro m² Wohnfläche. Enthalten sind neuer Verteilerkasten, Verkabelung, Schalter, Mehrschichtrohre, Abflüsse und das amtliche Zertifikat. Bei 90 m² sind das 8.100 bis 16.200 €."
       },
       "mobiliario-medida": {
         "title": "Maßgefertigte Möbel",
-        "description": "Design und Montage von Küchen- und Badmöbeln, die jeden verfügbaren Zentimeter nutzen."
+        "description": "Design und Montage von Küchen- und Badmöbeln, die jeden verfügbaren Zentimeter nutzen.",
+        "priceRange": "650 - 1.900 €/lfm",
+        "answer": "Maßgefertigte Küchenmöbel kosten auf Mallorca 650 bis 1.900 € pro laufendem Meter, je nach Fronten, Beschlägen und Arbeitsplatte. Einbauschränke und Ankleiden liegen bei 400 bis 900 € pro m² Frontfläche. Planung und Montage sind immer enthalten."
       },
       "banos-sanitarios": {
         "title": "Badausstattung",
-        "description": "Fachgerechte Installation von extraflachen Duschwannen, Glasabtrennungen und hängenden Design-Sanitärobjekten."
+        "description": "Fachgerechte Installation von extraflachen Duschwannen, Glasabtrennungen und hängenden Design-Sanitärobjekten.",
+        "priceRange": "4.500 - 12.000 € pro Bad",
+        "answer": "Eine komplette Badsanierung kostet auf Mallorca je nach Größe und Ausstattung 4.500 bis 12.000 €. Enthalten sind Abbruch, Sanitärinstallation, Fliesen, Boden, Duschwanne, Duschabtrennung, Sanitärobjekte, Waschtisch und Armaturen. Ein Standardbad mit 5 m² liegt meist bei etwa 7.000 €."
       }
     }
   },
@@ -103,19 +127,27 @@
     "subservices": {
       "revestimientos-continuos": {
         "title": "Durchgehende Beschichtungen",
-        "description": "Anwendung von technischen und dekorativen Mörteln zum Schutz und zur Verschönerung von Außenwänden."
+        "description": "Anwendung von technischen und dekorativen Mörteln zum Schutz und zur Verschönerung von Außenwänden.",
+        "priceRange": "35 - 75 €/m²",
+        "answer": "Ein durchgehender Fassadenputz kostet auf Mallorca 35 bis 75 € pro m², ohne Gerüst. Einlagiger Putzmörtel liegt im unteren Bereich, Kalk- und Glättputze im oberen. Das Gerüst kommt mit 8 bis 15 € pro m² Fassade hinzu."
       },
       "aislamiento-sate": {
         "title": "WDVS-Isolierung",
-        "description": "Wärmedämmverbundsystem zur drastischen Reduzierung des Energieverbrauchs Ihres Hauses."
+        "description": "Wärmedämmverbundsystem zur drastischen Reduzierung des Energieverbrauchs Ihres Hauses.",
+        "priceRange": "90 - 140 €/m² Fassade",
+        "answer": "Ein Wärmedämmverbundsystem kostet auf Mallorca 90 bis 140 € pro m² Fassade, inklusive Gerüst, Dämmung, Gewebe, Mörtel und Oberfläche. Bei einem Einfamilienhaus mit 180 m² Fassade sind das 16.000 bis 25.000 €. Der Klimatisierungsbedarf sinkt um 30 bis 50 %."
       },
       "rehabilitacion-fachadas": {
         "title": "Fassadensanierung",
-        "description": "Ästhetische und funktionale Wiederherstellung beschädigter Fassaden, Gewährleistung der Sicherheit und Wertsteigerung der Immobilie."
+        "description": "Ästhetische und funktionale Wiederherstellung beschädigter Fassaden, Gewährleistung der Sicherheit und Wertsteigerung der Immobilie.",
+        "priceRange": "60 - 130 €/m²",
+        "answer": "Eine Fassadensanierung kostet auf Mallorca je nach Schadensbild 60 bis 130 € pro m². Enthalten sind das Abschlagen hohlliegender Bereiche, die Behandlung freiliegender Bewehrung, die Reparatur von Gesimsen, Putz und Anstrich. Denkmalgeschützte Fassaden erfordern eine gesonderte Bewertung."
       },
       "pintura-impermeabilizacion-exterior": {
         "title": "Außenanstrich & Abdichtung",
-        "description": "Wasserabweisende Behandlungen und hochbeständige Farben für dauerhaften Schutz gegen Witterungseinflüsse."
+        "description": "Wasserabweisende Behandlungen und hochbeständige Farben für dauerhaften Schutz gegen Witterungseinflüsse.",
+        "priceRange": "18 - 40 €/m²",
+        "answer": "Fassade streichen und abdichten kostet auf Mallorca 18 bis 40 € pro m². Mineralfarbe liegt im unteren Bereich, elastische Beschichtungen mit Haftbrücke im oberen. In Küstennähe empfiehlt sich die elastische Variante: Salz und Meeresfeuchte verkürzen die Lebensdauer erheblich."
       }
     }
   },
@@ -133,19 +165,27 @@
     "subservices": {
       "instalaciones-obra-nueva": {
         "title": "Elektroinstallation Neubau",
-        "description": "Planung und Ausführung umfassender Elektroprojekte für neue Häuser und Gebäude."
+        "description": "Planung und Ausführung umfassender Elektroprojekte für neue Häuser und Gebäude.",
+        "priceRange": "55 - 95 €/m²",
+        "answer": "Die Elektroinstallation eines Neubaus kostet auf Mallorca 55 bis 95 € pro m². Enthalten sind Hauptverteiler, Verkabelung, Schalter, Lichtpunkte, Steckdosen und das amtliche Zertifikat für den Netzanschluss. Eine einfache Gebäudeautomation kommt mit 15 bis 30 € pro m² hinzu."
       },
       "actualizacion-reforma-electrica": {
         "title": "Elektrische Aufrüstung & Sanierung",
-        "description": "Austausch alter Verkabelungen und Schalttafeln zur Anpassung der Anlage an aktuelle Vorschriften."
+        "description": "Austausch alter Verkabelungen und Schalttafeln zur Anpassung der Anlage an aktuelle Vorschriften.",
+        "priceRange": "3.500 - 9.000 € pro Wohnung",
+        "answer": "Die Modernisierung der Elektroinstallation kostet auf Mallorca 3.500 bis 9.000 €. Enthalten sind ein neuer Verteiler mit FI- und Leitungsschutzschaltern, neue Verkabelung, Schalter und Zertifikat. Sie ist zwingend, wenn die Anlage vor 1973 errichtet wurde oder keine Erdung hat."
       },
       "boletines-certificaciones": {
         "title": "Zertifikate & Bescheinigungen",
-        "description": "Ausstellung offizieller Elektrobescheinigungen und Abwicklung mit Versorgungsunternehmen."
+        "description": "Ausstellung offizieller Elektrobescheinigungen und Abwicklung mit Versorgungsunternehmen.",
+        "priceRange": "150 - 450 €",
+        "answer": "Ein amtliches Elektrozertifikat kostet auf Mallorca je nach Anschlussleistung und Nutzung 150 bis 450 €. Enthalten sind Prüfung, Messungen, Ausstellung durch einen zugelassenen Installateur und Registrierung bei der Behörde. Es ist für Anmeldung oder Erweiterung des Anschlusses zwingend."
       },
       "iluminacion-led": {
         "title": "Effiziente LED-Beleuchtung",
-        "description": "Technische und dekorative Beleuchtungsprojekte mit LED-Technologie für maximale Einsparung und visuellen Komfort."
+        "description": "Technische und dekorative Beleuchtungsprojekte mit LED-Technologie für maximale Einsparung und visuellen Komfort.",
+        "priceRange": "Amortisation in 18-30 Monaten",
+        "answer": "Ein LED-Lichtprojekt kostet auf Mallorca 25 bis 70 € pro installiertem Lichtpunkt, inklusive Material. Ein kompletter Austausch senkt den Beleuchtungsverbrauch um 60 bis 80 %, mit einer Amortisation von üblicherweise 18 bis 30 Monaten."
       }
     }
   },
@@ -163,19 +203,27 @@
     "subservices": {
       "ventanas-puertas-aluminio-pvc": {
         "title": "Fenster & Türen (Alu/PVC)",
-        "description": "Hocheffiziente Außenschreinerei mit thermischer Trennung und Doppelverglasung."
+        "description": "Hocheffiziente Außenschreinerei mit thermischer Trennung und Doppelverglasung.",
+        "priceRange": "450 - 950 €/m² Öffnung",
+        "answer": "Ein Fenstertausch kostet auf Mallorca je nach Material und Leistung 450 bis 950 € pro m² Öffnung. Kunststoff mit Zweifachverglasung liegt im unteren Bereich, Aluminium mit thermischer Trennung und Dreifachverglasung im oberen. Ausbau, Montage und Anschlüsse sind enthalten."
       },
       "cerramientos-pergolas": {
         "title": "Überdachungen & Pergolen",
-        "description": "Leichte Strukturen für Terrassen und Gärten, die Ihren Wohnraum nach außen erweitern."
+        "description": "Leichte Strukturen für Terrassen und Gärten, die Ihren Wohnraum nach außen erweitern.",
+        "priceRange": "300 - 850 €/m²",
+        "answer": "Eine Pergola oder Terrassenverglasung kostet auf Mallorca 300 bis 850 € pro m². Aluminiumpergolen mit verstellbaren Lamellen liegen im oberen Bereich, feste Konstruktionen mit leichter Bedachung im unteren. Vorab sollte geprüft werden, ob eine Baugenehmigung erforderlich ist."
       },
       "puertas-paso-entrada": {
         "title": "Durchgangs- & Eingangstüren",
-        "description": "Lieferung und Montage von massiven, lackierten oder gepanzerten Holztüren mit erstklassigen Oberflächen."
+        "description": "Lieferung und Montage von massiven, lackierten oder gepanzerten Holztüren mit erstklassigen Oberflächen.",
+        "priceRange": "220 - 900 € pro Stück",
+        "answer": "Eine montierte Zimmertür kostet auf Mallorca je nach Material und Oberfläche 220 bis 900 €. Weiß lackierte Türen liegen im unteren Bereich, Massivholz oder wandbündige Schiebetüren im oberen. Eine Sicherheits- oder Panzerhaustür liegt bei 900 bis 2.500 €."
       },
       "armarios-vestidores-medida": {
         "title": "Maßgefertigte Schränke & Ankleiden",
-        "description": "Design von personalisierten Schrankinnenräumen für maximale Organisation und Eleganz."
+        "description": "Design von personalisierten Schrankinnenräumen für maximale Organisation und Eleganz.",
+        "priceRange": "400 - 900 €/m² Frontfläche",
+        "answer": "Ein Einbauschrank kostet auf Mallorca 400 bis 900 € pro m² Frontfläche. Der Preis hängt vom Öffnungssystem, den Beschlägen und der Inneneinteilung ab. Eine komplette Ankleide mit 6 m² liegt üblicherweise zwischen 3.500 und 6.500 €."
       }
     }
   },
@@ -193,19 +241,27 @@
     "subservices": {
       "redes-fontaneria-desagues": {
         "title": "Sanitär- & Abwassernetze",
-        "description": "Installation von Versorgungs- und Entsorgungsrohren mit modernen Materialien (Mehrschicht, PPR, schallgedämmtes PVC)."
+        "description": "Installation von Versorgungs- und Entsorgungsrohren mit modernen Materialien (Mehrschicht, PPR, schallgedämmtes PVC).",
+        "priceRange": "45 - 90 €/m² Wohnfläche",
+        "answer": "Die Erneuerung von Wasser- und Abwasserleitungen kostet auf Mallorca 45 bis 90 € pro m² Wohnfläche. Enthalten sind Mehrschicht- oder PPR-Rohre, Absperrventile je Raum, schallgedämmte PVC-Abflüsse und Dichtheitsprüfung. Bei 90 m² sind das 4.000 bis 8.100 €."
       },
       "reparacion-fugas": {
         "title": "Leckreparatur & Störungen",
-        "description": "Schnelle Erkennung und endgültige Lösung von Dichtheitsproblemen und Verstopfungen."
+        "description": "Schnelle Erkennung und endgültige Lösung von Dichtheitsproblemen und Verstopfungen.",
+        "priceRange": "120 - 600 € je nach Lage",
+        "answer": "Eine Wasserleckreparatur kostet auf Mallorca je nach Lage und Zugänglichkeit 120 bis 600 €. Die zerstörungsfreie Ortung mit Geofon oder Wärmebildkamera wird mit 120 bis 250 € berechnet; dieser Betrag wird bei Ausführung der Reparatur angerechnet."
       },
       "griferia-sanitarios": {
         "title": "Armaturen & Sanitärkeramik",
-        "description": "Montage von Bad- und Küchenelementen aller Marken, die eine einwandfreie Funktion gewährleisten."
+        "description": "Montage von Bad- und Küchenelementen aller Marken, die eine einwandfreie Funktion gewährleisten.",
+        "priceRange": "90 - 250 € pro Element",
+        "answer": "Die Montage von Armaturen oder Sanitärobjekten kostet auf Mallorca 90 bis 250 € pro Element, ohne Material. Ein Wand-WC mit Unterputzgestell steigt wegen der erforderlichen Bauarbeiten auf 350 bis 550 €. Ein einfacher Armaturentausch liegt im unteren Bereich."
       },
       "agua-caliente-sanitaria": {
         "title": "Warmwasserbereitung",
-        "description": "Installation und Wartung von Elektroboilern, Gasheizern und Aerothermiesystemen."
+        "description": "Installation und Wartung von Elektroboilern, Gasheizern und Aerothermiesystemen.",
+        "priceRange": "450 - 6.500 € je nach System",
+        "answer": "Warmwasserbereitung kostet auf Mallorca ab 450 € für einen Elektroboiler bis 6.500 € für eine Luft-Wasser-Wärmepumpe. Ein Gasdurchlauferhitzer liegt zwischen 700 und 1.400 €. Die Wärmepumpe ist die effizienteste Lösung und liefert im balearischen Klima die beste Leistung."
       }
     }
   },
@@ -223,19 +279,27 @@
     "subservices": {
       "pintura-interior-decorativa": {
         "title": "Innen- & Dekorationsmalerei",
-        "description": "Glatte Oberflächen, Stuck, Tapeten und dekorative Techniken zur Personalisierung Ihrer Umgebungen."
+        "description": "Glatte Oberflächen, Stuck, Tapeten und dekorative Techniken zur Personalisierung Ihrer Umgebungen.",
+        "priceRange": "8 - 25 €/m²",
+        "answer": "Innenanstriche kosten auf Mallorca 8 bis 25 € pro m² gestrichener Fläche. Glatte weiße Dispersion liegt im unteren Bereich, Stuck, Lasuren und Tapeten im oberen. Eine Wohnung mit 90 m² liegt üblicherweise zwischen 1.400 und 3.200 €."
       },
       "pintura-fachadas": {
         "title": "Fassadenanstrich",
-        "description": "Elastische und steinartige Beschichtungen zum Schutz der Gebäudehülle gegen Witterungseinflüsse."
+        "description": "Elastische und steinartige Beschichtungen zum Schutz der Gebäudehülle gegen Witterungseinflüsse.",
+        "priceRange": "14 - 32 €/m²",
+        "answer": "Ein Fassadenanstrich kostet auf Mallorca 14 bis 32 € pro m², ohne Gerüst. Enthalten sind Reinigung, Rissverschluss, Grundierung und zwei Deckanstriche. In Küstennähe empfiehlt sich elastische Farbe mit Salzschutz: sie liegt im oberen Bereich, verdoppelt aber die Lebensdauer."
       },
       "alisado-paredes": {
         "title": "Wandglättung",
-        "description": "Umwandlung alter Wände in glatte und moderne Oberflächen, bereit zum Streichen oder Tapezieren."
+        "description": "Umwandlung alter Wände in glatte und moderne Oberflächen, bereit zum Streichen oder Tapezieren.",
+        "priceRange": "12 - 22 €/m²",
+        "answer": "Rauputz entfernen und Wände glätten kostet auf Mallorca 12 bis 22 € pro m², inklusive Schlussanstrich. Der Ablauf umfasst Spachteln, Schleifen, Grundieren und zwei Anstriche. Es ist die Maßnahme, die eine ältere Wohnung für wenig Geld am stärksten verändert."
       },
       "tratamiento-humedades": {
         "title": "Feuchtigkeitsbehandlung",
-        "description": "Sanierung von Oberflächen, die von Schimmel, Salpeter oder Kapillarität betroffen sind, vor dem Anstrich."
+        "description": "Sanierung von Oberflächen, die von Schimmel, Salpeter oder Kapillarität betroffen sind, vor dem Anstrich.",
+        "priceRange": "35 - 120 €/m² betroffen",
+        "answer": "Feuchtigkeitssanierung kostet auf Mallorca je nach Ursache 35 bis 120 € pro m² betroffener Fläche. Oberflächenkondensat liegt im unteren Bereich, aufsteigende Feuchte mit Chemiesperre oder Injektion im oberen. Die Ursache muss vor dem Anstrich behoben werden."
       }
     }
   },
@@ -253,19 +317,27 @@
     "subservices": {
       "cubiertas-planas-terrazas": {
         "title": "Flachdächer & Terrassen",
-        "description": "Begehbare Abdichtung mit Oberflächen aus Fliesen, Kies oder Kunstrasen."
+        "description": "Begehbare Abdichtung mit Oberflächen aus Fliesen, Kies oder Kunstrasen.",
+        "priceRange": "55 - 120 €/m²",
+        "answer": "Die Abdichtung eines Flachdachs oder einer Terrasse kostet auf Mallorca 55 bis 120 € pro m². Enthalten sind Abbruch des Bestandsbelags, Gefälleausbildung, Dichtungsbahn, Dämmung und begehbare Oberfläche. Bleibt der Belag erhalten, sinkt der Preis mit Flüssigabdichtung auf 30 bis 50 € pro m²."
       },
       "reparacion-tejados": {
         "title": "Dachreparatur",
-        "description": "Austausch kaputter Ziegel, Reinigung von Dachrinnen und Verstärkung besonderer Punkte auf Schrägdächern."
+        "description": "Austausch kaputter Ziegel, Reinigung von Dachrinnen und Verstärkung besonderer Punkte auf Schrägdächern.",
+        "priceRange": "40 - 95 €/m²",
+        "answer": "Eine Steildachreparatur kostet auf Mallorca je nach Umfang 40 bis 95 € pro m². Punktueller Ziegeltausch und Kehlenarbeiten liegen im unteren Bereich, komplette Neueindeckung mit neuer Lattung und Unterspannbahn im oberen. Die Dachrinnenreinigung ist enthalten."
       },
       "laminas-membranas": {
         "title": "Technische Folien & Membranen",
-        "description": "Zertifizierte Installation von EPDM, PVC-Folien und Bitumenbahnen der neuesten Generation."
+        "description": "Zertifizierte Installation von EPDM, PVC-Folien und Bitumenbahnen der neuesten Generation.",
+        "priceRange": "45 - 85 €/m²",
+        "answer": "Die Verlegung einer Dichtungsbahn kostet auf Mallorca je nach System 45 bis 85 € pro m². EPDM und armiertes PVC erlauben großformatige Bahnen mit weniger Nähten, was die Schwachstellen reduziert. Alle unsere Verlegungen werden mit Flutungsprobe übergeben."
       },
       "aislamiento-cubiertas": {
         "title": "Dachwärmedämmung",
-        "description": "Einbau von Dämmplatten unter die Abdichtung zur Verbesserung des thermischen Komforts unter dem Dach."
+        "description": "Einbau von Dämmplatten unter die Abdichtung zur Verbesserung des thermischen Komforts unter dem Dach.",
+        "priceRange": "30 - 60 €/m² zusätzlich",
+        "answer": "Eine Wärmedämmung unter der Dachabdichtung kostet auf Mallorca 30 bis 60 € pro m² zusätzlich. Es ist die Maßnahme mit der besten Rendite der gesamten Gebäudehülle: über das Dach gehen bis zu 30 % der Wärmeverluste und -gewinne einer Wohnung."
       }
     }
   },
@@ -315,5 +387,30 @@
         }
       ]
     }
+  },
+  "ui": {
+    "breadcrumbHome": "Startseite",
+    "intro": "Bei Express Renovation Mallorca wissen wir, dass {service} eine bedeutende Investition ist. Unser Spezialistenteam kümmert sich um jedes Detail und garantiert hochwertige Ausführung und Langlebigkeit.",
+    "whyUsTitle": "Warum uns für diesen Service wählen?",
+    "whyUs": [
+      "Zertifizierte Experten für {category}.",
+      "Garantiert hochwertige Materialien.",
+      "Vertraglich festgelegte Fertigstellungstermine.",
+      "Transparente Angebote ohne Überraschungen."
+    ],
+    "sidebarTitle": "Interesse an {service}?",
+    "sidebarSubtitle": "Erhalten Sie sofort eine massgeschneiderte Preisschätzung für Ihr Projekt.",
+    "sidebarCta": "Jetzt Preis berechnen",
+    "callUs": "Oder rufen Sie uns direkt an",
+    "moreIn": "Mehr zu {category}",
+    "closingTitle": "Starten Sie {service} noch heute",
+    "closingCta": "Mit einem Berater sprechen",
+    "categoryAll": "Alles, was wir im Bereich {category} anbieten",
+    "viewDetail": "Details ansehen",
+    "faqSubtitle": "Antworten auf die häufigsten Fragen zu unseren Leistungen.",
+    "zonesTitle": "{service} auf Mallorca — Unsere Einsatzgebiete",
+    "priceLabel": "Richtpreis",
+    "priceDisclaimer": "Orientierende Marktspanne für Mallorca. Der Endpreis wird nach der Ortsbesichtigung festgelegt.",
+    "answerTitle": "Was kostet {service} auf Mallorca?"
   }
 }

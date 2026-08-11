@@ -1,10 +1,11 @@
 import { Wrench, Waves, Home, Layers, Zap, Hammer, Droplets, Paintbrush, Shield } from 'lucide-react';
+import { SERVICE_IMAGES } from '@/lib/site-assets';
 
 export const services = [
   {
     id: 'construccion-y-reformas',
     icon: <Wrench />,
-    image: 'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    image: SERVICE_IMAGES['construccion-y-reformas'],
     imageHint: 'construction site',
     subservices: [
       { id: 'gestion-integral-obra-nueva' },
@@ -16,7 +17,7 @@ export const services = [
   {
     id: 'piscinas',
     icon: <Waves />,
-    image: 'https://firebasestorage.googleapis.com/v0/b/local-digital-eye.firebasestorage.app/o/business%2Frm-construcciones%2Fstair-swimming-pool-beautiful-luxury-hotel-pool-resort.jpg?alt=media&token=000a63f7-5bc9-4725-8241-9a1aca26f0ee',
+    image: SERVICE_IMAGES['piscinas'],
     imageHint: 'swimming pool',
     subservices: [
       { id: 'diseno-personalizado' },
@@ -28,7 +29,7 @@ export const services = [
   {
     id: 'reformas-de-interiores',
     icon: <Home />,
-    image: 'https://firebasestorage.googleapis.com/v0/b/local-digital-eye.firebasestorage.app/o/business%2Frm-construcciones%2Freformas-interiores.jpg?alt=media&token=538252a2-39d1-4cf6-9901-07bcee453c1a',
+    image: SERVICE_IMAGES['reformas-de-interiores'],
     imageHint: 'modern kitchen',
     subservices: [
       { id: 'alicatados-pavimentos' },
@@ -40,7 +41,7 @@ export const services = [
   {
     id: 'paramentos-verticales',
     icon: <Layers />,
-    image: 'https://firebasestorage.googleapis.com/v0/b/local-digital-eye.firebasestorage.app/o/business%2Frm-construcciones%2Fportrait-engineer-job-site-work-hours.jpg?alt=media&token=62378104-d756-4d9f-92a7-e0663ce03fc6',
+    image: SERVICE_IMAGES['paramentos-verticales'],
     imageHint: 'building facade',
     subservices: [
       { id: 'revestimientos-continuos' },
@@ -52,7 +53,7 @@ export const services = [
   {
     id: 'pintura',
     icon: <Paintbrush />,
-    image: 'https://firebasestorage.googleapis.com/v0/b/local-digital-eye.firebasestorage.app/o/business%2Frm-construcciones%2Fsafety-tools-painting-work.jpg?alt=media&token=2de4b481-d54b-465b-8993-c027428dc313',
+    image: SERVICE_IMAGES['pintura'],
     imageHint: 'professional painter',
     subservices: [
       { id: 'pintura-interior-decorativa' },
@@ -64,7 +65,7 @@ export const services = [
   {
     id: 'impermeabilizacion',
     icon: <Shield />,
-    image: 'https://firebasestorage.googleapis.com/v0/b/local-digital-eye.firebasestorage.app/o/business%2Frm-construcciones%2Fclose-up-safety-boos-worker-use-boot-safety-cleaning-by-water.jpg?alt=media&token=2b06910b-0555-461a-9079-9045ddfa7912',
+    image: SERVICE_IMAGES['impermeabilizacion'],
     imageHint: 'roof waterproofing',
     subservices: [
       { id: 'cubiertas-planas-terrazas' },
@@ -76,7 +77,7 @@ export const services = [
   {
     id: 'electricidad',
     icon: <Zap />,
-    image: 'https://firebasestorage.googleapis.com/v0/b/local-digital-eye.firebasestorage.app/o/business%2Frm-construcciones%2Fmale-electrician-works-switchboard-with-electrical-connecting-cable.jpg?alt=media&token=398720eb-bd07-4aee-90cc-0376ed7b892a',
+    image: SERVICE_IMAGES['electricidad'],
     imageHint: 'electrical work',
     subservices: [
       { id: 'instalaciones-obra-nueva' },
@@ -88,7 +89,7 @@ export const services = [
   {
     id: 'carpinteria',
     icon: <Hammer />,
-    image: 'https://firebasestorage.googleapis.com/v0/b/local-digital-eye.firebasestorage.app/o/business%2Frm-construcciones%2Fcarpinteria.jpg?alt=media&token=3a943388-4d57-474c-86d7-ca02901b2fff',
+    image: SERVICE_IMAGES['carpinteria'],
     imageHint: 'woodworking tools',
     subservices: [
       { id: 'ventanas-puertas-aluminio-pvc' },
@@ -100,7 +101,7 @@ export const services = [
   {
     id: 'fontaneria',
     icon: <Droplets />,
-    image: 'https://firebasestorage.googleapis.com/v0/b/local-digital-eye.firebasestorage.app/o/business%2Frm-construcciones%2Ffontaneria.jpg?alt=media&token=265db5dc-043b-46b9-a87f-d968e5b3f1df',
+    image: SERVICE_IMAGES['fontaneria'],
     imageHint: 'plumbing pipes',
     subservices: [
       { id: 'redes-fontaneria-desagues' },

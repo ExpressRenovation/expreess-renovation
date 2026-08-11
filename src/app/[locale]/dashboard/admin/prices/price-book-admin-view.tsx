@@ -1,97 +1,42 @@
-
 'use client';
 
-import { useState } from 'react';
-import { PriceBookTable } from '@/components/prices/price-book-table';
-import { PriceBookUploader } from './price-book-uploader';
-import { Button } from '@/components/ui/button';
-import { PlusCircle } from 'lucide-react';
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog";
-
-import { Search } from 'lucide-react';
-import { Input } from '@/components/ui/input';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { PriceBookDashboard } from "@/components/prices/modern/PriceBookDashboard";
+import { CatalogManagementDashboard } from "@/components/prices/modern/CatalogManagementDashboard";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export function PriceBookAdminView({ locale }: { locale: string }) {
-    const [year, setYear] = useState<number>(new Date().getFullYear());
-    const [refreshKey, setRefreshKey] = useState(0);
-    const [isUploadOpen, setIsUploadOpen] = useState(false);
-    const [searchQuery, setSearchQuery] = useState('');
-    const [searchInput, setSearchInput] = useState('');
+    const searchParams = useSearchParams();
+    const initialTab = searchParams.get("view") === "catalog" ? "catalog" : "price-book";
+    const [currentTab, setCurrentTab] = useState(initialTab);
 
-    const handleSearch = () => {
-        setSearchQuery(searchInput);
-    };
-
-    const handleUploadComplete = () => {
-        setRefreshKey(prev => prev + 1);
-        setIsUploadOpen(false);
-    };
+    // Sync state if URL changes (optional, but good for back button if we were pushing state)
+    // For now just initial load is enough, but let's be reactive
+    useEffect(() => {
+        const view = searchParams.get("view");
+        if (view === "catalog") setCurrentTab("catalog");
+        else if (view === "price-book") setCurrentTab("price-book");
+    }, [searchParams]);
 
     return (
-        <div className="space-y-6">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <div>
-                    <h1 className="text-3xl font-bold font-headline">Administración de Precios</h1>
-                    <p className="text-muted-foreground">Gestiona la base de conocimiento de precios para la IA.</p>
+        <div className="w-full h-full p-4 md:p-6 bg-muted/10">
+            <Tabs value={currentTab} onValueChange={setCurrentTab} className="w-full h-full flex flex-col">
+                <div className="flex items-center justify-between mb-4">
+                    <TabsList>
+                        <TabsTrigger value="price-book">Base de Precios (Partidas)</TabsTrigger>
+                        <TabsTrigger value="catalog">Catálogo Obramat (Materiales)</TabsTrigger>
+                    </TabsList>
                 </div>
 
-                <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-2">
-                        <div className="relative w-64">
-                            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                            <Input
-                                placeholder="Buscar partida (ej: demoler...)"
-                                value={searchInput}
-                                onChange={(e) => setSearchInput(e.target.value)}
-                                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                                className="pl-8"
-                            />
-                        </div>
-                        <Button variant="secondary" onClick={handleSearch} disabled={searchInput.trim().length === 0}>
-                            Buscar
-                        </Button>
-                    </div>
+                <TabsContent value="price-book" className="h-full mt-0">
+                    <PriceBookDashboard />
+                </TabsContent>
 
-                    <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium">Año:</span>
-                        <input
-                            type="number"
-                            value={year}
-                            onChange={(e) => setYear(parseInt(e.target.value))}
-                            className="border rounded px-2 py-1 w-20 text-center"
-                        />
-                    </div>
-
-                    <Dialog open={isUploadOpen} onOpenChange={setIsUploadOpen}>
-                        <DialogTrigger asChild>
-                            <Button className="gap-2">
-                                <PlusCircle className="w-4 h-4" />
-                                Subir Nuevo Libro
-                            </Button>
-                        </DialogTrigger>
-                        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-                            <DialogHeader>
-                                <DialogTitle>Subir Libro de Precios</DialogTitle>
-                                <DialogDescription>
-                                    Carga un PDF (formato Preoc o similar) para que la IA extraiga las partidas.
-                                </DialogDescription>
-                            </DialogHeader>
-                            <div className="mt-4">
-                                <PriceBookUploader locale={locale} onUploadComplete={handleUploadComplete} />
-                            </div>
-                        </DialogContent>
-                    </Dialog>
-                </div>
-            </div>
-
-            <PriceBookTable year={year} searchQuery={searchQuery} key={refreshKey} />
+                <TabsContent value="catalog" className="h-full mt-0">
+                    <CatalogManagementDashboard />
+                </TabsContent>
+            </Tabs>
         </div>
     );
 }

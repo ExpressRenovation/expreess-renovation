@@ -13,19 +13,27 @@
     "subservices": {
       "gestion-integral-obra-nueva": {
         "title": "Gestión Integral de Obra Nueva",
-        "description": "Coordinamos y ejecutamos tu proyecto de edificación desde el movimiento de tierras hasta la entrega de llaves. Control total de plazos y costes."
+        "description": "Coordinamos y ejecutamos tu proyecto de edificación desde el movimiento de tierras hasta la entrega de llaves. Control total de plazos y costes.",
+        "priceRange": "1.400 - 2.200 €/m² construido",
+        "answer": "Construir una vivienda de obra nueva en Mallorca cuesta entre 1.400 y 2.200 €/m² según calidades, acceso a parcela y complejidad estructural. La cifra incluye ejecución material, dirección facultativa y licencias, pero no el suelo. Un chalet de 200 m² se mueve habitualmente entre 280.000 y 440.000 €."
       },
       "reformas-integrales-viviendas-locales": {
         "title": "Reformas Integrales de Viviendas y Locales",
-        "description": "Renovación completa de espacios interiores y exteriores, adaptando tu propiedad a las necesidades modernas de funcionalidad y estilo."
+        "description": "Renovación completa de espacios interiores y exteriores, adaptando tu propiedad a las necesidades modernas de funcionalidad y estilo.",
+        "priceRange": "600 - 1.100 €/m²",
+        "answer": "Una reforma integral en Mallorca cuesta entre 600 y 1.100 €/m² según el nivel de acabados y el estado de partida. Incluye demolición, instalaciones nuevas de fontanería y electricidad, alicatados, pavimentos, carpintería y pintura. Una vivienda de 90 m² suele situarse entre 54.000 y 99.000 €."
       },
       "ampliaciones-redistribucion": {
         "title": "Ampliaciones y Redistribución",
-        "description": "Maximizamos el potencial de tu inmueble añadiendo metros cuadrados o reconfigurando el layout para obtener espacios más abiertos y luminosos."
+        "description": "Maximizamos el potencial de tu inmueble añadiendo metros cuadrados o reconfigurando el layout para obtener espacios más abiertos y luminosos.",
+        "priceRange": "900 - 1.600 €/m² ampliado",
+        "answer": "Ampliar una vivienda en Mallorca cuesta entre 900 y 1.600 €/m² de superficie nueva. El precio depende de si hay que reforzar cimentación, del tipo de cubierta y de la tramitación urbanística. La redistribución interior sin ampliar superficie parte de 350 €/m² afectado."
       },
       "asesoramiento-materiales-construccion": {
         "title": "Asesoramiento en Materiales",
-        "description": "Consultoría experta para la elección de materiales sostenibles, duraderos y estéticamente acordes a tu visión arquitectónica."
+        "description": "Consultoría experta para la elección de materiales sostenibles, duraderos y estéticamente acordes a tu visión arquitectónica.",
+        "priceRange": "Sin coste con obra contratada",
+        "answer": "El asesoramiento en materiales es gratuito cuando se contrata la obra con nosotros. Incluye visita a proveedores, comparativa técnica de alternativas y muestras físicas. Como servicio independiente de consultoría, parte de 450 € para un proyecto de vivienda completa."
       }
     }
   },
@@ -43,19 +51,27 @@
     "subservices": {
       "diseno-personalizado": {
         "title": "Diseño Personalizado de Piscinas",
-        "description": "Creamos piscinas únicas que se integran perfectamente con la arquitectura de tu casa y el paisaje. Formas libres, infinity pools y diseños de autor."
+        "description": "Creamos piscinas únicas que se integran perfectamente con la arquitectura de tu casa y el paisaje. Formas libres, infinity pools y diseños de autor.",
+        "priceRange": "2.500 - 6.000 € (proyecto)",
+        "answer": "El diseño personalizado de una piscina en Mallorca cuesta entre 2.500 y 6.000 € e incluye levantamiento topográfico, propuesta volumétrica, renders y documentación técnica para licencia. El importe se descuenta del presupuesto de construcción si se ejecuta la obra con nosotros."
       },
       "construccion-gunitado": {
         "title": "Construcción con Hormigón Gunitado",
-        "description": "Utilizamos la técnica del gunitado (hormigón proyectado) para garantizar vasos monolíticos, totalmente estancos y de máxima durabilidad."
+        "description": "Utilizamos la técnica del gunitado (hormigón proyectado) para garantizar vasos monolíticos, totalmente estancos y de máxima durabilidad.",
+        "priceRange": "22.000 - 45.000 € (8x4 m)",
+        "answer": "Una piscina de hormigón gunitado de 8x4 m en Mallorca cuesta entre 22.000 y 45.000 € llave en mano. Incluye excavación, vaso gunitado, impermeabilización, revestimiento, depuración y coronación. El precio sube con formas libres, desbordante o accesos difíciles a la parcela."
       },
       "sistemas-cloracion-salina": {
         "title": "Cloración Salina y Climatización",
-        "description": "Disfruta de un agua más sana y cristalina con nuestros sistemas de electrólisis salina. Alarga la temporada de baño con bombas de calor eficientes."
+        "description": "Disfruta de un agua más sana y cristalina con nuestros sistemas de electrólisis salina. Alarga la temporada de baño con bombas de calor eficientes.",
+        "priceRange": "1.800 - 4.500 €",
+        "answer": "Instalar cloración salina en Mallorca cuesta entre 1.800 y 4.500 € según el volumen del vaso, e incluye célula, cuadro de control y puesta en marcha. Una bomba de calor para climatizar el agua añade entre 3.500 y 8.000 €, y alarga la temporada de baño unos cuatro meses."
       },
       "mantenimiento-reparacion": {
         "title": "Servicio de Mantenimiento y Reparación",
-        "description": "Nos encargamos de la puesta a punto, limpieza, lechada y reparación de fugas para que tu piscina esté siempre impecable."
+        "description": "Nos encargamos de la puesta a punto, limpieza, lechada y reparación de fugas para que tu piscina esté siempre impecable.",
+        "priceRange": "120 - 280 €/mes",
+        "answer": "El mantenimiento de una piscina privada en Mallorca cuesta entre 120 y 280 € al mes según tamaño y frecuencia de visita. Incluye control de pH y cloro, limpieza de fondo y línea de flotación, lavado de filtro y revisión de equipos. La puesta a punto de temporada se factura aparte."
       }
     }
   },
@@ -73,19 +89,27 @@
     "subservices": {
       "alicatados-pavimentos": {
         "title": "Renovación de Alicatados y Pavimentos",
-        "description": "Sustitución de revestimientos cerámicos, microcemento y suelos de madera para modernizar la estética de tus estancias."
+        "description": "Sustitución de revestimientos cerámicos, microcemento y suelos de madera para modernizar la estética de tus estancias.",
+        "priceRange": "45 - 110 €/m²",
+        "answer": "Renovar alicatado o pavimento en Mallorca cuesta entre 45 y 110 €/m² con material incluido. El porcelánico de gran formato y el microcemento se sitúan en la franja alta por su exigencia de mano de obra. Retirar el revestimiento antiguo añade entre 12 y 20 €/m²."
       },
       "instalaciones-fontaneria-electricidad": {
         "title": "Instalaciones Técnicas",
-        "description": "Renovación completa de redes de fontanería y circuitos eléctricos para cumplir normativas y mejorar la seguridad."
+        "description": "Renovación completa de redes de fontanería y circuitos eléctricos para cumplir normativas y mejorar la seguridad.",
+        "priceRange": "90 - 180 €/m² de vivienda",
+        "answer": "Renovar por completo fontanería y electricidad en Mallorca cuesta entre 90 y 180 €/m² de vivienda. Incluye cuadro eléctrico nuevo, cableado, mecanismos, tubería multicapa, desagües y boletín oficial. En una vivienda de 90 m² supone entre 8.100 y 16.200 €."
       },
       "mobiliario-medida": {
         "title": "Mobiliario a Medida",
-        "description": "Diseño y montaje de muebles de cocina y baño que aprovechan cada centímetro disponible."
+        "description": "Diseño y montaje de muebles de cocina y baño que aprovechan cada centímetro disponible.",
+        "priceRange": "650 - 1.900 €/ml",
+        "answer": "El mobiliario de cocina a medida en Mallorca cuesta entre 650 y 1.900 € por metro lineal según frente, herrajes y encimera. Los armarios y vestidores a medida se sitúan entre 400 y 900 €/m² de frente. El diseño y el montaje van siempre incluidos."
       },
       "banos-sanitarios": {
         "title": "Equipamiento de Baños",
-        "description": "Instalación experta de platos de ducha extraplanos, mamparas de vidrio y sanitarios suspendidos de diseño."
+        "description": "Instalación experta de platos de ducha extraplanos, mamparas de vidrio y sanitarios suspendidos de diseño.",
+        "priceRange": "4.500 - 12.000 € por baño",
+        "answer": "Reformar un baño completo en Mallorca cuesta entre 4.500 y 12.000 € según superficie y calidades. Incluye demolición, fontanería, alicatado, pavimento, plato de ducha, mampara, sanitarios, mueble y grifería. Un baño estándar de 5 m² se sitúa habitualmente sobre los 7.000 €."
       }
     }
   },
@@ -103,19 +127,27 @@
     "subservices": {
       "revestimientos-continuos": {
         "title": "Revestimientos Continuos",
-        "description": "Aplicación de morteros técnicos y decorativos para proteger y embellecer paramentos exteriores."
+        "description": "Aplicación de morteros técnicos y decorativos para proteger y embellecer paramentos exteriores.",
+        "priceRange": "35 - 75 €/m²",
+        "answer": "Aplicar un revestimiento continuo en fachada en Mallorca cuesta entre 35 y 75 €/m², sin contar andamio. El mortero monocapa ocupa la franja baja y los acabados de cal o estuco a la sal la alta. El andamio añade entre 8 y 15 €/m² de fachada."
       },
       "aislamiento-sate": {
         "title": "Aislamiento SATE",
-        "description": "Sistema de Aislamiento Térmico por el Exterior para reducir drásticamente el consumo energético de tu vivienda."
+        "description": "Sistema de Aislamiento Térmico por el Exterior para reducir drásticamente el consumo energético de tu vivienda.",
+        "priceRange": "90 - 140 €/m² de fachada",
+        "answer": "Instalar SATE en Mallorca cuesta entre 90 y 140 €/m² de fachada, incluyendo andamio, aislante, malla, morteros y acabado. En una vivienda unifamiliar con 180 m² de fachada supone entre 16.000 y 25.000 €. Reduce la demanda de climatización entre un 30 % y un 50 %."
       },
       "rehabilitacion-fachadas": {
         "title": "Rehabilitación de Fachadas",
-        "description": "Recuperación estética y funcional de fachadas deterioradas, asegurando la seguridad y revalorizando el inmueble."
+        "description": "Recuperación estética y funcional de fachadas deterioradas, asegurando la seguridad y revalorizando el inmueble.",
+        "priceRange": "60 - 130 €/m²",
+        "answer": "Rehabilitar una fachada en Mallorca cuesta entre 60 y 130 €/m² según el grado de deterioro. Incluye picado de zonas huecas, saneado de armaduras vistas, reparación de cornisas, revestimiento y pintura. Las fachadas catalogadas o con elementos de piedra requieren valoración específica."
       },
       "pintura-impermeabilizacion-exterior": {
         "title": "Pintura e Impermeabilización Exterior",
-        "description": "Tratamientos hidrófugos y pinturas de alta resistencia a la intemperie para una protección duradera."
+        "description": "Tratamientos hidrófugos y pinturas de alta resistencia a la intemperie para una protección duradera.",
+        "priceRange": "18 - 40 €/m²",
+        "answer": "Pintar e impermeabilizar una fachada en Mallorca cuesta entre 18 y 40 €/m². La pintura pétrea ocupa la franja baja y los revestimientos elásticos con puente de adherencia la alta. En zonas costeras conviene la opción elástica: el salitre y la humedad marina acortan mucho la vida útil."
       }
     }
   },
@@ -133,19 +165,27 @@
     "subservices": {
       "instalaciones-obra-nueva": {
         "title": "Instalaciones Eléctricas Obra Nueva",
-        "description": "Diseño y ejecución de proyectos eléctricos integrales para viviendas y edificios nuevos."
+        "description": "Diseño y ejecución de proyectos eléctricos integrales para viviendas y edificios nuevos.",
+        "priceRange": "55 - 95 €/m²",
+        "answer": "La instalación eléctrica de una vivienda de obra nueva en Mallorca cuesta entre 55 y 95 €/m². Incluye cuadro general, cableado, mecanismos, puntos de luz, tomas y boletín oficial para el alta con la compañía. La domótica básica añade entre 15 y 30 €/m²."
       },
       "actualizacion-reforma-electrica": {
         "title": "Actualización y Reforma Eléctrica",
-        "description": "Sustitución de cableado antiguo y cuadros eléctricos para adaptar la instalación a la normativa actual."
+        "description": "Sustitución de cableado antiguo y cuadros eléctricos para adaptar la instalación a la normativa actual.",
+        "priceRange": "3.500 - 9.000 € por vivienda",
+        "answer": "Actualizar la instalación eléctrica de una vivienda en Mallorca cuesta entre 3.500 y 9.000 €. Incluye cuadro nuevo con diferenciales y magnetotérmicos, sustitución de cableado, mecanismos y emisión de boletín. Es obligatorio si la instalación es anterior a 1973 o carece de toma de tierra."
       },
       "boletines-certificaciones": {
         "title": "Boletines y Certificaciones",
-        "description": "Emisión de boletines eléctricos oficiales y gestiones con compañías suministradoras."
+        "description": "Emisión de boletines eléctricos oficiales y gestiones con compañías suministradoras.",
+        "priceRange": "150 - 450 €",
+        "answer": "Un boletín eléctrico oficial en Mallorca cuesta entre 150 y 450 € según la potencia contratada y el uso. Incluye inspección, mediciones, emisión del certificado por instalador autorizado y registro ante la Conselleria. Es imprescindible para dar de alta o ampliar el suministro."
       },
       "iluminacion-led": {
         "title": "Iluminación LED Eficiente",
-        "description": "Proyectos de iluminación técnica y decorativa con tecnología LED para máximo ahorro y confort visual."
+        "description": "Proyectos de iluminación técnica y decorativa con tecnología LED para máximo ahorro y confort visual.",
+        "priceRange": "Amortización en 18-30 meses",
+        "answer": "Un proyecto de iluminación LED en Mallorca cuesta entre 25 y 70 € por punto de luz instalado, material incluido. La sustitución completa en una vivienda reduce el consumo de iluminación entre un 60 % y un 80 %, con amortización habitual entre 18 y 30 meses."
       }
     }
   },
@@ -163,19 +203,27 @@
     "subservices": {
       "ventanas-puertas-aluminio-pvc": {
         "title": "Ventanas y Puertas de Aluminio/PVC",
-        "description": "Carpintería exterior de alta eficiencia energética con rotura de puente térmico y doble acristalamiento."
+        "description": "Carpintería exterior de alta eficiencia energética con rotura de puente térmico y doble acristalamiento.",
+        "priceRange": "450 - 950 €/m² de hueco",
+        "answer": "Cambiar ventanas en Mallorca cuesta entre 450 y 950 €/m² de hueco según material y prestaciones. El PVC con doble acristalamiento ocupa la franja baja y el aluminio con rotura de puente térmico y triple vidrio la alta. Incluye desmontaje, instalación y remates."
       },
       "cerramientos-pergolas": {
         "title": "Cerramientos y Pérgolas",
-        "description": "Estructuras ligeras para terrazas y jardines, ampliando tu espacio habitable hacia el exterior."
+        "description": "Estructuras ligeras para terrazas y jardines, ampliando tu espacio habitable hacia el exterior.",
+        "priceRange": "300 - 850 €/m²",
+        "answer": "Una pérgola o cerramiento de terraza en Mallorca cuesta entre 300 y 850 €/m². La pérgola de aluminio con lamas orientables se sitúa en la franja alta; las estructuras fijas con cubierta ligera en la baja. Conviene verificar antes si la actuación requiere licencia municipal."
       },
       "puertas-paso-entrada": {
         "title": "Puertas de Paso y Entrada",
-        "description": "Suministro e instalación de puertas de madera maciza, lacadas o blindadas con acabados premium."
+        "description": "Suministro e instalación de puertas de madera maciza, lacadas o blindadas con acabados premium.",
+        "priceRange": "220 - 900 € por unidad",
+        "answer": "Una puerta de paso instalada en Mallorca cuesta entre 220 y 900 € según material y acabado. Las lacadas blancas ocupan la franja baja y la madera maciza o las correderas empotradas la alta. Una puerta de entrada blindada o acorazada va de 900 a 2.500 €."
       },
       "armarios-vestidores-medida": {
         "title": "Armarios y Vestidores a Medida",
-        "description": "Diseño de interiores de armario personalizados para la máxima organización y elegancia."
+        "description": "Diseño de interiores de armario personalizados para la máxima organización y elegancia.",
+        "priceRange": "400 - 900 €/m² de frente",
+        "answer": "Un armario a medida en Mallorca cuesta entre 400 y 900 € por metro cuadrado de frente. El precio depende del sistema de apertura, los herrajes y la organización interior. Un vestidor completo de 6 m² se sitúa habitualmente entre 3.500 y 6.500 €."
       }
     }
   },
@@ -193,19 +241,27 @@
     "subservices": {
       "redes-fontaneria-desagues": {
         "title": "Redes de Fontanería y Desagües",
-        "description": "Instalación de tuberías de alimentación y evacuación con materiales modernos (multicapa, PPR, PVC insonorizado)."
+        "description": "Instalación de tuberías de alimentación y evacuación con materiales modernos (multicapa, PPR, PVC insonorizado).",
+        "priceRange": "45 - 90 €/m² de vivienda",
+        "answer": "Renovar la red de fontanería y desagües en Mallorca cuesta entre 45 y 90 €/m² de vivienda. Incluye tubería multicapa o PPR, llaves de corte por estancia, desagües en PVC insonorizado y pruebas de estanqueidad. En una vivienda de 90 m² supone entre 4.000 y 8.100 €."
       },
       "reparacion-fugas": {
         "title": "Reparación de Fugas y Averías",
-        "description": "Detección rápida y solucion definitiva de problemas de estanqueidad y atascos."
+        "description": "Detección rápida y solucion definitiva de problemas de estanqueidad y atascos.",
+        "priceRange": "120 - 600 € según localización",
+        "answer": "Reparar una fuga de agua en Mallorca cuesta entre 120 y 600 € según su localización y accesibilidad. La detección no destructiva con geófono o cámara termográfica se factura entre 120 y 250 €, y ese importe se descuenta si se ejecuta la reparación."
       },
       "griferia-sanitarios": {
         "title": "Instalación de Grifería y Sanitarios",
-        "description": "Montaje de elementos de baño y cocina de todas las marcas, asegurando un funcionamiento perfecto."
+        "description": "Montaje de elementos de baño y cocina de todas las marcas, asegurando un funcionamiento perfecto.",
+        "priceRange": "90 - 250 € por elemento",
+        "answer": "Instalar grifería o sanitarios en Mallorca cuesta entre 90 y 250 € por elemento, sin contar el material. Un inodoro suspendido con bastidor empotrado sube a 350-550 € por la obra que requiere. La sustitución simple de un grifo se resuelve en la franja baja."
       },
       "agua-caliente-sanitaria": {
         "title": "Agua Caliente Sanitaria",
-        "description": "Instalación y mantenimiento de termos eléctricos, calentadores de gas y sistemas de aerotermia."
+        "description": "Instalación y mantenimiento de termos eléctricos, calentadores de gas y sistemas de aerotermia.",
+        "priceRange": "450 - 6.500 € según sistema",
+        "answer": "Instalar agua caliente sanitaria en Mallorca cuesta entre 450 € para un termo eléctrico y 6.500 € para un sistema de aerotermia. El calentador de gas se sitúa entre 700 y 1.400 €. La aerotermia es la opción más eficiente y la que mejor rendimiento da en el clima balear."
       }
     }
   },
@@ -223,19 +279,27 @@
     "subservices": {
       "pintura-interior-decorativa": {
         "title": "Pintura Interior y Decorativa",
-        "description": "Acabados lisos, estucos, papeles pintados y técnicas decorativas para personalizar tus ambientes."
+        "description": "Acabados lisos, estucos, papeles pintados y técnicas decorativas para personalizar tus ambientes.",
+        "priceRange": "8 - 25 €/m²",
+        "answer": "Pintar el interior de una vivienda en Mallorca cuesta entre 8 y 25 €/m² de superficie pintada. El plástico liso en blanco ocupa la franja baja; los estucos, veladuras y papeles pintados la alta. Una vivienda de 90 m² se sitúa habitualmente entre 1.400 y 3.200 €."
       },
       "pintura-fachadas": {
         "title": "Pintura de Fachadas",
-        "description": "Revestimientos elásticos y pétreos para proteger la envolvente del edificio contra la intemperie."
+        "description": "Revestimientos elásticos y pétreos para proteger la envolvente del edificio contra la intemperie.",
+        "priceRange": "14 - 32 €/m²",
+        "answer": "Pintar una fachada en Mallorca cuesta entre 14 y 32 €/m², sin andamio. Incluye limpieza, sellado de fisuras, imprimación y dos manos de acabado. En zonas costeras conviene pintura elástica con protección frente a salitre, que ocupa la franja alta pero dobla la vida útil."
       },
       "alisado-paredes": {
         "title": "Alisado y Quitado de Gotelé",
-        "description": "Transformación de paredes antiguas en superficies lisas y modernas, listas para pintar o empapelar."
+        "description": "Transformación de paredes antiguas en superficies lisas y modernas, listas para pintar o empapelar.",
+        "priceRange": "12 - 22 €/m²",
+        "answer": "Quitar el gotelé y alisar paredes en Mallorca cuesta entre 12 y 22 €/m², con la pintura de acabado incluida. El proceso consiste en plastecido, lijado, imprimación y dos manos. Es la intervención que más transforma una vivienda antigua por menos dinero."
       },
       "tratamiento-humedades": {
         "title": "Tratamiento de Humedades",
-        "description": "Saneamiento de superficies afectadas por moho, salitre o capilaridad antes del pintado."
+        "description": "Saneamiento de superficies afectadas por moho, salitre o capilaridad antes del pintado.",
+        "priceRange": "35 - 120 €/m² afectado",
+        "answer": "Tratar humedades en Mallorca cuesta entre 35 y 120 €/m² de superficie afectada según el origen. La condensación superficial se resuelve en la franja baja; la humedad por capilaridad, que exige barrera química o inyección, en la alta. Es imprescindible corregir la causa antes de pintar."
       }
     }
   },
@@ -253,19 +317,27 @@
     "subservices": {
       "cubiertas-planas-terrazas": {
         "title": "Cubiertas Planas y Terrazas",
-        "description": "Impermeabilización transitable con acabados en baldosa, grava o césped artificial."
+        "description": "Impermeabilización transitable con acabados en baldosa, grava o césped artificial.",
+        "priceRange": "55 - 120 €/m²",
+        "answer": "Impermeabilizar una cubierta plana o terraza en Mallorca cuesta entre 55 y 120 €/m². Incluye demolición del pavimento existente, formación de pendientes, lámina impermeable, aislamiento y acabado transitable. Mantener el pavimento actual con una lámina líquida baja el coste a 30-50 €/m²."
       },
       "reparacion-tejados": {
         "title": "Reparación de Tejados",
-        "description": "Sustitución de tejas rotas, limpieza de canalones y refuerzo de puntos singulares en cubiertas inclinadas."
+        "description": "Sustitución de tejas rotas, limpieza de canalones y refuerzo de puntos singulares en cubiertas inclinadas.",
+        "priceRange": "40 - 95 €/m²",
+        "answer": "Reparar un tejado inclinado en Mallorca cuesta entre 40 y 95 €/m² según el alcance. La sustitución puntual de tejas y el repaso de limahoyas ocupan la franja baja; el desmontaje completo con refuerzo de rastreles y lámina bajo teja, la alta. Incluye limpieza de canalones."
       },
       "laminas-membranas": {
         "title": "Láminas y Membranas Técnicas",
-        "description": "Instalación certificada de láminas EPDM, PVC y telas asfálticas de última generación."
+        "description": "Instalación certificada de láminas EPDM, PVC y telas asfálticas de última generación.",
+        "priceRange": "45 - 85 €/m²",
+        "answer": "Instalar una lámina impermeabilizante en Mallorca cuesta entre 45 y 85 €/m² según el sistema. El EPDM y el PVC armado permiten piezas de gran formato con menos soldaduras, lo que reduce los puntos débiles. Todas nuestras instalaciones se entregan con prueba de inundación."
       },
       "aislamiento-cubiertas": {
         "title": "Aislamiento Térmico de Cubiertas",
-        "description": "Incorporación de paneles aislantes bajo la impermeabilización para mejorar el confort térmico bajo cubierta."
+        "description": "Incorporación de paneles aislantes bajo la impermeabilización para mejorar el confort térmico bajo cubierta.",
+        "priceRange": "30 - 60 €/m² adicionales",
+        "answer": "Añadir aislamiento térmico bajo la impermeabilización de una cubierta en Mallorca cuesta entre 30 y 60 €/m² adicionales. Es la mejora con mejor retorno de toda la envolvente: la cubierta concentra hasta el 30 % de las pérdidas y ganancias térmicas de una vivienda."
       }
     }
   },
@@ -315,5 +387,30 @@
         }
       ]
     }
+  },
+  "ui": {
+    "breadcrumbHome": "Inicio",
+    "intro": "En Express Renovation Mallorca entendemos que {service} es una inversión importante. Nuestro equipo de especialistas se encarga de cada detalle, garantizando acabados de lujo y durabilidad.",
+    "whyUsTitle": "¿Por qué elegirnos para este servicio?",
+    "whyUs": [
+      "Expertos certificados en {category}.",
+      "Materiales de primera calidad garantizados.",
+      "Plazos de ejecución cerrados bajo contrato.",
+      "Presupuestos transparentes sin sorpresas."
+    ],
+    "sidebarTitle": "¿Interesado en {service}?",
+    "sidebarSubtitle": "Obtén una estimación de precio inmediata y personalizada para tu proyecto.",
+    "sidebarCta": "Calcular Precio Ahora",
+    "callUs": "O llámanos directamente",
+    "moreIn": "Más en {category}",
+    "closingTitle": "Comienza tu {service} hoy mismo",
+    "closingCta": "Contactar con un Agente",
+    "categoryAll": "Todo lo que hacemos en {category}",
+    "viewDetail": "Ver detalle",
+    "faqSubtitle": "Respuestas a las dudas más comunes sobre nuestros servicios.",
+    "zonesTitle": "{service} en Mallorca — Zonas de actuación",
+    "priceLabel": "Precio orientativo",
+    "priceDisclaimer": "Rango orientativo de mercado en Mallorca. El precio final se cierra tras la visita técnica.",
+    "answerTitle": "¿Cuánto cuesta {service} en Mallorca?"
   }
 }

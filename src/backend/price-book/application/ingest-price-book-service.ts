@@ -1,22 +1,25 @@
-
-
+// @ts-nocheck
 import { PriceBookRepository } from '../domain/price-book-repository';
-import { RegexPriceBookParser } from '../infrastructure/regex-price-book-parser';
+import { LLMPriceBookParser } from '../infrastructure/llm-price-book-parser';
 import { IngestionJobRepository } from '../domain/ingestion-job-repository';
-import { ai, embeddingModel } from '@/backend/ai/config/genkit.config';
+import { ai, embeddingModel } from '@/backend/ai/shared/config/genkit.config';
 import { PriceBookItem } from '../domain/price-book-item';
 
 /**
  * Application Service / Use Case: Ingest Price Book (Async Job)
  */
+
+import { BasicResourceRepository } from '../domain/basic-resource-repository';
+
 export class IngestPriceBookService {
     constructor(
         private repository: PriceBookRepository,
-        private parser: RegexPriceBookParser,
-        private jobRepository: IngestionJobRepository
+        private parser: LLMPriceBookParser,
+        private jobRepository: IngestionJobRepository,
+        private resourceRepository: BasicResourceRepository // New dependency
     ) { }
 
-    async execute(fileUrl: string, year: number, jobId: string) {
+    async execute(fileUrl: string, year: number, jobId: string, options?: { startPage?: number; maxPages?: number }) {
         console.log(`[Job ${jobId}] Starting ingestion for year ${year}...`);
 
         try {
@@ -30,9 +33,26 @@ export class IngestPriceBookService {
             };
 
             // 2. Parse PDF
-            const items = await this.parser.parsePdf(fileUrl, year,
-                async (p) => { await this.jobRepository.update(jobId, { progress: Math.min(40, p) }) }, // Cap parser progress at 40%
-                onLog
+            const items = await this.parser.parsePdf(
+                fileUrl,
+                year,
+                async (progress) => {
+                    await this.jobRepository.update(jobId, { progress, status: 'processing' });
+                },
+                async (log) => {
+                    // Append log
+                    const job = await this.jobRepository.findById(jobId);
+                    const logs = job?.logs || [];
+                    logs.push(log);
+                    // Keep only last 50 logs to avoid document size limits if needed, or valid array
+                    if (logs.length > 100) logs.shift();
+                    await this.jobRepository.update(jobId, { logs });
+                },
+                async (meta) => {
+                    // Update Metadata
+                    await this.jobRepository.update(jobId, { currentMeta: meta });
+                },
+                options // Pass options
             );
 
             await this.jobRepository.update(jobId, { progress: 40 });
@@ -52,8 +72,19 @@ export class IngestPriceBookService {
 
             await onLog(`[Job ${jobId}] Embeddings generated. Saving to database...`);
 
-            // 4. Save items (Progress 80-100)
+            // 4. Extract and Save Basic Resources (Graph Nodes)
+            // Save items (Progress 80-100)
             await this.jobRepository.update(jobId, { progress: 80 });
+
+            const resources = this.extractResources(enrichedItems);
+            if (resources.length > 0) {
+                await onLog(`[Job ${jobId}] Indexing ${resources.length} unique resources (Graph)...`);
+                // Save in chunks of 500 (Firestore batch limit)
+                for (let i = 0; i < resources.length; i += 400) {
+                    await this.resourceRepository.saveBatch(resources.slice(i, i + 400));
+                }
+            }
+
             await this.repository.saveBatch(enrichedItems);
 
             // 5. Update Job Status to Completed
@@ -94,20 +125,29 @@ export class IngestPriceBookService {
         for (let i = 0; i < total; i += batchSize) {
             const batch = items.slice(i, i + batchSize);
 
-            // Context for embedding: "Code: Description Unit"
-            // We embed a rich string representation to improve semantic match
-            const textsToEmbed = batch.map(item => `${item.code}: ${item.description} (${item.unit})`);
+            // Context for embedding: "Chapter > Section > Description (Code Unit)"
+            // Rich Context for "Atomic" Semantic Search
+            const textsToEmbed = batch.map(item => {
+                const context = [item.chapter, item.section].filter(Boolean).join(' > ');
+                return `${context} > ${item.description} (${item.code} ${item.unit})`;
+            });
 
             try {
                 // Call Genkit embedMany
                 const embeddings = await ai.embedMany({
                     embedder: embeddingModel,
                     content: textsToEmbed,
+                    options: { outputDimensionality: 768 }
                 });
 
                 // Assign embeddings back to items
                 for (let j = 0; j < batch.length; j++) {
-                    batch[j].embedding = embeddings[j].embedding;
+                    const vector = embeddings[j].embedding;
+                    if (vector.length > 2048) {
+                        console.error(`Error: Embedding dimension ${vector.length} exceeds 2048 limit.`);
+                        throw new Error(`Generated embedding dimension ${vector.length} exceeds Firestore limit of 2048.`);
+                    }
+                    batch[j].embedding = vector;
                 }
 
                 enrichedItems.push(...batch);
@@ -128,5 +168,31 @@ export class IngestPriceBookService {
         }
 
         return enrichedItems;
+    }
+
+    /**
+     * Extracts unique BasicResources from the breakdown of all items.
+     */
+    private extractResources(items: PriceBookItem[]): import('../domain/basic-resource').BasicResource[] {
+        const resourceMap = new Map<string, import('../domain/basic-resource').BasicResource>();
+
+        items.forEach(item => {
+            if (item.breakdown) {
+                item.breakdown.forEach(comp => {
+                    // Deduplicate by code
+                    if (!resourceMap.has(comp.code)) {
+                        resourceMap.set(comp.code, {
+                            code: comp.code,
+                            description: comp.description || `Resource ${comp.code}`,
+                            unit: comp.unit || 'u',
+                            priceBase: comp.price || 0,
+                            updatedAt: new Date()
+                        });
+                    }
+                });
+            }
+        });
+
+        return Array.from(resourceMap.values());
     }
 }

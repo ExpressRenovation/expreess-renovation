@@ -8,5 +8,5 @@ export const ai = genkit({
         googleAI(),
         // firebase(), // Temporarily disabled due to import error // Temporarily disabled due to import error
     ],
-    model: 'googleai/gemini-2.0-flash', // Switched to 2.0-flash for speed/reliability
+    model: 'googleai/gemini-2.5-flash', // 2.0-flash was retired (404 on both Vertex and the Gemini API)
 });

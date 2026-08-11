@@ -7,6 +7,7 @@ import { Calculator, Hammer, Home, MessageSquarePlus, Palmtree, ArrowRight } fro
 import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { useScrollDirection } from '@/hooks/use-scroll-direction'; // Assumption: We might need to create this or use simple logic
+import { usePathname } from 'next/navigation';
 
 // Local hook removed in favor of imported hook
 
@@ -31,6 +32,8 @@ const getTriggerConfig = (mode: BudgetMode, t: any) => {
         'kitchen': { icon: MessageSquarePlus, color: 'bg-green-600' },
         'bathroom': { icon: MessageSquarePlus, color: 'bg-cyan-600' },
         'wizard': { icon: Calculator, color: 'bg-purple-600' },
+        'chat': { icon: MessageSquarePlus, color: 'bg-indigo-600' },
+        'agenda': { icon: Calculator, color: 'bg-pink-600' }
     };
 
     const modeKey = mode === 'new-build' ? 'new_build' : mode; // key in json is new_build
@@ -42,6 +45,7 @@ const getTriggerConfig = (mode: BudgetMode, t: any) => {
 
 export function SmartBudgetTrigger({ dictionary }: { dictionary?: any }) {
     const { activeMode, openWidget, isOpen } = useWidgetContext();
+    const pathname = usePathname();
     // Fallback if dictionary is missing
     const t = dictionary || { trigger: { title: "¿Pensando en renovar?", subtitle: "Obtén tu estimación gratuita.", mobileSubtitle: "Click para comenzar" } };
 
@@ -54,7 +58,7 @@ export function SmartBudgetTrigger({ dictionary }: { dictionary?: any }) {
     // Don't show if already open (modal handles visibility usually, but here sticky footer stays? 
     // Usually sticky footer stays BEHIND modal or hides. Let's hide if open to reduce clutter 
     // OR keep it if it acts as a toggle. Let's hide)
-    if (isOpen) return null;
+    if (isOpen || (pathname && pathname.includes('/dashboard'))) return null;
 
     return (
         <AnimatePresence>

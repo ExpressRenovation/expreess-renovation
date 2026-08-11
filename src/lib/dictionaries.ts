@@ -68,7 +68,37 @@ const dictionaries: Record<Locale, () => Promise<any>> = {
   },
 };
 
+const DEFAULT_LOCALE: Locale = 'es';
+
+/**
+ * Recursively fills gaps in `target` with values from `base`.
+ *
+ * Arrays and primitives are taken whole — a translated array is never merged
+ * element-by-element with the base one, which would produce a mix of languages.
+ */
+function withFallback<T>(base: T, target: unknown): T {
+  if (target === undefined || target === null) return base;
+  if (Array.isArray(base) || Array.isArray(target)) return target as T;
+  if (typeof base !== 'object' || typeof target !== 'object') return target as T;
+
+  const merged: Record<string, unknown> = { ...(base as Record<string, unknown>) };
+  for (const [key, value] of Object.entries(target as Record<string, unknown>)) {
+    merged[key] = key in merged ? withFallback(merged[key], value) : value;
+  }
+  return merged as T;
+}
+
+/**
+ * Loads a locale's dictionary, backfilled with the default locale.
+ *
+ * Translation files drift: `ca` shipped with no subservice entries at all,
+ * which made every Catalan subservice URL `notFound()` while still being listed
+ * in the sitemap and hreflang alternates. Backfilling means an untranslated key
+ * degrades to Spanish instead of taking the page down.
+ */
 export const getDictionary = async (locale: Locale) => {
-  const loader = dictionaries[locale] || dictionaries.es;
-  return loader();
+  const base = await dictionaries[DEFAULT_LOCALE]();
+  if (locale === DEFAULT_LOCALE || !dictionaries[locale]) return base;
+
+  return withFallback(base, await dictionaries[locale]());
 };

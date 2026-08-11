@@ -1,0 +1,1962 @@
+[
+    {
+        "input": {
+            "code": "D0708.0010",
+            "description": "Suministro y montaje de trasdosado sencillo, de 63 mm de espesor total, con nivel de calidad del acabado estándar (Q2), sobre banda acústica, formado por una estructura simple de perfiles de chapa de acero galvanizado de 48 mm de anchura, a base de montantes (elementos verticales) separados 400 mm entre sí, con disposición normal \"N\" y canales (elementos horizontales) al cual se atornilla una placa en  tipo normal de 15 mm de espesor; aislamiento mediante panel semirrígido de lana mineral, espesor 45 mm, en el alma. Incluso banda acústica; fijaciones para el anclaje de canales y montantes metálicos; tornillería para la fijación de las placas y pasta y cinta para el tratamiento de juntas.",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 40.73
+        }
+    },
+    {
+        "input": {
+            "code": "D0708.0011",
+            "description": "Trasdosado directo formado por placa de yeso laminado tipo normal de 15 mm de espesor, recibida directamente sobre el paramento vertical con pasta de agarre. Incluso pasta y cinta para el tratamiento de juntas.",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 26.25
+        }
+    },
+    {
+        "input": {
+            "code": "FDA005",
+            "description": "Antepecho de 1,25 m de altura de 12 cm de espesor de fábrica, de ladrillo cerámico hueco triple H12, para revestir, 24x19x12 cm, recibida con mortero de cemento y picadís M-7,5.",
+            "unit": "m"
+        },
+        "output": {
+            "calculated_total_price": 46.98
+        }
+    },
+    {
+        "input": {
+            "code": "FEF010a",
+            "description": "Ejecución de muro de 14 cm de espesor de fábrica de ladrillo cerámico hueco de carga H-20, para revestir, 24x19x14 cm, resistencia a compresión 8 N/mm², recibida con mortero de cemento industrial, color gris, M-5. Incluso p/p de replanteo, nivelación y aplomado, mermas y roturas, enjarjes, jambas y mochetas y limpieza.",
+            "unit": "m²"
+        },
+        "output": {
+            "calculated_total_price": 50.73
+        }
+    },
+    {
+        "input": {
+            "code": "FFM010",
+            "description": "Hoja exterior de cerramiento en medianera, de 19 cm de espesor de fábrica, de ladrillo cerámico hueco H16, para revestir, 14x19x24 cm, recibida con mortero de cemento y picadís M-5.",
+            "unit": "m²"
+        },
+        "output": {
+            "calculated_total_price": 56.1
+        }
+    },
+    {
+        "input": {
+            "code": "FFQ010i",
+            "description": "Fábrica de ladrillo de 8 cm de espesor de fábrica, de ladrillo cerámico Super H-6, para revestir, 8x19x33 cm, recibida con mortero de cemento portland y arena, dosificación 1:6. Incluso p/p de replanteo, nivelación y aplomado, recibido de cercos y precercos, mermas y roturas, enjarjes, mochetas, ejecución de encuentros y limpieza.",
+            "unit": "m²"
+        },
+        "output": {
+            "calculated_total_price": 34.87
+        }
+    },
+    {
+        "input": {
+            "code": "FFZ010",
+            "description": "Hoja exterior de cerramiento de fachada, de 19 cm de espesor de fábrica, de ladrillo cerámico hueco H16, para revestir, 14x19x24 cm, recibida con mortero de cemento y picadís M-5.",
+            "unit": "m²"
+        },
+        "output": {
+            "calculated_total_price": 56.1
+        }
+    },
+    {
+        "input": {
+            "code": "FRA010b",
+            "description": "Albardilla prefabricada de hormigón de color gris, para cubrición de muros, en piezas de 50x20x5 cm.",
+            "unit": "m"
+        },
+        "output": {
+            "calculated_total_price": 66.24
+        }
+    },
+    {
+        "input": {
+            "code": "FRU010b",
+            "description": "Umbral para remate de puerta de entrada o balconera de hormigón polímero, de 27,5x2 cm.",
+            "unit": "m"
+        },
+        "output": {
+            "calculated_total_price": 45.2
+        }
+    },
+    {
+        "input": {
+            "code": "FRV010b",
+            "description": "Vierteaguas de hormigón polímero de superficie pulida, plano de 26x2,5 cm.",
+            "unit": "m"
+        },
+        "output": {
+            "calculated_total_price": 43.92
+        }
+    },
+    {
+        "input": {
+            "code": "NAD030",
+            "description": "Aislamiento térmico bajo forjado formado por placa aislante Ytong Multipor, de 50 mm de espesor, de densidad 115 kg/m3, resistencia térmica 1,11 m²K/W, conductividad térmica 0,045 W/(mK), fijado con mortero ligero Multipor. Revestido con mortero ligero Multipor y malla de fibra de vidrio.",
+            "unit": "m²"
+        },
+        "output": {
+            "calculated_total_price": 37.92
+        }
+    },
+    {
+        "input": {
+            "code": "NAM020",
+            "description": "Aislamiento acústico formado por lámina de espuma de polietileno de alta densidad de 3 mm de espesor, colocado sobre capa de nivelación o pavimento existente y preparado para recibir directamente el suelo de madera o laminado (no incluido en este precio), que además actúa como barrera antihumedad y desolidarizador.",
+            "unit": "m²"
+        },
+        "output": {
+            "calculated_total_price": 6.53
+        }
+    },
+    {
+        "input": {
+            "code": "NAS010",
+            "description": "Aislamiento térmico por el exterior de fachadas, con el sistema Traditerm \"GRUPO PUMA\", formado por: mortero hidráulico Traditerm \"GRUPO PUMA\", color gris, dispuesto en tres capas: una primera capa de adhesión a el soporte, una segunda capa de protección contra la intemperie del aislamiento y una tercera capa de adhesión de la malla; un panel rígido de poliestireno expandido elastificado con grafito, de superficie lisa y mecanizado lateral recto, de 40 mm de espesor, color gris, resistencia térmica 1,25 m²K/W, conductividad térmica 0,032 W/(mK), densidad 20 kg/m³ (situado entre las dos capas de mortero hidráulico, como aislante térmico); malla de fibra de vidrio, de 3,7x4,3 mm de luz, antiálcalis, de 160 g/m² y 0,49 mm de espesor, para refuerzo del mortero (en la capa de protección); Fondo Morcemcril \"GRUPO PUMA\" y mortero acrílico Morcemcril \"GRUPO PUMA\", de 2 a 3 mm de espesor, color Blanco 100, acabado grueso.",
+            "unit": "m²"
+        },
+        "output": {
+            "calculated_total_price": 84.25
+        }
+    },
+    {
+        "input": {
+            "code": "NIG020",
+            "description": "Impermeabilización de galerías y balcones, con lámina de betún modificado con elastómero SBS, LBM(SBS)-40-FP, con armadura de fieltro de poliéster no tejido de 160 g/m², de superficie no protegida, adherida con emulsión asfáltica aniónica con cargas tipo EB al soporte de mortero de cemento CEM II/B-P 32,5 N tipo M-5, confeccionado en obra con 250 kg/m³ de cemento y una proporción en volumen 1/6, con espesor medio de 4 cm y pendiente del 1% al 5%, acabado fratasado, y protegida con capa separadora. El precio no incluye la capa separadora ni el pavimento.",
+            "unit": "m²"
+        },
+        "output": {
+            "calculated_total_price": 39.64
+        }
+    },
+    {
+        "input": {
+            "code": "PTW080b",
+            "description": "Trasdosado directo sobre partición interior, realizado con placa de yeso laminado, de 13 mm de espesor, con un panel de lana de vidrio de 40 mm de espesor, Calibel \"ISOVER\", dimensiones 1200x2600 mm, resistencia térmica 1,55882 m²K/W, conductividad térmica 0,034 W/(mK).",
+            "unit": "m²"
+        },
+        "output": {
+            "calculated_total_price": 2.51
+        }
+    },
+    {
+        "input": {
+            "code": "PTY010",
+            "description": "Tabique múltiple sistema 98 (46) MW \"PLADUR\" (4 estándar) con 2 placas de yeso laminado por cara, sobre banda estanca autoadhesiva \"PLADUR\", formado por una estructura simple, con disposición normal \"N\" de los montantes; aislamiento acústico mediante panel semirrígido de lana mineral, espesor 45 mm, en el alma; 98 mm de espesor total. El precio incluye la resolución de encuentros y puntos singulares y las ayudas de albañilería para instalaciones.",
+            "unit": "m²"
+        },
+        "output": {
+            "calculated_total_price": 73.04
+        }
+    },
+    {
+        "input": {
+            "code": "PYA010",
+            "description": "Ayudas de albañilería en edificio plurifamiliar, para instalación audiovisual (conjunto receptor, instalaciones de interfonía y/o vídeo).",
+            "unit": "m²"
+        },
+        "output": {
+            "calculated_total_price": 1.56
+        }
+    },
+    {
+        "input": {
+            "code": "PYA010b",
+            "description": "Ayudas de albañilería en edificio plurifamiliar, para infraestructura común de telecomunicaciones (ICT).",
+            "unit": "m²"
+        },
+        "output": {
+            "calculated_total_price": 2.57
+        }
+    },
+    {
+        "input": {
+            "code": "PYA010c",
+            "description": "Ayudas de albañilería en edificio plurifamiliar, para instalación de climatización.",
+            "unit": "m²"
+        },
+        "output": {
+            "calculated_total_price": 2.48
+        }
+    },
+    {
+        "input": {
+            "code": "PYA010d",
+            "description": "Ayudas de albañilería en edificio plurifamiliar, para instalación eléctrica.",
+            "unit": "m²"
+        },
+        "output": {
+            "calculated_total_price": 8.36
+        }
+    },
+    {
+        "input": {
+            "code": "PYA010e",
+            "description": "Ayudas de albañilería en edificio plurifamiliar, para instalación de fontanería.",
+            "unit": "m²"
+        },
+        "output": {
+            "calculated_total_price": 3.86
+        }
+    },
+    {
+        "input": {
+            "code": "PYA010f",
+            "description": "Ayudas de albañilería en edificio plurifamiliar, para instalación de gas.",
+            "unit": "m²"
+        },
+        "output": {
+            "calculated_total_price": 1.74
+        }
+    },
+    {
+        "input": {
+            "code": "PYA010g",
+            "description": "Ayudas de albañilería en edificio plurifamiliar, para instalación de iluminación.",
+            "unit": "m²"
+        },
+        "output": {
+            "calculated_total_price": 2.98
+        }
+    },
+    {
+        "input": {
+            "code": "PYA010h",
+            "description": "Ayudas de albañilería en edificio plurifamiliar, para instalación de protección contra incendios.",
+            "unit": "m²"
+        },
+        "output": {
+            "calculated_total_price": 1.69
+        }
+    },
+    {
+        "input": {
+            "code": "PYA010i",
+            "description": "Ayudas de albañilería en edificio plurifamiliar, para instalación de evacuación de aguas.",
+            "unit": "m²"
+        },
+        "output": {
+            "calculated_total_price": 4.01
+        }
+    },
+    {
+        "input": {
+            "code": "PYA010j",
+            "description": "Ayudas de albañilería en edificio plurifamiliar, para instalación de ascensor.",
+            "unit": "m²"
+        },
+        "output": {
+            "calculated_total_price": 1.13
+        }
+    },
+    {
+        "input": {
+            "code": "PYR040",
+            "description": "Colocación y fijación de carpintería exterior de hasta 2 m² de superficie, mediante recibido al paramento de las patillas de anclaje con mortero de cemento hidrófugo M-5.",
+            "unit": "Ud"
+        },
+        "output": {
+            "calculated_total_price": 57.64
+        }
+    },
+    {
+        "input": {
+            "code": "QAB010",
+            "description": "",
+            "unit": "m²"
+        },
+        "output": {
+            "calculated_total_price": 155.93
+        }
+    },
+    {
+        "input": {
+            "code": "QAF010",
+            "description": "Junta de dilatación en cubierta plana transitable, no ventilada, con solado fijo, tipo invertida. Impermeabilización: dos bandas de adherencia, de lámina de betún modificado con elastómero SBS, LBM(SBS)-30-FP, con armadura de fieltro de poliéster no tejido de 160 g/m², de superficie no protegida, totalmente adheridas al soporte con soplete, a cada lado de la junta, previa imprimación con emulsión asfáltica aniónica con cargas tipo EB; banda de refuerzo de 50 cm de anchura, realizada a partir de lámina de betún modificado con elastómero SBS, LBM(SBS)-40-FP, con armadura de fieltro de poliéster no tejido de 160 g/m², de superficie no protegida, formando un fuelle sin adherir en la zona de la junta; cordón de relleno para junta de dilatación, de masilla con base bituminosa tipo BH-II, de 20 mm de diámetro; y banda de terminación de 32 cm de anchura, realizada a partir de lámina de betún modificado con elastómero SBS, LBM(SBS)-40-FP, con armadura de fieltro de poliéster no tejido de 160 g/m², de superficie no protegida soldada a la impermeabilización continua de la cubierta, formando un fuelle sin adherir en la zona de la junta, sobre el cordón de relleno.",
+            "unit": "m"
+        },
+        "output": {
+            "calculated_total_price": 24.85
+        }
+    },
+    {
+        "input": {
+            "code": "QAF020",
+            "description": "Encuentro de cubierta plana transitable, no ventilada, con solado fijo, tipo convencional con paramento vertical; mediante la realización de un retranqueo perimetral de más de 5 cm con respecto al paramento vertical y de más de 20 cm de altura sobre la protección de la cubierta, relleno con mortero de cemento, industrial, M-2,5 colocado sobre la impermeabilización soldada a su vez al soporte y formada por: banda de refuerzo de 50 cm de anchura, realizada a partir de lámina de betún modificado con elastómero SBS, LBM(SBS)-40-FP, con armadura de fieltro de poliéster no tejido de 160 g/m², de superficie no protegida, totalmente adherida al soporte con soplete, previa imprimación con emulsión asfáltica aniónica con cargas tipo EB. Remate con banda de terminación de 50 cm de desarrollo con lámina de betún modificado con elastómero SBS, LBM(SBS)-40-FP, con armadura de fieltro de poliéster no tejido de 160 g/m², de superficie no protegida, acabado con un revestimiento de rodapiés de gres rústico, de 7 cm, 3 /m colocados con junta abierta (separación entre 3 y 15 mm), en capa fina con adhesivo cementoso de fraguado normal, C1 sin ninguna característica adicional, color gris y rejuntados con mortero de juntas cementoso mejorado, con absorción de agua reducida y resistencia elevada a la abrasión tipo CG 2 W A, color blanco, para juntas de 2 a 15 mm.",
+            "unit": "m"
+        },
+        "output": {
+            "calculated_total_price": 30.03
+        }
+    },
+    {
+        "input": {
+            "code": "QAF030",
+            "description": "Encuentro de cubierta plana transitable, no ventilada, con solado fijo, tipo convencional con sumidero de salida vertical, formado por: pieza de refuerzo de lámina de betún modificado con elastómero SBS, LBM(SBS)-40/FP (160), adherida al soporte y sumidero de caucho EPDM, de salida vertical, de 80 mm de diámetro adherido a la pieza de refuerzo.",
+            "unit": "Ud"
+        },
+        "output": {
+            "calculated_total_price": 36.55
+        }
+    },
+    {
+        "input": {
+            "code": "RAG012b",
+            "description": "Alicatado con azulejo liso, 1/0/-/-, 30x60 cm, (pvp 8 /m²), colocado sobre una superficie soporte de placas de yeso laminado en paramentos interiores, mediante adhesivo cementoso normal, C1 blanco, con doble encolado, sin junta (separación entre 1,5 y 3 mm); cantoneras de PVC.",
+            "unit": "m²"
+        },
+        "output": {
+            "calculated_total_price": 31.39
+        }
+    },
+    {
+        "input": {
+            "code": "RBB020",
+            "description": "Revestimiento de paramentos interiores y exteriores con enfoscado a buena vista de mortero industrial para enlucido, color gris, para la realización de la capa base en revestimientos continuos bicapa, acabado rugoso, espesor 15 mm, aplicado manualmente, armado y reforzado con malla antiálcalis en los cambios de material y en los frentes de forjado.",
+            "unit": "m²"
+        },
+        "output": {
+            "calculated_total_price": 24.95
+        }
+    },
+    {
+        "input": {
+            "code": "RIP030",
+            "description": "Pintura plástica con textura lisa, color blanco, acabado mate, sobre paramentos horizontales y verticales interiores de yeso o escayola, mano de fondo y dos manos de acabado (rendimiento: 0,125 l/m² cada mano).",
+            "unit": "m²"
+        },
+        "output": {
+            "calculated_total_price": 6.47
+        }
+    },
+    {
+        "input": {
+            "code": "ROO030",
+            "description": "Marcado de plazas de garaje mediante línea de 5 cm de ancho, de pintura al clorocaucho de color rojo y acabado semibrillante.",
+            "unit": "m"
+        },
+        "output": {
+            "calculated_total_price": 3.35
+        }
+    },
+    {
+        "input": {
+            "code": "ROO040",
+            "description": "Rotulación de número de plaza de garaje o trastero, con pintura al clorocaucho de color rojo y acabado semibrillante.",
+            "unit": "Ud"
+        },
+        "output": {
+            "calculated_total_price": 6.75
+        }
+    },
+    {
+        "input": {
+            "code": "RPE005",
+            "description": "Enfoscado de cemento, a buena vista, aplicado sobre un paramento vertical interior, hasta 3 m de altura, acabado superficial rugoso, con mortero de cemento M-5, previa colocación de malla antiálcalis en cambios de material y en los frentes de forjado.",
+            "unit": "m²"
+        },
+        "output": {
+            "calculated_total_price": 24.95
+        }
+    },
+    {
+        "input": {
+            "code": "RPE012",
+            "description": "Enfoscado de cemento, maestreado, aplicado sobre un paramento vertical interior, acabado superficial rayado, para servir de base a un posterior alicatado, con mortero de cemento M-5.",
+            "unit": "m²"
+        },
+        "output": {
+            "calculated_total_price": 25.2
+        }
+    },
+    {
+        "input": {
+            "code": "RQO010",
+            "description": "Revestimiento de paramentos exteriores con mortero monocapa para la impermeabilización y decoración de fachadas, acabado con árido proyectado, color blanco, espesor 15 mm, aplicado manualmente, armado y reforzado con malla antiálcalis en los cambios de material y en los frentes de forjado.",
+            "unit": "m²"
+        },
+        "output": {
+            "calculated_total_price": 45.33
+        }
+    },
+    {
+        "input": {
+            "code": "RSB020",
+            "description": "Base para pavimento interior de mortero autonivelante de cemento, tipo CT C20 F6 según UNE-EN 13813, de 40 mm de espesor, vertido con mezcladora-bombeadora, sobre lámina de aislamiento para formación de suelo flotante.",
+            "unit": "m²"
+        },
+        "output": {
+            "calculated_total_price": 51.19
+        }
+    },
+    {
+        "input": {
+            "code": "RSG010",
+            "description": "Solado de baldosas cerámicas de gres porcelánico, pulido 2/0/-/-, de 30x60 cm, 8 /m², recibidas con adhesivo cementoso normal, C1 (SE INLCUYE C2 POR SER NECESARIO PARA BALDOSAS DE GRES PORCELÁNICO) sin ninguna característica adicional, color gris con doble encolado, y rejuntadas con lechada de cemento blanco, L, BL-V 22,5, para junta mínima (entre 1,5 y 3 mm), coloreada con la misma tonalidad de las piezas.",
+            "unit": "m²"
+        },
+        "output": {
+            "calculated_total_price": 52.05
+        }
+    },
+    {
+        "input": {
+            "code": "RSG010b",
+            "description": "Solado de baldosas cerámicas de gres porcelánico, abujardado para exterior 2/3/-/E, de 30x30 cm, 8 /m², recibidas con adhesivo cementoso mejorado, C2 sin ninguna característica adicional, color gris y rejuntadas con mortero de juntas cementoso con resistencia elevada a la abrasión y absorción de agua reducida, CG2, para junta mínima (entre 1,5 y 3 mm), con la misma tonalidad de las piezas.",
+            "unit": "m²"
+        },
+        "output": {
+            "calculated_total_price": 52.05
+        }
+    },
+    {
+        "input": {
+            "code": "RSG020b",
+            "description": "Rodapié cerámico de gres porcelánico, pulido de 7 cm, 3 /m, recibido con adhesivo cementoso de uso exclusivo para interiores, Ci sin ninguna característica adicional, blanco y rejuntado con mortero de juntas cementoso, CG1, para junta mínima (entre 1,5 y 3 mm), con la misma tonalidad de las piezas.",
+            "unit": "m"
+        },
+        "output": {
+            "calculated_total_price": 13.14
+        }
+    },
+    {
+        "input": {
+            "code": "RSG020d",
+            "description": "Rodapié cerámico de gres porcelánico, pulido de 7 cm, 3 /m, recibido con mortero de cemento M-5( SE INCLUYE RECIBIDO CON MORTERO COLA C2, NO ES POSIBLE EL RECIBIDO DE MATERIAL PORCELÁNICO CON MORTERO DE CP)  y rejuntado con mortero de juntas cementoso, CG1, para junta mínima (entre 1,5 y 3 mm), con la misma tonalidad de las piezas.",
+            "unit": "m"
+        },
+        "output": {
+            "calculated_total_price": 13.14
+        }
+    },
+    {
+        "input": {
+            "code": "RSN200",
+            "description": "Pulido mecánico en obra de superficie de hormigón.",
+            "unit": "m²"
+        },
+        "output": {
+            "calculated_total_price": 14.68
+        }
+    },
+    {
+        "input": {
+            "code": "RTC015",
+            "description": "Falso techo continuo, situado a una altura menor de 4 m, liso suspendido con estructura metálica (12,5+27+27), formado por una placa de yeso laminado A / UNE-EN 520 - 1200 / longitud / 12,5 / borde longitudinal afinado.",
+            "unit": "m²"
+        },
+        "output": {
+            "calculated_total_price": 31.4
+        }
+    },
+    {
+        "input": {
+            "code": "YCM010",
+            "description": "Escalera fija provisional de madera, de 1,00 m de anchura útil, barandillas laterales de 1,00 m de altura, amortizable en 3 usos, para protección de paso peatonal entre dos puntos situados a distinto nivel, salvando una altura máxima de 3,70 m entre mesetas.",
+            "unit": "m"
+        },
+        "output": {
+            "calculated_total_price": 9.68
+        }
+    },
+    {
+        "input": {
+            "code": ".",
+            "description": "Muro de bloque macizado 15 cm para revestir",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 100.27
+        }
+    },
+    {
+        "input": {
+            "code": "145CAA20",
+            "description": "Llosa d'escala inclinada de 20 cm de gruix i part proporcional d'esgraons, amb una quantía de 0,20 m3/m2 de formigó, amb esglaons d'obra inclosos, amb encofrat per a revestir amb una quantia de 1,20 m2/m2, formigó HA-25/F/10/XC1, abocat amb bomba i acer en barres corrugades B 500 S amb una quantia de 25 kg/m2. S'inclou: Disposició dels mitjans de seguretat i protecció reglamentaris definits al Pla de Seguretat i Salut de l'obra, col.locació de bastides i plataformes de treball necessaries, apuntalaments i encofrat segons detall en planols de projecte, replanteig de les pendents, col.locació d'ancoratges d'acer D 12 en entrega llosa a murs, col.locació de les armadures definides en projecte, replanteig i formació dels esgraons al mateix temps que la llosa, formigonament segons indicacions en planols de projecte, neteja dels empalmaments i armadures a col.locar, muntatge a l'obra de les armadures i el seu lligament, emplaçament de les armadures muntades i separadors, deixar els empalmaments amb les llargades definides en el projecte, col.locació de tubs metàl.lics per el pas d'instal.lacions i soldadura de les armadures, aplicació del desencofrant i replanteig del límit del formigonat, encofrat de la llosa i els graons, anivellament i treballs complementaris per a garantir-ne la solidesa, regularització de la base de l'encofrat, col.locació del llit de repartiment, execució dels forats de pas d'instalacions necessaris, realització de junts de construcció i dilatació,  tapament dels junts irregulars de l'encofrat amb fusta, segellat de junts d'encofrat amb mástic,  col.locació dels ancoratges necessaris per a l'unió amb altres elements, desencofrat i neteja dels materials d'encofrar, carrega de runa sobre l'element de transport col.locat a peu d'obra i neteja de la zona de treball",
+            "unit": "M2"
+        },
+        "output": {
+            "calculated_total_price": 206.15
+        }
+    },
+    {
+        "input": {
+            "code": "1511AM01",
+            "description": "Terraza transitable con aislamiento.",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 91.96
+        }
+    },
+    {
+        "input": {
+            "code": "1511AM02",
+            "description": "Cubierta no transitable de grava",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 120.95
+        }
+    },
+    {
+        "input": {
+            "code": "1511AM05",
+            "description": "Impermeabilización terrazas transitable.",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 67.59
+        }
+    },
+    {
+        "input": {
+            "code": "1511AM07",
+            "description": "Impermeabilización Balcones y terrazas transitable sin aislamiento",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 59.5
+        }
+    },
+    {
+        "input": {
+            "code": "1511GI03",
+            "description": "FORMACIÓN DE BANCADA DE SOPORTE DE MAQUINARIA Y PLACAS SOLARES EN CUBIERTA, DE 15 CM DE GROSOR, CON HORMIGÓN HA-25/B/20/IIA HORMIGONADO CON LOS MEDIOS NECESARIOS, INCLUIDO ARMADO CON MALLA ELECTROSOLDADA DE 20X20 D.6 MM, Y ENCOFRADO CON TABLERO DE MADERA. TODO COMPLETO Y ACABADO. MEDICIÓN SEGÚN POSICIÓN DE MAQUINARIA Y PLACAS SOLARES",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 106.5
+        }
+    },
+    {
+        "input": {
+            "code": "1935U030",
+            "description": "Solera de formigó HA-25/B/20/XC2,  de 15 cm de gruix, amb armadura de malla electrosoldada d'acer B 500 T, de 20x20 cm i 8 mm de d, amb una quantia de 4.5 kg/m2, sobre subbase de grava de gruix 15 cm. de 50 a 70 mm de d, amb piconatge de caixa de paviment al 100% de PN, s'inclou: Disposició dels mitjans de seguretat i protecció reglamentaris definits al pla de seguretat i salut de l'obra, aplec de materials, replanteig de la superficie de la solera, definició dels límits i formació de nervi de remat, col.locació dels materials necessaris segons detall en planols de projecte, formació de junts de treball i dilatació, acabat fratasat de la superficie del formigó.  Neteja de la zona de treball i transport de runa fins al element de càrrega i transport col.locat a peu d'obra.",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 75.3
+        }
+    },
+    {
+        "input": {
+            "code": "E2R440G0",
+            "description": "Càrrega amb mitjans manuals i transport de terres a monodipòsit o centre de reciclatge, amb contenidor, s'inclou: disposició dels mitjans de seguretat i protecció reglamentaris definits al pla de seguretat i salut de l'obra, sortida de l'element de transport de l'obra i neteja de la zona de treball. NO INCLUYE TASAS DE VERTIDO.",
+            "unit": "M3"
+        },
+        "output": {
+            "calculated_total_price": 55.15
+        }
+    },
+    {
+        "input": {
+            "code": "E32515H3",
+            "description": "Formigó per a murs de fossat ascensor, HA-25/B/20/XC2, de consistència tova i grandària màxima del granulat 20 mm, abocat amb cubilot, ajuda de grua i vibratge mecànic. S'inclou: disposició dels mitjans de seguretat i protecció reglamentaris, col·locació de bastides, apuntalaments i travament necessaris, transport d'eines i mitjans auxiliars a l'obra, additius necessaris per a obtenir un formigó sense fissuració, reg del suport, vigilància de l'encofrat, separadors, vibrat i vigilància del formigó, formació de juntes i anivellació de l'acabat, remats de coronació segons indicacions de projecte, curat i protecció del formigó, es formigonarà d'un sol cop tota l'alçada del mur, en tot cas, els junts de formigonat coincidiran amb junts verticals de l'encofrat, regs intermitents després del formigonat, retirada d'eines i mitjans auxiliars, neteja del lloc de treball i tot allò necessari per a la correcta execució dels treballs.",
+            "unit": "m3"
+        },
+        "output": {
+            "calculated_total_price": 310.83
+        }
+    },
+    {
+        "input": {
+            "code": "E32B300P",
+            "description": "Acer en barres corrugades b 500 s de límit elàstic >= 500 n/mm2, per a l'armadura de murs de fossat ascensor, d'una alçària màxima de 3 m, s'inclou: disposició dels mitjans de seguretat i protecció reglamentaris definits al pla de seguretat i salut de l'obra, neteja dels empalmaments i armadures a col.locar, muntatge a l'obra de les armadures i el seu lligament, emplaçament de les armadures muntades i el seu lligament, col.locació de les armadures de muntatge i separadors, deixar els empalmaments amb les llargades definides en el projecte, deixar esperes per a la connexió amb altres elements estructurals, retalls i solapaments, col.locació i soldadura d'esperes i/o ancoratges, neteja de la zona de treball.",
+            "unit": "Kg"
+        },
+        "output": {
+            "calculated_total_price": 2.1
+        }
+    },
+    {
+        "input": {
+            "code": "E32DZA0M",
+            "description": "Muntatge i desmuntatge d'una cara d'encofrat amb plafó metàl·lic de 250x50 cm, per a murs de fossat ascensor de base rectilínia encofrats a dues cares (medició de superfície teòrica en contacte amb el formigó), inclou els elements necessaris per a l'execució de detalls descrits en plànols d'arquitectura i/o estructura. S'inclou: disposició dels mitjans de seguretat i protecció reglamentaris, col·locació de bastides, transport d'eines i mitjans auxiliars a l'obra, neteja acurada dels taulers i plafons abans de col·locar-los, apuntalament i travament necessaris, col·locació dels llits de repartiment sota l'apuntalament, encofrat de l'element i col·locació dels mitjans d'apuntalament i auxiliars necessaris, aplicació del desencofrant i replanteig del límit de formigonat, anivellat i treballs complementaris per a garantir-ne la solidesa, col·locació dels tirants protegits amb tubs de PVC i posterior reblert amb morter M 40A, execució dels forats de pas necessaris, col·locació de tubs en pas d'instal·lacions, realització de junts de construcció i dilatació, realització d'escorrentius, tapament dels junts irregulars de l'encofrat amb fusta, subministrament i col.locació de separadors, col.locacio i soldadura dels ancoratges necessaris per a la unió amb altres elements, desencofrat i neteja dels materials d'encofrar, retirada d'eines i mitjans auxiliars, neteja del lloc de treball i tot allò necessari per a la correcta execució dels treballs.",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 44.25
+        }
+    },
+    {
+        "input": {
+            "code": "E45C1AH4",
+            "description": "Formigó per a lloses de balcons/terrasses, HA-30/F/20/XC3, de consistència tova i grandària màxima del granulat 20 mm, abocat amb Bomba i ajuda de grua, i vibratge mecànic. S'inclou: Disposició dels mitjans de seguretat i protecció reglamentaris i definits al Pla de Seguretat i Salut de l'obra, col·locació de bastides, apuntalaments i plataformes de treball necessaries, aplec de materials i mitjans auxiliars en el punt de treball, additius necessaris per a obtenir un formigó sense fissuració, reg del suport, vigilància de l'encofrat, separadors, vibrat i vigilància del formigó, formació de juntes i anivellació de l'acabat, curat i protecció del formigó, regs intermitents després del formigonat, remats de coronació segons indicacions de projecte, retirada d'eines i mitjans auxiliars, neteja del lloc de treball i tot allò necessari per a la correcta execució dels treballs.",
+            "unit": "m3"
+        },
+        "output": {
+            "calculated_total_price": 255.11
+        }
+    },
+    {
+        "input": {
+            "code": "E4BC4000",
+            "description": "Acer B 500 S ò B 500 SD en barres corrugades de límit elàstic >= 500 N/nm2, per a l'armadura de lloses de balcons. Inclouent part proporcional de retalls, mermes, armadures de muntatge i elements separadors en gelosia, congrenys, jàsseres embegudes i planes i creuetes.",
+            "unit": "kg"
+        },
+        "output": {
+            "calculated_total_price": 2.1
+        }
+    },
+    {
+        "input": {
+            "code": "E4BP1112",
+            "description": "Ancoratge amb acer en barres corrugades de 12 mm de diàmetre, amb perforació i injectat continu d'adhesiu d'aplicació unilateral de resines epoxi sense dissolvents, de dos components i baixa viscositat;  Lmax=30 cms",
+            "unit": "u"
+        },
+        "output": {
+            "calculated_total_price": 11.37
+        }
+    },
+    {
+        "input": {
+            "code": "E4BP111A",
+            "description": "Ancoratge amb acer en barres corrugades de 20 mm de diàmetre, amb perforació D25mm i injectat continu d'adhesiu d'aplicació unilateral de resines epoxi sense dissolvents, de dos components i baixa viscositat",
+            "unit": "u"
+        },
+        "output": {
+            "calculated_total_price": 31.08
+        }
+    },
+    {
+        "input": {
+            "code": "E4DC2D02",
+            "description": "Muntatge i desmuntatge d'encofrat per a lloses de balcons, amb tauler de fusta de pi, per a deixar el formigó vist. Inclou part proporcional de tapes laterals (medició de superfície teòrica en contacte amb el formigó). S'inclou: disposició dels mitjans de seguretat i protecció reglamentaris, col·locació de bastides, transport d'eines i mitjans auxiliars a l'obra, neteja acurada dels taulers i plafons abans de col·locar-los, apuntalament i travament necessaris, col·locació dels llits de repartiment sota l'apuntalament, encofrat de l'element i col·locació dels mitjans d'apuntalament i auxiliars necessaris, aplicació del desencofrant i replanteig del límit de formigonat, execució dels forats de pas necessaris, col·locació de tubs en pas d'instal·lacions, realització de junts de construcció i dilatació, tapament dels junts irregulars de l'encofrat amb fusta, col·locació dels ancoratges necessaris per a la unió amb altres elements, desencofrat i neteja dels materials d'encofrar, retirada d'eines i mitjans auxiliars, neteja del lloc de treball i tot allò necessari per a la correcta execució dels treballs.",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 58.8
+        }
+    },
+    {
+        "input": {
+            "code": "E4F2A59F",
+            "description": "Paret estructural de maó ceràmic calat de 14 cm, amb maó de 29x14x7,5 cm R30 N/mm2, per a revestir, col.locat amb morter de ciment 1:3 (M-16 N/mm2), elaborat a l'obra amb formigonera de 165 l",
+            "unit": "m3"
+        },
+        "output": {
+            "calculated_total_price": 397.42
+        }
+    },
+    {
+        "input": {
+            "code": "E612B515",
+            "description": "PARED DE CIERRE APOYADA DE GROSOR 14 CM, DE LADRILLO CALADO, LD, DE 290X140X100 MM , PARA REVESTIR, CATEGORÍA I, SEGÚN LA NORMA UNE-EN 771-1, COLOCADO CON MORTERO PARA ALBAÑILERÍA INDUSTRIALIZADO M 7,5 (7,5 N/MM2 ) DE DESIGNACIÓN (G) SEGÚN NORMA UNE-EN 998-2, INCLUYENDO FORMACIÓN DE DINTELES PREFABRICADOS DE HORMIGÓN Y REFUERZOS NECESARIOS, ARRIOSTRAMIENTOS Y ARMADURAS DE CELOSÍA TIPO MURFOR PARA SU EJECUCIÓN PARA GRANDES ALTURAS.",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 87.02
+        }
+    },
+    {
+        "input": {
+            "code": "E612B516",
+            "description": "PARED DE CIERRE APOYADA DE GROSOR 14 CM, DE LADRILLO CALADO, LD, DE 290X140X100 MM , PARA REVESTIR, CATEGORÍA I, SEGÚN LA NORMA UNE-EN 771-1, COLOCADO CON MORTERO PARA ALBAÑILERÍA INDUSTRIALIZADO M 7,5 (7,5 N/MM2 ) DE DESIGNACIÓN (G) SEGÚN NORMA UNE-EN 998-2, INCLUYENDO FORMACIÓN DE DINTELES PREFABRICADOS DE HORMIGÓN Y REFUERZOS NECESARIOS, ARRIOSTRAMIENTOS Y ARMADURAS DE CELOSÍA TIPO MURFOR PARA SU EJECUCIÓN PARA GRANDES ALTURAS.",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 87.02
+        }
+    },
+    {
+        "input": {
+            "code": "E612B517",
+            "description": "PARED DE CIERRE APOYADA DE GROSOR 14 CM, DE LADRILLO CALADO, LD, DE 290X140X100 MM , PARA REVESTIR, CATEGORÍA I, SEGÚN LA NORMA UNE-EN 771-1, COLOCADO CON MORTERO PARA ALBAÑILERÍA INDUSTRIALIZADO M 7,5 (7,5 N/MM2 ) DE DESIGNACIÓN (G) SEGÚN NORMA UNE-EN 998-2.",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 87.02
+        }
+    },
+    {
+        "input": {
+            "code": "E774PT01",
+            "description": "Impermeabilización de duchas con membrana de una lámina de polietileno de 0.5 mm de grosor tipo schluter kerdi o equivalente, revestida en las dos caras con una tela no tejida, colocada adherida con mortero adhesivo bicomponente y con sellado entre juntas con cinta específica tipo schluter keba o equivalente.",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 65.04
+        }
+    },
+    {
+        "input": {
+            "code": "E7C2BD01",
+            "description": "Revestimiento exterior mineral tipo weber, aplicado a paramentos, a base de:",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 72.99
+        }
+    },
+    {
+        "input": {
+            "code": "E7C2CA06",
+            "description": "Sistema de aislamiento y revestimiento exterior tipo  SATE webertherm o equivalente con 8 cm de aislamiento, aplicado a paramentos, a base de:",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 112.59
+        }
+    },
+    {
+        "input": {
+            "code": "E7C2CA07",
+            "description": "Sistema de aislamiento y revestimiento exterior tipo  SATE webertherm o equivalente con 8 cm de aislamiento, aplicado a paramentos, a base de:",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 346.16
+        }
+    },
+    {
+        "input": {
+            "code": "E811PT06",
+            "description": "Enlucido a buena vista sobre paramento vertical interior, a cualquier altura, con mortero de cemento 1:6, remolinado. Incluye parte proporcional de colocación de malla de fibra de vidrio revestida de pvc, de dimensiones 4x4 mm, con un peso mínimo de 730 g/m2 en aristas, esquinas, cambios de material y en todos los puntos donde determine la dirección facultativa.",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 33.27
+        }
+    },
+    {
+        "input": {
+            "code": "E82CBO01",
+            "description": "Colocación de alicatado de paramento vertical interior a una altura <= 3 m con baldosa cerámica o porcelánico de 1 a 6 piezas/m2, colocadas con adhesivo para baldosa cerámica c2 té (une-en 12004) y rejuntado con borada cg2 (une-en 13888).",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 67.83
+        }
+    },
+    {
+        "input": {
+            "code": "E82CBO02",
+            "description": "Suministro de baldosa cerámica rectificado blanco mate 25x40cm, o similar, para lavaderos y armarios instalaciones.",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 31.08
+        }
+    },
+    {
+        "input": {
+            "code": "E82CBO03",
+            "description": "Suministro de baldosa de porcelánico rectificado marca Argenta modelo Gravel Cream con piezas de 30x60 cm. Alicatado baños viviendas.",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 31.08
+        }
+    },
+    {
+        "input": {
+            "code": "E82CBO04",
+            "description": "Suministro de baldosa de porcelánico rectificado marca Keraben, colección Naturwood Concept Brandy 120x60 o similar. Alicatado Pared ducha viviendas.",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 48.47
+        }
+    },
+    {
+        "input": {
+            "code": "E82CBO05",
+            "description": "Suministro y colocación de pieza de silestone de espesor 10mm cortada a medida en una sola pieza para remate de repisa de cisterna empotrada. Color a definir por la DF.",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 450.57
+        }
+    },
+    {
+        "input": {
+            "code": "E83BAM01",
+            "description": "Aplacado de paramento vertical exterior hasta 3 m de altura con piezas de piedra natural de Mares para fachada, con piezas de 60x30 cm y 2 cm de grosor, colocadas con adhesivo para baldosa cerámica c2 te s1 (une-en 12004) y fijadas con gancho de acero inoxidable, rejuntadas con borada cg2 (une-en 13888).",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 167.11
+        }
+    },
+    {
+        "input": {
+            "code": "E83BAM4",
+            "description": "Suministro y colocación pavimento con piezas de piedra natural de Mares, con piezas de 60x30 cm y 2 cm de grosor, incluye tratamiento necesario o acabado abujardado para evitar resbalabicidad, necesario nivel C3.",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 82.48
+        }
+    },
+    {
+        "input": {
+            "code": "E8449260",
+            "description": "Falso techo continuo de placas de yeso laminado tipo hidrófuga (H), para revestir, de 15 mm de grosor y borde afinado (BA), entramado de acero galvanizado formado por perfiles principales colocados cada 1000 mm y perfiles secundarios colocados cada 600 mm fijados en el techo mediante varilla de suspensión cada 1,2 m , para una altura de cielo raso de 4 m como máximo. Se incluye la p.p. de encuentros con tabiques, remates, rejuntados con pasta de juntas especifica, cinta de juntas y esquinas, y juntas acústicas de fieltro. También quedan incluidas todas tabicas de cambio de nivel, las perforaciones para paso de instalaciones, rejas de climatización, puntos de luz, etc, y perfilería auxiliar para elementos de apoyo.",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 34.94
+        }
+    },
+    {
+        "input": {
+            "code": "E844AM11",
+            "description": "Falso techo continuo de placas de cemento portland con aditivos y material aligerante, recubierta en las dos caras con malla de fibra de vidrio, tipo aquapanel de knauf o equivalente, de 8 mm de grosor y borde afinado (ba), entramado de acero galvanizado formado por perfiles principales colocados cada 1000 mm y perfiles secundarios colocados cada 600 mm fijados en el techo mediante varilla de suspensión cada 1,2 m , para una altura de cielo raso de 4 m como máximo. Se incluye la p.p. de encuentros con tabiques, remates, rejuntados con pasta de juntas especifica, cinta de juntas y esquinas, y juntas acústicas de fieltro. También quedan incluidas todas las perforaciones para paso de instalación, rejas de climatización, puntos de luz, etc., y perfilería auxiliar para elementos de soporte.",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 69.0
+        }
+    },
+    {
+        "input": {
+            "code": "E844BO01",
+            "description": "Falso techo continuo de placas de yeso laminado tipo estándar (A), para revestir, de 15 mm de grosor y borde afinado (BA), entramado de acero galvanizado formado por perfiles principales colocados cada 1000 mm y perfiles secundarios colocados cada 600 mm fijados en el techo mediante varilla de suspensión cada 1,2 m , para una altura de cielo raso de 4 m como máximo. Se incluye la p.p. de encuentros con tabiques, remates, rejuntados con pasta de juntas especifica, cinta de juntas y esquinas, y juntas acústicas de fieltro. También quedan incluidas todas tabicas de cambio de nivel, las perforaciones para paso de instalaciones, rejas de climatización, puntos de luz, etc, y perfilería auxiliar para elementos de apoyo.",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 31.92
+        }
+    },
+    {
+        "input": {
+            "code": "E84ZPT01",
+            "description": "Registro para falso techo de placas de yeso laminado formado por trampilla de 120x60cm con marco de aluminio y hoja de placa yeso laminado hidrófuga (H) con un grosor total de 15 mm como máximo, cierre de presión y dispositivo de retención, colocado con perfilería de acero galvanizado.",
+            "unit": "u"
+        },
+        "output": {
+            "calculated_total_price": 139.48
+        }
+    },
+    {
+        "input": {
+            "code": "E8989240",
+            "description": "Pintado de paramentos vertical interior, con pintura plástica con acabado liso, con una capa de fondo, diluida, y dos de acabado.",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 6.77
+        }
+    },
+    {
+        "input": {
+            "code": "E898AM14",
+            "description": "Pintado de plazas de aparcamiento, de dimensiones según planos, con franjas de 10 cm de anchura, con pintura con base de resinas especial para señalización de aparcamento. Color a definir por la DF.",
+            "unit": "u"
+        },
+        "output": {
+            "calculated_total_price": 70.04
+        }
+    },
+    {
+        "input": {
+            "code": "E898JN06",
+            "description": "Pintado de número de plaza de aparcamiento grafiado tanto en pavimento como en pared, con pintura en base resinas, de color y carácter alfanumérico a definir por la DF",
+            "unit": "u"
+        },
+        "output": {
+            "calculated_total_price": 18.68
+        }
+    },
+    {
+        "input": {
+            "code": "E898K2A0",
+            "description": "Pintado de paramento horizontal de yeso, con pintura plástica ecológica con acabado liso, con una capa selladora y dos de acabado.",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 6.77
+        }
+    },
+    {
+        "input": {
+            "code": "E8B2U001",
+            "description": "Pintat de superfícies de formigó vist, amb pintura anticarbonatació, monocomponent, a base de resines acríliques en dispersió aquosa, aplicada a dues mans. s'inclou: Disposició dels mitjans de seguretat i protecció reglamentaris definits al Pla de Seguretat i Salut de l'obra, col.locació de bastides, apuntalaments i plataformes de treball necessaries, aplec de materials i mitjans auxiliars en el punt de treball, aplicació de la pintura segons indicacions del fabricant, retirada dels mitjans auxiliars i neteja de la zona de treball.",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 14.42
+        }
+    },
+    {
+        "input": {
+            "code": "E8J4CE01",
+            "description": "Suministro y colocación de escalón de baldosa porcelánico rectificado antideslizante clase 2, formado por huella y contrahuella, modelo Argenta Gravel Cream. Huella de tamaño completo 100x30cm con canto romo pulido y contrahuella 100x18cm. Colocado con adhesivo para baldosa cerámica c1 (une-en 12004) y rejuntado con borada cg1 (une-en 13888).",
+            "unit": "u"
+        },
+        "output": {
+            "calculated_total_price": 119.02
+        }
+    },
+    {
+        "input": {
+            "code": "E8J4CE04",
+            "description": "Suministro y colocación de escalón de piedra natural mares antideslizante clase 3, formado por huella  de 180x30cm y contrahuella de 180x18cm. Huella en piezas de 60x30cm con canto romo pulido y contrahuella en piezas de 60x18cm. Colocado con adhesivo para piedra natural o mortero de cemento, industrial, con aditivo hidrófugo, M-10; y rejuntado entre piezas y, en su caso, de las uniones con los muros con mortero de juntas especial para piedra natural.",
+            "unit": "u"
+        },
+        "output": {
+            "calculated_total_price": 131.13
+        }
+    },
+    {
+        "input": {
+            "code": "E9DCBO02",
+            "description": "Suministro de baldosa de porcelánico rectificado marca Argenta modelo Gravel Shadow o similar con piezas de 60x60 cm. Clasificación resbalabicidad C2.",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 31.08
+        }
+    },
+    {
+        "input": {
+            "code": "E9DCBO05",
+            "description": "Colocación de pavimento interior de baldosa de gres porcelánico, de forma rectangular o cuadrada, colocadas en el tendido, con adhesivo para baldosa cerámica C1 (une-en 12004) y rejuntado con borada CG1 (une-en 13888) de color a definir por la dirección facultativa.",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 45.93
+        }
+    },
+    {
+        "input": {
+            "code": "E9DCBO07",
+            "description": "Suministro y colocación de rodapié porcelánico misma marca y modelo que el pavimento interior, Argenta Gravel Cream, de 10cm de alto en tramos de 100cm minimo,  canto pulido romo, con adhesivo para baldosa cerámica C1 (une-en 12004) y rejuntado con borada CG1 (une-en 13888) de color a definir por la DF",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 29.36
+        }
+    },
+    {
+        "input": {
+            "code": "E9DCBO09",
+            "description": "Suministro y colocación de rodapié zanquin para escalera porcelánico, misma marca y modelo que el pavimento zonas comunes, Argenta Gravel Cream, de 10cm de alto, canto pulido romo.Formado por dos piezas cortadas a inglete de 30 y 18cm.",
+            "unit": "u"
+        },
+        "output": {
+            "calculated_total_price": 31.96
+        }
+    },
+    {
+        "input": {
+            "code": "E9DCVI01",
+            "description": "Suministro Pavimento interior de baldosa porcelánica, marca Argenta, modelo Gravel Cream 60x60cm, resbalabicidad C2.",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 31.08
+        }
+    },
+    {
+        "input": {
+            "code": "E9G2PT01",
+            "description": "ACABADO FRATASADO MECÁNICO DE LOSA DE HORMIGÓN CON ADICIÓN DE 4 KG/M2 DE POLVO DE CUARZO COLOR GRIS",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 17.16
+        }
+    },
+    {
+        "input": {
+            "code": "E9Q1BO01",
+            "description": "Suministro de parquet flotante multicapa sintético, con piezas de 1200 mm de longitut y 190 mm de anchura, con base de tablero de fibras de alta densidad HDF y acabado laminado decorativo en roble o similar, con clasificación c5 resistente a la humedad, acabado a definir según muestras.",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 21.13
+        }
+    },
+    {
+        "input": {
+            "code": "E9QH12P3",
+            "description": "Colocación de parquet flotante, con unión a presión, incluyendo:",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 17.51
+        }
+    },
+    {
+        "input": {
+            "code": "E9U7U110",
+            "description": "Zócalo de madera de tablero hidrófugo de dm de 10 mm de grosor y 10 cm de altura acabado lacado de color blanco y fijado con adhesivo y/o clavado. Todo completo, sellado y acabado.",
+            "unit": "m"
+        },
+        "output": {
+            "calculated_total_price": 26.7
+        }
+    },
+    {
+        "input": {
+            "code": "E9Z4AA16",
+            "description": "Armadura para recrecido autonivelante en planta baja AP500T con malla electrosoldada de barras corrugadas de acero ME 15x15 cm d:6-6 mm 6x2.2 m B500T UNE-EN 10080",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 16.58
+        }
+    },
+    {
+        "input": {
+            "code": "FCH040030",
+            "description": "Dintel prefabricado en ´´U´´, cerámico, de 14 cm de anchura, 19 cm de altura y longitud variable, para revestir, con refuerzo de hormigón de relleno preparado en obra, vertido con medios manuales, y acero UNE-EN 10080 B 500 S, cuantía 1,54 kg,",
+            "unit": "m"
+        },
+        "output": {
+            "calculated_total_price": 47.21
+        }
+    },
+    {
+        "input": {
+            "code": "HRE050",
+            "description": "Recercado de hueco de fachada, a base de:",
+            "unit": "m"
+        },
+        "output": {
+            "calculated_total_price": 49.52
+        }
+    },
+    {
+        "input": {
+            "code": "HRL020000320",
+            "description": "Revestimiento de frente de forjado de balcones de chapa plegada de aluminio lacado en color, con 60 micras de espesor mínimo de película seca, 2 mm de espesor, 250 mm de desarrollo y 2 pliegues;",
+            "unit": "m"
+        },
+        "output": {
+            "calculated_total_price": 53.87
+        }
+    },
+    {
+        "input": {
+            "code": "HRN010000401",
+            "description": "Albardilla cubremuros de piedra natural Mares, en piezas de 600 mm de longitud, de 210 a 250 mm de anchura y 30 mm de espesor, con goterón, para cubrición de muros, cara y canto recto pulido y grava adherida a la superficie en su cara inferior; recibida con mortero de cemento, industrial, con aditivo hidrófugo, M-10; y rejuntado entre piezas y, en su caso, de las uniones con los muros con mortero de juntas especial para piedra natural.",
+            "unit": "m"
+        },
+        "output": {
+            "calculated_total_price": 69.83
+        }
+    },
+    {
+        "input": {
+            "code": "HRN010000402",
+            "description": "Albardilla cubremuros de piedra natural Mares, en piezas de 1520 mm de longitud, de 440  mm de anchura y 30 mm de espesor, con goterón, para cubrición de muros, cara y canto recto pulido y grava adherida a la superficie en su cara inferior; recibida con mortero de cemento, industrial, con aditivo hidrófugo, M-10; y rejuntado entre piezas y, en su caso, de las uniones con los muros con mortero de juntas especial para piedra natural.",
+            "unit": "u"
+        },
+        "output": {
+            "calculated_total_price": 147.39
+        }
+    },
+    {
+        "input": {
+            "code": "HRN060000402",
+            "description": "Vierteaguas de piedra natural de marés, en piezas de hasta 1100 mm de longitud, de 280 mm de anchura y 20 mm de espesor, con goterón, cara y canto recto pulido y grava adherida a la superficie en su cara inferior; recibido con mortero de cemento, industrial, con aditivo hidrófugo, M-10; y rejuntado entre piezas y de las uniones con los muros con mortero de juntas especial para piedra natural.",
+            "unit": "m"
+        },
+        "output": {
+            "calculated_total_price": 62.04
+        }
+    },
+    {
+        "input": {
+            "code": "K5ZAAM01",
+            "description": "Cubierta inclinada teja árabe sobre muretes palomeros.",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 141.91
+        }
+    },
+    {
+        "input": {
+            "code": "K898AM02",
+            "description": "Pintado de paramento horizontal exterior, con pintura acrílica para exteriores tipo reveton o equivalente con acabado liso, con una capa de fondo y dos de acabado.",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 9.91
+        }
+    },
+    {
+        "input": {
+            "code": "P2212-55U8",
+            "description": "EXCAVACIÓ DE FONAMENTS AMB RAMPA D'ACCÉS, MÉS DE 4 M DE FONDÀRIA I MÉS DE 2 M D'AMPLÀRIA, EN TERRENY COMPACTE, AMB MITJANS MECÀNICS, I CÀRREGA SOBRE CAMIÓ,  S'INCLOU: DISPOSICIÓ DELS MITJANS DE SEGURETAT I PROTECCIÓ REGLAMENTARIS DEFINITS AL PLA DE SEGURETAT I SALUT DE L'OBRA, PORTADA DE LA MAQUINARIA A L'OBRA, DISPOSICIÓ DE L'ACCES A L'OBRA, REPLANTEIG I DEFINICIÓ DE LES SABATES A EXCAVAR, EXCAVACIÓ DE LES SABATES A LA FONDARIA NECESSARIA DEFINIDA EN ELS PLANOLS DE PROJECTE, REPLANTEIG I FORMACIÓ DE TALÚSOS, DEMOLICIÓ DE PETITS ESTRACTES DE TERRENY DUR O ROCA TOVA, DEMOLICIÓ I EXCAVACIÓ DE PETITES CONSTRUCCIONS SOTERRADES, APLOMATS DE PARETS I REFINATS DE FONS AMB MITJANS MANUALS, RETIRADA DE LA MAQUINARIA I NETEJA DE LA ZONA DE TREBALL.",
+            "unit": "m3"
+        },
+        "output": {
+            "calculated_total_price": 32.78
+        }
+    },
+    {
+        "input": {
+            "code": "P2218-566F",
+            "description": "EXCAVACIÓ DE POUS FINS A 2 M DE FONDÀRIA, EN TERRENY COMPACTE, AMB MITJANS MECÀNICS, I CÀRREGA SOBRE CAMIÓ,  S'INCLOU: DISPOSICIÓ DELS MITJANS DE SEGURETAT I PROTECCIÓ REGLAMENTARIS DEFINITS AL PLA DE SEGURETAT I SALUT DE L'OBRA, PORTADA DE LA MAQUINARIA A L'OBRA, DISPOSICIÓ DE L'ACCES A L'OBRA, REPLANTEIG I DEFINICIÓ DE LES SABATES A EXCAVAR, EXCAVACIÓ DE LES SABATES A LA FONDARIA NECESSARIA DEFINIDA EN ELS PLANOLS DE PROJECTE, REPLANTEIG I FORMACIÓ DE TALÚSOS, DEMOLICIÓ DE PETITS ESTRACTES DE TERRENY DUR O ROCA TOVA, DEMOLICIÓ I EXCAVACIÓ DE PETITES CONSTRUCCIONS SOTERRADES, APLOMATS DE PARETS I REFINATS DE FONS AMB MITJANS MANUALS, RETIRADA DE LA MAQUINARIA I NETEJA DE LA ZONA DE TREBALL.",
+            "unit": "m3"
+        },
+        "output": {
+            "calculated_total_price": 32.78
+        }
+    },
+    {
+        "input": {
+            "code": "P221F-A8IG",
+            "description": "02.04.01.2",
+            "unit": "m3"
+        },
+        "output": {
+            "calculated_total_price": 15.11
+        }
+    },
+    {
+        "input": {
+            "code": "P2258-DRN8",
+            "description": "TERRAPLENAT I PICONATGE MECÀNICS AMB TERRES SELECCIONADES, EN TONGADES DE FINS A 25 CM, AMB UNA COMPACTACIÓ DEL 95% DEL PM, AMB TERRES REAPROFIITADES PROCEDENTS DE L'EXCAVACIÓ.",
+            "unit": "m3"
+        },
+        "output": {
+            "calculated_total_price": 10.35
+        }
+    },
+    {
+        "input": {
+            "code": "P22D1-DGOW",
+            "description": "02.04.01.1",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 2.21
+        }
+    },
+    {
+        "input": {
+            "code": "P310-D51N",
+            "description": "02.04.02.4-(03ET-04)",
+            "unit": "kg"
+        },
+        "output": {
+            "calculated_total_price": 2.1
+        }
+    },
+    {
+        "input": {
+            "code": "P312-D4RK",
+            "description": "02.04.02.3-(03ET-03)",
+            "unit": "m3"
+        },
+        "output": {
+            "calculated_total_price": 228.5
+        }
+    },
+    {
+        "input": {
+            "code": "P314-UE8S",
+            "description": "02.04.02.2-(03ET-02)",
+            "unit": "m3"
+        },
+        "output": {
+            "calculated_total_price": 193.71
+        }
+    },
+    {
+        "input": {
+            "code": "P320-D6Y8",
+            "description": "02.04.03-01.3-(03ET-07)",
+            "unit": "kg"
+        },
+        "output": {
+            "calculated_total_price": 2.1
+        }
+    },
+    {
+        "input": {
+            "code": "P324-MQEO",
+            "description": "02.04.03-01.2-(03ET-06)",
+            "unit": "m3"
+        },
+        "output": {
+            "calculated_total_price": 236.47
+        }
+    },
+    {
+        "input": {
+            "code": "P3Z3-D53G",
+            "description": "CAPA DE NETEJA I ANIVELLAMENT 10 CM DE GRUIX AMB FORMIGÓ DE NETEJA, AMB UNA DOSIFICACIÓ DE 150 KG/M3 DE CIMENT, CONSISTÈNCIA TOVA I GRANDÀRIA MÀXIMA DEL GRANULAT 20 MM, HL-150/B/20, ABOCAT DES DE CAMIÓ, S'INCLOU: DISPOSICIÓ DELS MITJANS DE SEGURETAT I PROTECCIÓ REGLAMENTARIS DEFINITS AL PLA DE SEGURETAT I SALUT DE L'OBRA, REGATGE DEL SUPORT, COL.LOCACIÓ I VIGILANCIA DE L'ENCOFRAT QUAN SIGUI NECESSARI, REGS DEL SUPORT, VIBRAT DEL FORMIGÓ, FORMACIÓ DE JUNTS DE FORMIGONAT I CONSTRUCCIÓ, ANIVELLAMENT DE L'ACABAT, CURAT I PROTECCIÓ DEL FORMIGÓ,  NETEJA DE LA ZONA DE TREBALL.",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 16.76
+        }
+    },
+    {
+        "input": {
+            "code": "P4510-LOLN",
+            "description": "02.04.03-01.5-(03ET-09)",
+            "unit": "m3"
+        },
+        "output": {
+            "calculated_total_price": 235.64
+        }
+    },
+    {
+        "input": {
+            "code": "P45C7-P5AA",
+            "description": "02.04.03-01.7-(03ET-11)",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 199.33
+        }
+    },
+    {
+        "input": {
+            "code": "P4BE-FIVO",
+            "description": "02.04.03-01.6-(03ET-10)",
+            "unit": "kg"
+        },
+        "output": {
+            "calculated_total_price": 2.1
+        }
+    },
+    {
+        "input": {
+            "code": "P4D5-9LVG",
+            "description": "Muntatge i desmuntatge d'una cara d'encofrat amb bastidors metàl.lics modulars amb tauler fenòlic, per a murs de base rectilínea amb funció de contenció, encofrats a una cara, d'una alçada < = 3m, per a formigó no vist",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 42.4
+        }
+    },
+    {
+        "input": {
+            "code": "P4D5-9LVY",
+            "description": "Muntatge i desmuntatge d'una cara d'encofrat amb bastidors metàl.lics modulars amb tauler fenòlic, per a murs de base rectilínea amb funció de contgenció, encofrats a dos cares, d'una alçada < = 3 m, per a formigó no vist",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 33.82
+        }
+    },
+    {
+        "input": {
+            "code": "P4DH-DQL0",
+            "description": "02.04.03-01.4-(03ET-08)",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 62.39
+        }
+    },
+    {
+        "input": {
+            "code": "P654-D01",
+            "description": "Tabique tipo D01 (15+48+15) A/A + MW",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 55.56
+        }
+    },
+    {
+        "input": {
+            "code": "P654-D02",
+            "description": "Tabique tipo D02 (15+48+15) H/H + MW",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 61.78
+        }
+    },
+    {
+        "input": {
+            "code": "P654-D03",
+            "description": "Tabique tipo D03 (15+48+15) A/H + MW",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 58.67
+        }
+    },
+    {
+        "input": {
+            "code": "P654-D08",
+            "description": "Trasdosado tipo D08 (15+48) A+MW",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 45.06
+        }
+    },
+    {
+        "input": {
+            "code": "P654-D09",
+            "description": "Trasdosado tipo D09 (15+48) H+MW",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 48.17
+        }
+    },
+    {
+        "input": {
+            "code": "P654-D11",
+            "description": "Tabique tipo D11 (15+70+15) A/A + MW",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 58.11
+        }
+    },
+    {
+        "input": {
+            "code": "P654-D12",
+            "description": "Tabique tipo D12 (15+70+15) H/H + MW",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 64.33
+        }
+    },
+    {
+        "input": {
+            "code": "P654-D13",
+            "description": "Tabique tipo D13 (15+70+15) A/H + MW",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 61.22
+        }
+    },
+    {
+        "input": {
+            "code": "P654-D19",
+            "description": "Trasdosado tipo D19 (15+16) H+MW",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 44.99
+        }
+    },
+    {
+        "input": {
+            "code": "P7C25-DD3L",
+            "description": "Aislamiento térmico de suelos flotantes, formado por panel rígido de poliestireno extruido, de superficie lisa y mecanizado lateral recto, de 80 mm de espesor, resistencia a compresión >= 300 kPa, resistencia térmica 1,2 m²K/W, conductividad térmica 0,033 W/(mK), colocado a tope, simplemente apoyado, cubierto con film de polietileno de 0,2 mm de espesor y desolidarización perimetral realizada con el mismo material aislante, preparado para recibir una base de pavimento de mortero u hormigón. Incluso cinta autoadhesiva para sellado de juntas.",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 22.5
+        }
+    },
+    {
+        "input": {
+            "code": "P7C45-5OHH",
+            "description": "Aislamiento con placa rígida de lana mineral de roca (mw), de densidad 66 a 85 kg/m3, de 50 mm de grosor, con una conductividad térmica <= 0.034 w/(m·k) y resistencia térmica >= 2,353 m2· k/w, colocada con fijaciones mecánicas",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 15.59
+        }
+    },
+    {
+        "input": {
+            "code": "P7C45-8OHH",
+            "description": "Aislamiento con placa rígida de lana mineral de roca (mw), de densidad 66 a 85 kg/m3, de 80 mm de grosor, con una conductividad térmica <= 0.034 w/(m·k) y resistencia térmica >= 2,353 m2· k/w, colocada con fijaciones mecánicas",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 25.48
+        }
+    },
+    {
+        "input": {
+            "code": "P7R1-HISL",
+            "description": "Barrera contra el gas radón con lámina bituminosa de betún aditivado con acabado plástico por las dos caras LA-30-AL con armadura de aluminio gofrado, de espesor mayor a 2 mm, con coeficiente de difusión frente al gas radón menor o igual a 10^-13 m2/s, colocada no adherida sobre superfície horizontal",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 23.01
+        }
+    },
+    {
+        "input": {
+            "code": "P7R1-HIW5",
+            "description": "Barrera frente al gas radón con lámina de betún modificado con elastómero, con acabado plástico por las dos caras, lbm (sbs) 40/p-fp con armadura de fieltro de poliéster de 150 g/m2, de grosor mayor a 2 mm, con coeficiente de difusión frente al gas radón menor o igual a 2 * 100-12 m2/s,  colocada no adherida sobre superficie horizontal",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 23.01
+        }
+    },
+    {
+        "input": {
+            "code": "P8B0-H8TL",
+            "description": "Pintado de superficies de hormigón visto, con pintura anticarbonatación, monocomponente, a base de resinas acrílicas en dispersión acuosa, aplicada a dos manos.",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 14.42
+        }
+    },
+    {
+        "input": {
+            "code": "P93I-57SR",
+            "description": "Recrecido y nivelación del soporte de 80 mm de grosor, con mortero autonivelante aislante acústico compuesto por cemento, áridos, aditivos y material polimérico 100% reciclado, tipo Prosilence de PROMSA, aplicado mediante bombeo.",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 27.05
+        }
+    },
+    {
+        "input": {
+            "code": "P9G0-51BI",
+            "description": "RALLADO MANUAL DE PAVIMENTO DE HORMIGÓN PARA EVITAR DESLIZAMIENTOS EN RAMPA.",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 8.58
+        }
+    },
+    {
+        "input": {
+            "code": "P9M1-AM02",
+            "description": "Impermeabilización depósitos:",
+            "unit": "m2"
+        },
+        "output": {
+            "calculated_total_price": 52.27
+        }
+    },
+    {
+        "input": {
+            "code": "PPA0AM20",
+            "description": "PARTIDA ALZADA A JUSTIFICAR PARA LA SEGURIDAD Y SALUD EN LA OBRA, EN BASE AL ESTUDIO Y PLAN DE SEGURIDAD Y SALUD PARA LA CONSTRUCCIÓN DEL EDIFICIO DE VIVIENDAS DE NUEVA EJECUCIÓN",
+            "unit": "pa"
+        },
+        "output": {
+            "calculated_total_price": 30686.22
+        }
+    },
+    {
+        "input": {
+            "code": "QTT210C3011C",
+            "description": "Formación de pendientes de cubierta inclinada mediante tabiques conejeros con una inclinación del 25% formada por:",
+            "unit": "m²"
+        },
+        "output": {
+            "calculated_total_price": 183.84
+        }
+    },
+    {
+        "input": {
+            "code": "RSG030031100",
+            "description": "Suministro y colocación de Perfil angular para juntas entre pavimentos cerámicos, de acero inoxidable AISI 304, Schlüter-SCHIENE-E 100 ´´SCHLÜTER-SYSTEMS´´, de 10 mm de altura, con perforaciones trapezoidales para su fijación o similar.",
+            "unit": "m"
+        },
+        "output": {
+            "calculated_total_price": 29.5
+        }
+    },
+    {
+        "input": {
+            "code": "RSG033001300",
+            "description": "Perfil de transición entre pavimentos a distinto nivel, de aluminio anodizado, acabado natural, Schlüter-RENO-RAMP-AE 100 B65 ´´SCHLÜTER-SYSTEMS´´, de 10 mm de altura, con perforaciones trapezoidales para su fijación.",
+            "unit": "m"
+        },
+        "output": {
+            "calculated_total_price": 23.27
+        }
+    },
+    {
+        "input": {
+            "code": "EMY240",
+            "description": "Reparación de extremo de vigueta de forjado de madera, eliminando la zona deteriorada y colocando una prótesis de 10x15x50 cm de madera aserrada de abeto (Abies alba), acabado cepillado, para aplicaciones estructurales, calidad estructural S10 según DIN 4074, clase resistente C24 según UNE-EN 338 y UNE-EN 1912 y protección frente a agentes bióticos que se corresponde con la clase de penetración NP2 (3 mm en las caras laterales de la albura) según UNE-EN 351-1, adherida a la madera sana mediante resina epoxi-acrilato, libre de estireno. Unión de la prótesis y el resto de la madera sana mediante 4 barras corrugadas de fibra de vidrio reforzada con resina de poliéster, de 0,6 m de longitud cada una y 12 mm de diámetro, alojadas en taladros realizados en la prótesis y la madera sana, y relleno de los taladros con la misma resina. Montaje y desmontaje de apeo.",
+            "unit": "Ud"
+        },
+        "output": {
+            "calculated_total_price": 69.65
+        }
+    },
+    {
+        "input": {
+            "code": "mt08ema050b",
+            "description": "Madera para encofrar, de 26 mm de espesor.",
+            "unit": "m³"
+        },
+        "output": {
+            "calculated_total_price": 345.303
+        }
+    },
+    {
+        "input": {
+            "code": "mt08var050",
+            "description": "Alambre galvanizado para atar, de 1,30 mm de diámetro.",
+            "unit": "kg"
+        },
+        "output": {
+            "calculated_total_price": 2.484
+        }
+    },
+    {
+        "input": {
+            "code": "mt08var060",
+            "description": "Puntas de acero de 20x100 mm.",
+            "unit": "kg"
+        },
+        "output": {
+            "calculated_total_price": 7.848
+        }
+    },
+    {
+        "input": {
+            "code": "mt08dba010d",
+            "description": "Agente desmoldeante, a base de aceites especiales, emulsionable en agua, para encofrados metálicos, fenólicos o de madera.",
+            "unit": "l"
+        },
+        "output": {
+            "calculated_total_price": 1.614
+        }
+    },
+    {
+        "input": {
+            "code": "mt50spa050m",
+            "description": "Tablón de madera de pino, dimensiones 20x7,2 cm.",
+            "unit": "m³"
+        },
+        "output": {
+            "calculated_total_price": 393.914
+        }
+    },
+    {
+        "input": {
+            "code": "mt50spa101",
+            "description": "Clavos de acero.",
+            "unit": "kg"
+        },
+        "output": {
+            "calculated_total_price": 1.211
+        }
+    },
+    {
+        "input": {
+            "code": "mt50spa081a",
+            "description": "Puntal metálico telescópico, de hasta 3 m de altura.",
+            "unit": "U"
+        },
+        "output": {
+            "calculated_total_price": 14.915
+        }
+    },
+    {
+        "input": {
+            "code": "mt26reh100a",
+            "description": "Cartucho de 380 ml de resina epoxi-acrilato, libre de estireno, de dos componentes, con dosificador y boquilla de mezcla automática, para anclajes estructurales verticales y horizontales.",
+            "unit": "Ud"
+        },
+        "output": {
+            "calculated_total_price": 13.633
+        }
+    },
+    {
+        "input": {
+            "code": "mt07mee014fa",
+            "description": "Madera aserrada de abeto (Abies alba), acabado cepillado, para aplicaciones estructurales, calidad estructural S10 según DIN 4074, clase resistente C24 según UNE-EN 338 y UNE-EN 1912 y protección frente a agentes bióticos que se corresponde con la clase de penetración NP2 (3 mm en las caras laterales de la albura) según UNE-EN 351-1, trabajada en taller.",
+            "unit": "m³"
+        },
+        "output": {
+            "calculated_total_price": 539.659
+        }
+    },
+    {
+        "input": {
+            "code": "mt07cef010f",
+            "description": "Barra corrugada de fibra de vidrio reforzada con resina de poliéster, de 12 mm de diámetro, con superficie arenada como mejora de la adherencia, para armado y refuerzo estructural.",
+            "unit": "m"
+        },
+        "output": {
+            "calculated_total_price": 8.009
+        }
+    },
+    {
+        "input": {
+            "code": "mq09sie010",
+            "description": "Motosierra a gasolina, de 50 cm de espada y 2 kW de potencia.",
+            "unit": "h"
+        },
+        "output": {
+            "calculated_total_price": 2.96
+        }
+    },
+    {
+        "input": {
+            "code": "mo020",
+            "description": "Oficial 1ª construcció.",
+            "unit": "h"
+        },
+        "output": {
+            "calculated_total_price": 27.49
+        }
+    },
+    {
+        "input": {
+            "code": "mo112",
+            "description": "Peón especializado construcción.",
+            "unit": "h"
+        },
+        "output": {
+            "calculated_total_price": 22.88
+        }
+    },
+    {
+        "input": {
+            "code": "mo058",
+            "description": "Ayudante carpintero.",
+            "unit": "h"
+        },
+        "output": {
+            "calculated_total_price": 21.15
+        }
+    },
+    {
+        "input": {
+            "code": "mo113",
+            "description": "Peó ordinari construcció.",
+            "unit": "h"
+        },
+        "output": {
+            "calculated_total_price": 22.12
+        }
+    },
+    {
+        "input": {
+            "code": "DPT020",
+            "description": "Demolició de partició interior de fàbrica revestida, formada per maó foradat senzill de 4/5 cm d'espessor, amb mitjans manuals, sense afectar a l'estabilitat dels elements constructius contigus, i càrrega manual sobre camió o contenidor.",
+            "unit": "m²"
+        },
+        "output": {
+            "calculated_total_price": 5.28
+        }
+    },
+    {
+        "input": {
+            "code": "RYP130",
+            "description": "Preparación de superficie de hormigón mediante lijado mecánico con disco de diamante, eliminando las partes blandas, en especial las de lechada de cemento.",
+            "unit": "m²"
+        },
+        "output": {
+            "calculated_total_price": 11.38
+        }
+    },
+    {
+        "input": {
+            "code": "RYP045",
+            "description": "Alisado y nivelado de paramentos interiores y exteriores con mortero de cemento, compuesto por ligantes hidráulicos, resinas poliméricas, áridos calizos y silíceos y aditivos orgánicos e inorgánicos, color blanco, armado y reforzado con malla de fibra de vidrio antiálcalis, de 5 mm de espesor.",
+            "unit": "m²"
+        },
+        "output": {
+            "calculated_total_price": 134.57
+        }
+    },
+    {
+        "input": {
+            "code": "mt28mic060b",
+            "description": "Mortero de cemento, compuesto por ligantes hidráulicos, resinas poliméricas, áridos calizos y silíceos y aditivos orgánicos e inorgánicos, color blanco, para regularización de superficies.",
+            "unit": "kg"
+        },
+        "output": {
+            "calculated_total_price": 20.162
+        }
+    },
+    {
+        "input": {
+            "code": "mt28maw050c",
+            "description": "Malla de fibra de vidrio antiálcalis, de 3,5x3,8 mm de luz de malla, 160 g/m² de masa superficial, 0,52 mm de espesor y de 0,11x50 m, para armar morteros.",
+            "unit": "m²"
+        },
+        "output": {
+            "calculated_total_price": 1.444
+        }
+    },
+    {
+        "input": {
+            "code": "mo038",
+            "description": "Oficial 1ª pintor.",
+            "unit": "h"
+        },
+        "output": {
+            "calculated_total_price": 27.49
+        }
+    },
+    {
+        "input": {
+            "code": "RBE050",
+            "description": "Capa base de mortero de cemento, tipo GP CSIV W2, según UNE-EN 998-1, color gris, de 10 mm de espesor, maestreado, con acabado rugoso, aplicado manualmente, sobre paramento interior de fábrica cerámica, vertical, de hasta 3 m de altura. Incluso junquillos de PVC, para formación de juntas.",
+            "unit": "m²"
+        },
+        "output": {
+            "calculated_total_price": 20.02
+        }
+    },
+    {
+        "input": {
+            "code": "mt08aaa010a",
+            "description": "Aigua.",
+            "unit": "m³"
+        },
+        "output": {
+            "calculated_total_price": 1.292
+        }
+    },
+    {
+        "input": {
+            "code": "mt28esc050c",
+            "description": "Mortero de cemento, tipo GP CSIV W2, según UNE-EN 998-1, para uso en interiores o en exteriores, color gris, compuesto por cemento, áridos de granulometría seleccionada y aditivos, suministrado en sacos.",
+            "unit": "kg"
+        },
+        "output": {
+            "calculated_total_price": 0.143
+        }
+    },
+    {
+        "input": {
+            "code": "mt28mon030",
+            "description": "Junquillo de PVC.",
+            "unit": "m"
+        },
+        "output": {
+            "calculated_total_price": 0.323
+        }
+    },
+    {
+        "input": {
+            "code": "mo039",
+            "description": "Oficial 1ª revocador.",
+            "unit": "h"
+        },
+        "output": {
+            "calculated_total_price": 27.49
+        }
+    },
+    {
+        "input": {
+            "code": "mo111",
+            "description": "Peó especialitzat revocador.",
+            "unit": "h"
+        },
+        "output": {
+            "calculated_total_price": 22.88
+        }
+    },
+    {
+        "input": {
+            "code": "NOUBAU_",
+            "description": "Sistema refuerzo NOUBAU",
+            "unit": "u"
+        },
+        "output": {
+            "calculated_total_price": 3388.551
+        }
+    },
+    {
+        "input": {
+            "code": "RTA010",
+            "description": "Fals sostre continu suspès, situat a una altura menor de 4 m, constituït per plaques d'escaiola amb nervadures, de 100x60 cm, amb cantell recte i acabat llis, suspeses del forjat mitjançant estopades penjants de pasta d'escaiola i fibres vegetals, repartides uniformement (3 fixacions/m²) i separades dels paraments verticals un mínim de 5 mm. Inclús pasta d'escaiola per al enganxat de les vores de les plaques i rejuntat de la cara vista i lliscat final.",
+            "unit": "m²"
+        },
+        "output": {
+            "calculated_total_price": 17.92
+        }
+    },
+    {
+        "input": {
+            "code": "mt12fpe010b",
+            "description": "Placa d'escaiola amb nervadures, de 100x60 cm i de 8 mm d'espessor (20 mm de gruix total, incloent les nervadures), amb cantell recte i acabat llis, sense revestir, per a falsos sostres.",
+            "unit": "m²"
+        },
+        "output": {
+            "calculated_total_price": 2.87
+        }
+    },
+    {
+        "input": {
+            "code": "mt12fac010",
+            "description": "Fibres vegetals en rotllos.",
+            "unit": "kg"
+        },
+        "output": {
+            "calculated_total_price": 1.247
+        }
+    },
+    {
+        "input": {
+            "code": "mt09pes010",
+            "description": "Pasta d'escaiola, segons UNE-EN 13279-1.",
+            "unit": "m³"
+        },
+        "output": {
+            "calculated_total_price": 164.983
+        }
+    },
+    {
+        "input": {
+            "code": "mo035",
+            "description": "Oficial 1ª escaiolista.",
+            "unit": "h"
+        },
+        "output": {
+            "calculated_total_price": 27.49
+        }
+    },
+    {
+        "input": {
+            "code": "mo117",
+            "description": "Peó escaiolista.",
+            "unit": "h"
+        },
+        "output": {
+            "calculated_total_price": 22.12
+        }
+    },
+    {
+        "input": {
+            "code": "RIC020",
+            "description": "Aplicació manual de dues mans de pintura a la calç, color blanc, la primera mà diluïda amb un 30 a 40% d'aigua i la següent diluïda amb un 30% d'aigua o sense diluir, (rendiment: 0,29 l/m² cada mà); prèvia aplicació d'una mà d'emprimació granulosa translúcida, sobre parament interior de morter de calç o morter bastard de calç, vertical, de fins 3 m d'altura.",
+            "unit": "m²"
+        },
+        "output": {
+            "calculated_total_price": 19.43
+        }
+    },
+    {
+        "input": {
+            "code": "mt27pci010a",
+            "description": "Emprimació granulosa, translúcida, per millorar l'adherència de pintures o revestiments a la calç sobre superfícies difícils.",
+            "unit": "l"
+        },
+        "output": {
+            "calculated_total_price": 22.359
+        }
+    },
+    {
+        "input": {
+            "code": "mt27pir200c",
+            "description": "Pintura a la calç ecològica per a interior, a base de calç grassa completament extinta i reposada, terres colorants, carbonat càlcic micronitzat i additius especials, color blanc, acabat mat, textura llisa, antifloridura i antiverdet, molt permeable al vapor d'aigua, resistent a la contaminació urbana, als rajos UV i als gasos de la combustió; per a aplicar amb brotxa, corró o pistola.",
+            "unit": "l"
+        },
+        "output": {
+            "calculated_total_price": 12.503
+        }
+    },
+    {
+        "input": {
+            "code": "mo076",
+            "description": "Ajudant pintor.",
+            "unit": "h"
+        },
+        "output": {
+            "calculated_total_price": 22.12
+        }
+    },
+    {
+        "input": {
+            "code": "RIS030",
+            "description": "Aplicació manual de dues mans de pintura al silicat, color blanc, acabat mat, textura llisa, (rendiment: 0,09 l/m² cada mà); prèvia aplicació d'una mà d'emprimació acrílica, reguladora de l'absorció, sobre parament interior de guix o escaiola, horitzontal, a més de 3 m d'altura.",
+            "unit": "m²"
+        },
+        "output": {
+            "calculated_total_price": 15.62
+        }
+    },
+    {
+        "input": {
+            "code": "mt27pfs100cf",
+            "description": "Emprimació acrílica, reguladora de l'absorció a base de copolímers acrílics, color blanc, amb un contingut de substàncies orgàniques volàtils (VOC) < 5 g/l, per a aplicar amb brotxa, corró o pistola.",
+            "unit": "l"
+        },
+        "output": {
+            "calculated_total_price": 11.74
+        }
+    },
+    {
+        "input": {
+            "code": "mt27psi030b",
+            "description": "Pintura per a interior, a base de silicat potàssic, color blanc, acabat mat, textura llisa, permeable al vapor d'aigua, amb un contingut de substàncies orgàniques volàtils (VOC) < 5 g/l; per a aplicar amb brotxa, corró o pistola.",
+            "unit": "l"
+        },
+        "output": {
+            "calculated_total_price": 10.413
+        }
+    },
+    {
+        "input": {
+            "code": "RIS030b",
+            "description": "Aplicació manual de dues mans de pintura al silicat, color blanc, acabat mat, textura llisa, (rendiment: 0,09 l/m² cada mà); prèvia aplicació d'una mà d'emprimació acrílica, reguladora de l'absorció, sobre parament interior de guix o escaiola, vertical, de fins 3 m d'altura.",
+            "unit": "m²"
+        },
+        "output": {
+            "calculated_total_price": 11.11
+        }
+    },
+    {
+        "input": {
+            "code": "HCA010b",
+            "description": "Repercussió per m² de superfície construïda d'obra, d'ajudes de qualsevol treball, necessàries per a la correcta execució en construccions en sec de l'instal·lació de salubritat formada per: sistema d'evacuació (baixants interiors i exteriors d'aigües pluvials i residuals, canalons, caixes sifòniques, col·lectors suspesos, sistemes d'elevació, derivacions individuals i qualsevol altre element component de la instal·lació), amb un grau de complexitat mig, en edifici plurifamiliar, inclosa p/p d'elements comuns. Inclús material auxiliar per a la correcta execució dels treballs.",
+            "unit": "m²"
+        },
+        "output": {
+            "calculated_total_price": 2.07
+        }
+    },
+    {
+        "input": {
+            "code": "mo011",
+            "description": "Oficial 1ª muntador.",
+            "unit": "h"
+        },
+        "output": {
+            "calculated_total_price": 33.3
+        }
+    },
+    {
+        "input": {
+            "code": "mo080",
+            "description": "Ajudant muntador.",
+            "unit": "h"
+        },
+        "output": {
+            "calculated_total_price": 22.12
+        }
+    },
+    {
+        "input": {
+            "code": "GRA020",
+            "description": "Transport amb camió de residus inertes de formigons, morters i prefabricats produïts en obres de construcció i/o demolició, a abocador específic, instal·lació de tractament de residus de construcció i demolició externa a l'obra o centre de valorització o eliminació de residus, situat a 20 km de distància.",
+            "unit": "m³"
+        },
+        "output": {
+            "calculated_total_price": 5.97
+        }
+    },
+    {
+        "input": {
+            "code": "mq04cap020aa",
+            "description": "Camió de transport de 10 t amb una capacitat de 8 m³ i 2 eixos.",
+            "unit": "h"
+        },
+        "output": {
+            "calculated_total_price": 22.763
+        }
+    }
+]

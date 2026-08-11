@@ -1,26 +1,44 @@
-import { useReducer, useCallback, useEffect } from 'react';
+import { useReducer, useCallback, useEffect, useState } from 'react';
 import { BudgetLineItem, BudgetCostBreakdown } from '@/backend/budget/domain/budget';
-import { BudgetEditorState, BudgetEditorAction, EditableBudgetLineItem } from '@/types/budget-editor';
-// import { arrayMove } from '@dnd-kit/sortable';
+import { BudgetEditorState, BudgetEditorAction, EditableBudgetLineItem, BudgetConfig } from '@/types/budget-editor';
 
 // Simple ID generator
 const generateId = () => Math.random().toString(36).substr(2, 9);
 
 // Initial Cost Breakdown Calculator
-const calculateBreakdown = (items: EditableBudgetLineItem[]): BudgetCostBreakdown => {
-    const materialExecutionPrice = items.reduce((sum, item) => sum + (item.item?.totalPrice || 0), 0);
-    const overheadExpenses = materialExecutionPrice * 0.13; // 13% General Expenses
-    const industrialBenefit = materialExecutionPrice * 0.06; // 6% Industrial Benefit
+const calculateBreakdown = (items: EditableBudgetLineItem[], config: BudgetConfig, isExecutionOnly: boolean = false): BudgetCostBreakdown => {
+    const materialExecutionPrice = items.reduce((sum, item) => {
+        let price = parseFloat(String(item.item?.totalPrice || 0));
+
+        // Exclude variable material costs if Execution Only mode is active
+        if (isExecutionOnly && item.item?.breakdown) {
+            const variableCosts = item.item.breakdown
+                .filter((comp: any) => comp.is_variable === true)
+                .reduce((acc: number, comp: any) => {
+                    const cPrice = comp.unitPrice || comp.price || 0;
+                    const cQuantity = comp.quantity || comp.yield || 1;
+                    return acc + (comp.totalPrice || comp.total || (cPrice * cQuantity));
+                }, 0);
+            price = Math.max(0, price - variableCosts);
+        }
+
+        return sum + (isNaN(price) ? 0 : price);
+    }, 0);
+    const overheadExpenses = materialExecutionPrice * (config.marginGG / 100);
+    const industrialBenefit = materialExecutionPrice * (config.marginBI / 100);
     const subtotal = materialExecutionPrice + overheadExpenses + industrialBenefit;
-    const tax = subtotal * 0.21; // 21% IVA
+    const tax = subtotal * (config.tax / 100);
+
+    // Round to 2 decimals
+    const round = (num: number) => Math.round((num + Number.EPSILON) * 100) / 100;
 
     return {
-        materialExecutionPrice,
-        overheadExpenses,
-        industrialBenefit,
-        tax,
+        materialExecutionPrice: round(materialExecutionPrice),
+        overheadExpenses: round(overheadExpenses),
+        industrialBenefit: round(industrialBenefit),
+        tax: round(tax),
         globalAdjustment: 0,
-        total: subtotal + tax
+        total: round(subtotal + tax)
     };
 };
 
@@ -35,15 +53,50 @@ const initialState: BudgetEditorState = {
         globalAdjustment: 0,
         total: 0
     },
-    history: [],
+    config: { marginGG: 13, marginBI: 6, tax: 21 }, // Default, can be overridden by INIT_STATE
     historyIndex: -1,
     hasUnsavedChanges: false,
-    isSaving: false
+    isSaving: false,
+    isExecutionOnly: false,
+    history: []
 };
 
-function budgetEditorReducer(state: BudgetEditorState, action: BudgetEditorAction): BudgetEditorState {
+// Add new INIT_STATE action
+export type BudgetEditorInitAction = { type: 'INIT_STATE'; payload: { items: EditableBudgetLineItem[]; config?: BudgetConfig; isExecutionOnly?: boolean } };
+
+function budgetEditorReducer(state: BudgetEditorState, action: BudgetEditorAction | BudgetEditorInitAction): BudgetEditorState {
     switch (action.type) {
+        case 'INIT_STATE': {
+            console.log('[BudgetEditor] INIT_STATE triggered with', action.payload.items.length, 'items');
+            const newItems = action.payload.items.map(item => ({
+                ...item,
+                id: item.id || generateId(),
+                isEditing: false,
+                isDirty: false,
+                chapter: item.chapter || 'General',
+                order: item.order || 0
+            }));
+
+            const derivedChapters = Array.from(new Set(newItems.map(i => i.chapter).filter(Boolean) as string[]));
+            const chapters = derivedChapters.length > 0 ? derivedChapters : ['General'];
+            const config = action.payload.config || state.config;
+            const isExecutionOnly = action.payload.isExecutionOnly ?? state.isExecutionOnly;
+
+            const breakdown = calculateBreakdown(newItems, config, isExecutionOnly);
+            return {
+                ...state,
+                items: newItems,
+                chapters: chapters,
+                config: config,
+                isExecutionOnly: isExecutionOnly,
+                costBreakdown: breakdown,
+                history: [{ items: newItems, timestamp: Date.now() }],
+                historyIndex: 0,
+                hasUnsavedChanges: false
+            };
+        }
         case 'SET_ITEMS': {
+            console.log('[BudgetEditor] SET_ITEMS triggered with', action.payload.length, 'items');
             // Extract unique chapters or default to 'General'
             const newItems = action.payload.map(item => ({
                 ...item,
@@ -51,19 +104,19 @@ function budgetEditorReducer(state: BudgetEditorState, action: BudgetEditorActio
                 isEditing: false,
                 isDirty: false,
                 chapter: item.chapter || 'General', // Default chapter
+                order: item.order || 0, // Ensure order exists
                 originalState: item.originalState || (item.item ? {
-                    unitPrice: item.item.unitPrice || 0,
-                    quantity: item.item.quantity || 0,
+                    unitPrice: Number(item.item.unitPrice || 0),
+                    quantity: Number(item.item.quantity || 0),
                     description: item.item.description || '',
                     unit: item.item.unit || ''
                 } : undefined) // Snapshot with strict defaults
             }));
 
-            // Derive unique chapters from items
             const derivedChapters = Array.from(new Set(newItems.map(i => i.chapter).filter(Boolean) as string[]));
             const chapters = derivedChapters.length > 0 ? derivedChapters : ['General'];
 
-            const breakdown = calculateBreakdown(newItems);
+            const breakdown = calculateBreakdown(newItems, state.config, state.isExecutionOnly);
             return {
                 ...state,
                 items: newItems,
@@ -85,29 +138,29 @@ function budgetEditorReducer(state: BudgetEditorState, action: BudgetEditorActio
             const chapterToRemove = action.payload;
             const newChapters = state.chapters.filter(c => c !== chapterToRemove);
 
-            // Move items to 'General' or the first available chapter
-            const targetChapter = newChapters.length > 0 ? newChapters[0] : 'General';
-
-            const newItems = state.items.map(item =>
-                item.chapter === chapterToRemove
-                    ? { ...item, chapter: targetChapter, isDirty: true }
-                    : item
-            );
+            // DELETE items in that chapter (User intent: remove cost)
+            const newItems = state.items.filter(item => item.chapter !== chapterToRemove);
 
             // Ensure we have at least 'General' if all chapters removed
             if (newChapters.length === 0 && !newChapters.includes('General')) {
                 newChapters.push('General');
             }
 
+            const breakdown = calculateBreakdown(newItems, state.config, state.isExecutionOnly);
+
+            const newHistory = state.history.slice(0, state.historyIndex + 1);
+            newHistory.push({ items: newItems, timestamp: Date.now() });
+
             return {
                 ...state,
                 items: newItems,
                 chapters: newChapters,
+                costBreakdown: breakdown,
+                history: newHistory,
+                historyIndex: newHistory.length - 1,
                 hasUnsavedChanges: true
             };
-        }
-
-        case 'RENAME_CHAPTER': {
+        } case 'RENAME_CHAPTER': {
             const { oldName, newName } = action.payload;
             const newChapters = state.chapters.map(c => c === oldName ? newName : c);
             const newItems = state.items.map(item =>
@@ -155,7 +208,7 @@ function budgetEditorReducer(state: BudgetEditorState, action: BudgetEditorActio
                 return item;
             });
 
-            const breakdown = calculateBreakdown(updatedItems);
+            const breakdown = calculateBreakdown(updatedItems, state.config, state.isExecutionOnly);
 
             // Add to history
             const newHistory = state.history.slice(0, state.historyIndex + 1);
@@ -248,7 +301,7 @@ function budgetEditorReducer(state: BudgetEditorState, action: BudgetEditorActio
                 ? state.chapters
                 : [...state.chapters, newItem.chapter];
 
-            const breakdown = calculateBreakdown(newItems);
+            const breakdown = calculateBreakdown(newItems, state.config, state.isExecutionOnly);
 
             const newHistory = state.history.slice(0, state.historyIndex + 1);
             newHistory.push({ items: newItems, timestamp: Date.now() });
@@ -273,19 +326,16 @@ function budgetEditorReducer(state: BudgetEditorState, action: BudgetEditorActio
                 id: generateId(),
                 isDirty: true,
                 originalTask: `${originalItem.originalTask} (Copia)`,
-                item: originalItem.item ? { ...originalItem.item, description: `${originalItem.item.description}` } : undefined,
-                order: originalItem.order + 0.5 // Temporary order, will need re-indexing or splices
+                item: originalItem.item ? { ...originalItem.item, description: `${originalItem.item.description}` } as any : undefined,
+                order: originalItem.order + 0.5
             };
 
-            // Insert after original
+            // Replace order in array
             const originalIndex = state.items.findIndex(i => i.id === action.payload);
             const newItems = [...state.items];
             newItems.splice(originalIndex + 1, 0, newItem);
 
-            // Re-index orders? Not strictly necessary if we rely on array order, but good practice.
-            // Let's just trust array order for now as `reorderItems` handles logic.
-
-            const breakdown = calculateBreakdown(newItems);
+            const breakdown = calculateBreakdown(newItems, state.config, state.isExecutionOnly);
 
             const newHistory = state.history.slice(0, state.historyIndex + 1);
             newHistory.push({ items: newItems, timestamp: Date.now() });
@@ -302,7 +352,7 @@ function budgetEditorReducer(state: BudgetEditorState, action: BudgetEditorActio
 
         case 'REMOVE_ITEM': {
             const newItems = state.items.filter(item => item.id !== action.payload);
-            const breakdown = calculateBreakdown(newItems);
+            const breakdown = calculateBreakdown(newItems, state.config, state.isExecutionOnly);
 
             const newHistory = state.history.slice(0, state.historyIndex + 1);
             newHistory.push({ items: newItems, timestamp: Date.now() });
@@ -323,7 +373,7 @@ function budgetEditorReducer(state: BudgetEditorState, action: BudgetEditorActio
             return {
                 ...state,
                 items: prevVersion.items,
-                costBreakdown: calculateBreakdown(prevVersion.items),
+                costBreakdown: calculateBreakdown(prevVersion.items, state.config, state.isExecutionOnly),
                 historyIndex: state.historyIndex - 1,
                 hasUnsavedChanges: true
             };
@@ -334,10 +384,71 @@ function budgetEditorReducer(state: BudgetEditorState, action: BudgetEditorActio
             return {
                 ...state,
                 items: nextVersion.items,
-                costBreakdown: calculateBreakdown(nextVersion.items),
+                costBreakdown: calculateBreakdown(nextVersion.items, state.config, state.isExecutionOnly),
                 historyIndex: state.historyIndex + 1,
                 hasUnsavedChanges: true
             };
+
+        case 'TOGGLE_EXECUTION_MODE': {
+            const newMode = !state.isExecutionOnly;
+            return {
+                ...state,
+                isExecutionOnly: newMode,
+                costBreakdown: calculateBreakdown(state.items, state.config, newMode)
+            };
+        }
+
+        case 'UPDATE_CONFIG': {
+            const newConfig = { ...state.config, ...action.payload };
+            return {
+                ...state,
+                config: newConfig,
+                costBreakdown: calculateBreakdown(state.items, newConfig, state.isExecutionOnly),
+                hasUnsavedChanges: true
+            };
+        }
+
+        case 'APPLY_MARKUP': {
+            const { scope, targetId, percentage } = action.payload;
+            const factor = 1 + (percentage / 100);
+
+            const newItems = state.items.map(item => {
+                let apply = false;
+                if (scope === 'global') apply = true;
+                else if (scope === 'chapter' && item.chapter === targetId) apply = true;
+                else if (scope === 'item' && item.id === targetId) apply = true;
+
+                if (apply && item.item) {
+                    const currentPrice = Number(item.item.unitPrice || 0);
+                    const newUnitPrice = currentPrice * factor;
+                    const quantity = Number(item.item.quantity || 1);
+                    return {
+                        ...item,
+                        isDirty: true,
+                        item: {
+                            ...item.item,
+                            unitPrice: newUnitPrice,
+                            totalPrice: quantity * newUnitPrice
+                        }
+                    };
+                }
+                return item;
+            });
+
+            const breakdown = calculateBreakdown(newItems, state.config, state.isExecutionOnly);
+
+            const newHistory = state.history.slice(0, state.historyIndex + 1);
+            newHistory.push({ items: newItems, timestamp: Date.now() });
+
+            return {
+                ...state,
+                items: newItems,
+                costBreakdown: breakdown,
+                history: newHistory,
+                historyIndex: newHistory.length - 1,
+                hasUnsavedChanges: true
+            };
+        }
 
         case 'SAVE_START':
             return { ...state, isSaving: true };
@@ -353,15 +464,24 @@ function budgetEditorReducer(state: BudgetEditorState, action: BudgetEditorActio
     }
 }
 
-export function useBudgetEditor(initialItems: BudgetLineItem[] = []) {
+export function useBudgetEditor(initialItems: BudgetLineItem[] = [], initialConfig?: BudgetConfig) {
     const [state, dispatch] = useReducer(budgetEditorReducer, initialState);
 
-    // Initialize items
+    const [isInitialized, setIsInitialized] = useState(false);
+
+    // Initialize items only on the first load to prevent race conditions when saving
     useEffect(() => {
-        if (initialItems.length > 0 && state.items.length === 0) {
-            dispatch({ type: 'SET_ITEMS', payload: initialItems as EditableBudgetLineItem[] });
+        if (!isInitialized) {
+            if (initialItems && initialItems.length > 0) {
+                console.log('[useBudgetEditor] Initializing state with initialItems:', initialItems.length);
+                dispatch({ type: 'INIT_STATE', payload: { items: initialItems as any, config: initialConfig } });
+                setIsInitialized(true);
+            } else if (initialConfig && state.items.length === 0) {
+                dispatch({ type: 'INIT_STATE', payload: { items: [], config: initialConfig } });
+                setIsInitialized(true);
+            }
         }
-    }, [initialItems]);
+    }, [initialItems, initialConfig, isInitialized]);
 
     // Prevent accidental exit with unsaved changes
     useEffect(() => {
@@ -420,6 +540,13 @@ export function useBudgetEditor(initialItems: BudgetLineItem[] = []) {
     const renameChapter = useCallback((oldName: string, newName: string) => dispatch({ type: 'RENAME_CHAPTER', payload: { oldName, newName } }), []);
     const reorderChapters = useCallback((newOrder: string[]) => dispatch({ type: 'REORDER_CHAPTERS', payload: newOrder }), []);
 
+    const toggleExecutionMode = useCallback(() => dispatch({ type: 'TOGGLE_EXECUTION_MODE' }), []);
+
+    const updateConfig = useCallback((config: Partial<BudgetConfig>) => dispatch({ type: 'UPDATE_CONFIG', payload: config }), []);
+
+    const applyMarkup = useCallback((scope: 'global' | 'chapter' | 'item', percentage: number, targetId?: string) =>
+        dispatch({ type: 'APPLY_MARKUP', payload: { scope, targetId, percentage } }), []);
+
     // Feature: Duplicate
     const duplicateItem = useCallback((id: string) => dispatch({ type: 'DUPLICATE_ITEM', payload: id }), []);
 
@@ -441,6 +568,9 @@ export function useBudgetEditor(initialItems: BudgetLineItem[] = []) {
         addChapter,
         removeChapter,
         renameChapter,
-        reorderChapters
+        reorderChapters,
+        toggleExecutionMode,
+        updateConfig,
+        applyMarkup
     };
 }

@@ -1,6 +1,6 @@
 
 import { PriceBookRepository } from "../domain/price-book-repository";
-import { ai, embeddingModel } from '@/backend/ai/config/genkit.config';
+import { ai, embeddingModel } from '@/backend/ai/shared/config/genkit.config';
 import { PriceBookItem } from "../domain/price-book-item";
 
 export class SearchPriceBookService {
@@ -27,6 +27,6 @@ export class SearchPriceBookService {
         }
 
         // 2. Perform Vector Search
-        return this.repository.searchByVector(vector, limit, year);
+        return this.repository.searchByVector(vector, limit, year, query);
     }
 }
