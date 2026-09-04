@@ -16,7 +16,7 @@
 
 [CmdletBinding()]
 param(
-    [string]$ProjectId  = "grupo-rg-a9929",
+    [string]$ProjectId  = "express-renovation",
     [string]$Region     = "europe-southwest1",
     [string]$JobName    = "ai-core-worker",
     [string]$WorkerSaId = "ai-core-worker-sa"

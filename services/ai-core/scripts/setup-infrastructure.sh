@@ -19,7 +19,7 @@
 #   bash services/ai-core/scripts/setup-infrastructure.sh
 #
 # Required env (or sane defaults):
-#   PROJECT_ID    grupo-rg-a9929
+#   PROJECT_ID    express-renovation
 #   REGION        europe-southwest1
 #   JOB_NAME      ai-core-worker
 #   WORKER_SA_ID  ai-core-worker-sa
@@ -27,7 +27,7 @@
 
 set -euo pipefail
 
-: "${PROJECT_ID:=grupo-rg-a9929}"
+: "${PROJECT_ID:=express-renovation}"
 : "${REGION:=europe-southwest1}"
 : "${JOB_NAME:=ai-core-worker}"
 : "${WORKER_SA_ID:=ai-core-worker-sa}"

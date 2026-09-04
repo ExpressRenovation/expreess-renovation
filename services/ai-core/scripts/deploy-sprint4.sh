@@ -14,7 +14,7 @@
 #   bash services/ai-core/scripts/deploy-sprint4.sh --build-only   # solo build, no toca env vars
 #
 # Requisitos:
-#   - gcloud autenticado con permisos sobre grupo-rg-a9929.
+#   - gcloud autenticado con permisos sobre express-renovation.
 #   - Estar dentro del repo (cwd = repo root o services/ai-core).
 #
 # IMPORTANTE: este script NO toca env vars sensibles (FIREBASE_*, GENAI_API,
@@ -22,7 +22,7 @@
 
 set -euo pipefail
 
-PROJECT_ID="${PROJECT_ID:-grupo-rg-a9929}"
+PROJECT_ID="${PROJECT_ID:-express-renovation}"
 REGION="${REGION:-europe-southwest1}"
 SERVICE_NAME="${SERVICE_NAME:-ai-core}"
 JOB_NAME="${JOB_NAME:-ai-core-worker}"

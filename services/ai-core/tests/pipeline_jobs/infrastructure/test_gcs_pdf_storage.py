@@ -57,10 +57,10 @@ class TestUriParsing:
     async def test_parses_canonical_uri(self, storage, storage_client):
         _wire_blob(storage_client)
         await storage.download_to_bytes(
-            "gs://grupo-rg-a9929-pipeline-uploads/user-1/job-abc/x.pdf"
+            "gs://express-renovation-pipeline-uploads/user-1/job-abc/x.pdf"
         )
         storage_client.bucket.assert_called_once_with(
-            "grupo-rg-a9929-pipeline-uploads"
+            "express-renovation-pipeline-uploads"
         )
         storage_client.bucket.return_value.blob.assert_called_once_with(
             "user-1/job-abc/x.pdf"
@@ -177,7 +177,7 @@ class TestUploadPdf:
     def storage_with_bucket(self, storage_client):
         return GcsPdfStorage(
             storage_client=storage_client,
-            upload_bucket="grupo-rg-a9929-pipeline-uploads",
+            upload_bucket="express-renovation-pipeline-uploads",
         )
 
     async def test_uploads_to_expected_path_and_returns_gs_uri(
@@ -197,10 +197,10 @@ class TestUploadPdf:
 
         assert (
             uri
-            == "gs://grupo-rg-a9929-pipeline-uploads/pipeline_uploads/user-1/job-abc/m.pdf"
+            == "gs://express-renovation-pipeline-uploads/pipeline_uploads/user-1/job-abc/m.pdf"
         )
         storage_client.bucket.assert_called_once_with(
-            "grupo-rg-a9929-pipeline-uploads"
+            "express-renovation-pipeline-uploads"
         )
         bucket.blob.assert_called_once_with(
             "pipeline_uploads/user-1/job-abc/m.pdf"

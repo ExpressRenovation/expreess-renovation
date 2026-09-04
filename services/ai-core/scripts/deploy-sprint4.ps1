@@ -6,13 +6,13 @@
 #   .\services\ai-core\scripts\deploy-sprint4.ps1 -NoTabular           # USE_TABULAR_PARSER=false
 #   .\services\ai-core\scripts\deploy-sprint4.ps1 -BuildOnly           # solo build
 #
-# Requires: gcloud CLI autenticated with grupo-rg-a9929 access.
+# Requires: gcloud CLI autenticated with express-renovation access.
 
 [CmdletBinding()]
 param(
     [switch]$NoTabular,
     [switch]$BuildOnly,
-    [string]$ProjectId = "grupo-rg-a9929",
+    [string]$ProjectId = "express-renovation",
     [string]$Region = "europe-southwest1",
     [string]$ServiceName = "ai-core",
     [string]$JobName = "ai-core-worker"

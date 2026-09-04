@@ -26,7 +26,7 @@ from src.pipeline_jobs.infrastructure.cloud_run_jobs_executor import (
 
 
 FULL_JOB_NAME = (
-    "projects/grupo-rg-a9929/locations/europe-southwest1/jobs/ai-core-worker"
+    "projects/express-renovation/locations/europe-southwest1/jobs/ai-core-worker"
 )
 FULL_EXEC_NAME = FULL_JOB_NAME + "/executions/ai-core-worker-xyz12"
 

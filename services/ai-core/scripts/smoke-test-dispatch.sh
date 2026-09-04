@@ -20,7 +20,7 @@ set -euo pipefail
 
 : "${AI_CORE_URL:?Set AI_CORE_URL to the deployed Service base URL}"
 : "${INTERNAL_WORKER_TOKEN:?Set INTERNAL_WORKER_TOKEN (matches Service env var)}"
-: "${PROJECT_ID:=grupo-rg-a9929}"
+: "${PROJECT_ID:=express-renovation}"
 : "${PDF_FIXTURE:=/tmp/smoke.pdf}"
 
 BUCKET="${PROJECT_ID}-pipeline-uploads"

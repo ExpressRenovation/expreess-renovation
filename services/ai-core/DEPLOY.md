@@ -97,12 +97,12 @@ once on each resource, then redeploys preserve them:
 # Service
 gcloud run services update ai-core \
   --region=europe-southwest1 \
-  --update-env-vars=FIREBASE_PROJECT_ID=grupo-rg-a9929,GOOGLE_GENAI_API_KEY=...,...
+  --update-env-vars=FIREBASE_PROJECT_ID=express-renovation,GOOGLE_GENAI_API_KEY=...,...
 
 # Job
 gcloud run jobs update ai-core-worker \
   --region=europe-southwest1 \
-  --update-env-vars=FIREBASE_PROJECT_ID=grupo-rg-a9929,GOOGLE_GENAI_API_KEY=...,...
+  --update-env-vars=FIREBASE_PROJECT_ID=express-renovation,GOOGLE_GENAI_API_KEY=...,...
 ```
 
 For `FIREBASE_PRIVATE_KEY`, keep the literal `\n` escapes — the
@@ -115,23 +115,23 @@ If Cloud Build is unavailable, you can deploy directly with `gcloud`:
 
 ```bash
 # 1. Build & push locally
-docker build -t europe-southwest1-docker.pkg.dev/grupo-rg-a9929/ai-core/ai-core:dev .
-docker push europe-southwest1-docker.pkg.dev/grupo-rg-a9929/ai-core/ai-core:dev
+docker build -t europe-southwest1-docker.pkg.dev/express-renovation/ai-core/ai-core:dev .
+docker push europe-southwest1-docker.pkg.dev/express-renovation/ai-core/ai-core:dev
 
 # 2. Deploy Service
 gcloud run deploy ai-core \
-  --image=europe-southwest1-docker.pkg.dev/grupo-rg-a9929/ai-core/ai-core:dev \
+  --image=europe-southwest1-docker.pkg.dev/express-renovation/ai-core/ai-core:dev \
   --region=europe-southwest1 \
   --memory=1Gi --cpu=1 --timeout=60s \
-  --service-account=firebase-adminsdk-fbsvc@grupo-rg-a9929.iam.gserviceaccount.com \
-  --update-env-vars=WORKER_JOB_NAME=projects/grupo-rg-a9929/locations/europe-southwest1/jobs/ai-core-worker
+  --service-account=firebase-adminsdk-fbsvc@express-renovation.iam.gserviceaccount.com \
+  --update-env-vars=WORKER_JOB_NAME=projects/express-renovation/locations/europe-southwest1/jobs/ai-core-worker
 
 # 3. Deploy Job
 gcloud run jobs deploy ai-core-worker \
-  --image=europe-southwest1-docker.pkg.dev/grupo-rg-a9929/ai-core/ai-core:dev \
+  --image=europe-southwest1-docker.pkg.dev/express-renovation/ai-core/ai-core:dev \
   --region=europe-southwest1 \
   --memory=2Gi --cpu=2 --task-timeout=3600s \
-  --service-account=ai-core-worker-sa@grupo-rg-a9929.iam.gserviceaccount.com \
+  --service-account=ai-core-worker-sa@express-renovation.iam.gserviceaccount.com \
   --command=python --args=-m,src.core.jobs.worker_main
 ```
 

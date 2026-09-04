@@ -41,12 +41,12 @@ métricas monitorizamos. Sincronizado con el dashboard
 ## Cómo se despliega
 
 > **Sprint 3.B**: los pesos fine-tuned vivirán en
-> `gs://grupo-rg-a9929-ai-models/` y se cargarán al arrancar el container vía
+> `gs://express-renovation-ai-models/` y se cargarán al arrancar el container vía
 > las env vars `MODEL_VERSION_EMBEDDING` y `MODEL_VERSION_RERANKER`.
 >
 > Flujo previsto:
 > 1. Entrenamiento offline produce los artefactos (`.safetensors` + tokenizer).
-> 2. Subir a `gs://grupo-rg-a9929-ai-models/<component>/<version>/`.
+> 2. Subir a `gs://express-renovation-ai-models/<component>/<version>/`.
 > 3. Actualizar la env var del servicio Cloud Run (`gcloud run services update ai-core ...`).
 > 4. Cloud Run hace rolling restart de las réplicas; el nuevo container baja el
 >    modelo en el primer request (warm path).

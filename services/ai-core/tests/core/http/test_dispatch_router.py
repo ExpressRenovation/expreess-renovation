@@ -43,7 +43,7 @@ from src.pipeline_jobs.infrastructure.in_memory_pipeline_job_repository import (
 
 
 WORKER_JOB_NAME = (
-    "projects/grupo-rg-a9929/locations/europe-southwest1/jobs/ai-core-worker"
+    "projects/express-renovation/locations/europe-southwest1/jobs/ai-core-worker"
 )
 EXEC_NAME = WORKER_JOB_NAME + "/executions/exec-test"
 

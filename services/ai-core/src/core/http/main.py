@@ -61,8 +61,8 @@ from src.budget.application.use_cases.generate_budget_from_nl_uc import (
 from src.core.http.dependencies import get_restructure_budget_uc, get_generate_budget_from_nl_uc
 
 app = FastAPI(
-    title="NexoAI Core Intelligence",
-    description="Microservice to handle spatial PDF extraction and Gemini AI Budget Pricing.",
+    title="Express Renovation AI Core",
+    description="Spatial PDF extraction and Vertex AI budget pricing (dispatcher + Cloud Run Jobs worker).",
     version="2.0.0"
 )
 
