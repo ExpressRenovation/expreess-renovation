@@ -10,7 +10,9 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "validate": "tsc --noEmit && next lint"
+    "validate": "tsc --noEmit && next lint",
+    "test": "vitest run --passWithNoTests",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@formatjs/intl-localematcher": "^0.5.4",
