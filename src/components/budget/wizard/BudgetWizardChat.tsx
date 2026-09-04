@@ -22,6 +22,9 @@ import { Trash2, MessageSquare, PanelLeftClose, PanelLeftOpen } from 'lucide-rea
 import { Logo } from '@/components/logo';
 import { Budget } from '@/backend/budget/domain/budget';
 import { BudgetWizardTips } from './BudgetWizardTips';
+import { isPipelineJobsEnabled } from '@/lib/feature-flags';
+import { dispatchPipelineJobAction } from '@/actions/pipeline/dispatch-pipeline-job.action';
+import { v4 as uuidv4 } from 'uuid';
 
 
 export function BudgetWizardChat({ isAdmin = false, isPublicMode = false }: { isAdmin?: boolean, isPublicMode?: boolean }) {
@@ -316,6 +319,36 @@ export function BudgetWizardChat({ isAdmin = false, isPublicMode = false }: { is
             let result;
 
             if (isAdmin) {
+                // Flujo async pipeline-jobs (nl-budget) gateado por flag. Con el flag
+                // OFF queda intacto el legacy sincrono (generateBudgetFromSpecsAction).
+                if (isPipelineJobsEnabled()) {
+                    const narrative = [
+                        'Brief del cliente (conversacion del asistente):',
+                        messages.map(m => `${m.role}: ${m.content}`).join('\n'),
+                        '',
+                        'Especificaciones detectadas:',
+                        JSON.stringify(requirements, null, 2),
+                    ].join('\n');
+                    const uid = leadId || 'admin';
+                    const nlBudgetId = uuidv4();
+                    const dispatch = await dispatchPipelineJobAction({
+                        jobType: 'nl-budget',
+                        uid,
+                        leadId: leadId || uid,
+                        budgetId: nlBudgetId,
+                        payload: { narrative },
+                    });
+                    if (dispatch.success) {
+                        setGenerationProgress({ step: 'idle' });
+                        addSystemMessage(
+                            `El presupuesto se está generando en segundo plano.\n\n[Abrir el editor](/dashboard/admin/budgets/${dispatch.budgetId}/edit)`,
+                        );
+                        setState('idle');
+                    } else {
+                        setGenerationProgress({ step: 'error', error: dispatch.error });
+                    }
+                    return;
+                }
                 const { generateBudgetFromSpecsAction } = await import('@/actions/budget/generate-budget-from-specs.action');
                 // Ensure specs exists, we have guarded against it above
                 result = await generateBudgetFromSpecsAction(leadId, requirements as any, true);
