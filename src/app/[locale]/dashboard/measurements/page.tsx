@@ -27,6 +27,16 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { createBudgetFromMeasurementsAction } from '@/actions/budget/create-budget-from-measurements.action';
+import { isPipelineJobsEnabled } from '@/lib/feature-flags';
+import { MeasurementsPipelineFlow } from '@/components/budget/MeasurementsPipelineFlow';
+
+// Gate: con el flag pipeline-jobs ON usamos el flujo async (Cloud Run Jobs)
+// aislado en MeasurementsPipelineFlow. El flujo legacy síncrono queda intacto
+// debajo. El wrapper no llama hooks → no viola las rules-of-hooks.
+export default function MeasurementsPage() {
+    if (isPipelineJobsEnabled()) return <MeasurementsPipelineFlow />;
+    return <LegacyMeasurementsPage />;
+}
 
 type ProcessingStep = 'idle' | 'uploading' | 'extracting' | 'pricing' | 'complete' | 'error';
 
@@ -79,7 +89,7 @@ const groupItems = (items: PricedItem[]) => {
     return grouped;
 };
 
-export default function MeasurementsPage() {
+function LegacyMeasurementsPage() {
     const router = useRouter();
     const { toast } = useToast();
     const [activeTab, setActiveTab] = useState<'budget' | 'raw'>('budget');
