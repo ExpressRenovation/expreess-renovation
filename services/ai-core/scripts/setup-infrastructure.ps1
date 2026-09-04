@@ -72,7 +72,10 @@ Write-Host "==> Granting worker SA the runtime roles..."
 $roles = @(
     'roles/datastore.user',
     'roles/logging.logWriter',
-    'roles/monitoring.metricWriter'
+    'roles/monitoring.metricWriter',
+    # El worker llama a Vertex AI (Gemini) para el swarm de pricing / NL / vision.
+    # Sin esto: 403 PERMISSION_DENIED aiplatform.endpoints.predict.
+    'roles/aiplatform.user'
 )
 foreach ($role in $roles) {
     gcloud projects add-iam-policy-binding $ProjectId `

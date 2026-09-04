@@ -66,7 +66,8 @@ echo "==> Granting worker SA the runtime roles..."
 for role in \
     roles/datastore.user \
     roles/logging.logWriter \
-    roles/monitoring.metricWriter; do
+    roles/monitoring.metricWriter \
+    roles/aiplatform.user; do
   gcloud projects add-iam-policy-binding "$PROJECT_ID" \
     --member="serviceAccount:${WORKER_SA}" \
     --role="$role" \
