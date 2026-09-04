@@ -29,6 +29,7 @@ import { useToast } from '@/hooks/use-toast';
 import { usePipelineJob } from '@/hooks/use-pipeline-job';
 import { dispatchMeasurementsJob } from '@/lib/budget/dispatch-measurements-job';
 import { PipelineJobControls } from './PipelineJobControls';
+import { PipelineBudgetProgress } from './PipelineBudgetProgress';
 
 type Phase = 'idle' | 'uploading' | 'dispatching' | 'tracking' | 'error';
 
@@ -194,7 +195,12 @@ export function MeasurementsPipelineFlow() {
                                     <p className="text-sm text-muted-foreground truncate">{fileName}</p>
                                 </div>
                             </div>
-                            <PipelineJobControls jobId={jobId} />
+                            <PipelineBudgetProgress
+                                budgetId={budgetId ?? undefined}
+                                pipelineJobId={jobId ?? undefined}
+                                progress={{ step: 'extracting' }}
+                                className="max-w-full"
+                            />
                             <p className="text-xs text-muted-foreground">
                                 Al completar, se abrirá automáticamente el editor del presupuesto.
                             </p>
