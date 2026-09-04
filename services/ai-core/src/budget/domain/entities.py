@@ -21,8 +21,18 @@ class PersonalInfo(BaseModel):
     name: str = "Cliente Generico"
     email: str = ""
     phone: str = ""
+    # `company` se mantiene por retrocompat de presupuestos históricos. Los flujos
+    # nuevos persisten en `companyName` (alineado con la interfaz TS).
     company: Optional[str] = None
+    companyName: Optional[str] = None
     nif: Optional[str] = None
+    address: Optional[str] = None
+    web: Optional[str] = None
+    billingAddress: Optional[str] = None
+    billingCity: Optional[str] = None
+    billingPostalCode: Optional[str] = None
+    billingProvince: Optional[str] = None
+    billingCountry: Optional[str] = None
 
 class BudgetBreakdownComponent(BaseModel):
     code: Optional[str] = None
@@ -33,6 +43,15 @@ class BudgetBreakdownComponent(BaseModel):
     waste: Optional[float] = None
     total: float
     isSubstituted: Optional[bool] = None
+    alternativeComponents: Optional[List[Dict[str, Any]]] = None
+    # Fase 9.7 — flag heredado del catálogo. Optional para retrocompat con
+    # presupuestos históricos que no lo tenían. El editor frontend (modos
+    # Sólo Ejecución / Exclusivamente Mano de Obra) lo lee como `is_variable`.
+    is_variable: Optional[bool] = None
+    # Phase 17 — snapshot raw PEM antes de bakear GG+BI. Permite recalcular
+    # con margen distinto sin perder fidelidad al catálogo COAATMCA.
+    rawPrice: Optional[float] = None
+    rawTotal: Optional[float] = None
 
 class BudgetConfig(BaseModel):
     marginGG: float
@@ -64,6 +83,16 @@ class AIResolution(BaseModel):
     confidence_score: int
     is_estimated: bool
     needs_human_review: bool
+    # Phase 17 — snapshot del unit_price raw PEM antes de bakear GG+BI.
+    # Permite auditoría y recálculo sin perder el valor original del LLM.
+    calculated_unit_price_raw: Optional[float] = None
+    # Calibración (catálogo → constructor real). Snapshot del PEM ANTES de
+    # multiplicar por el factor de calibración + el factor aplicado. Permiten
+    # aprender el multiplicador real (corrected_raw / pre_calibration_unit_price)
+    # de forma independiente al factor vigente cuando se generó (evita runaway),
+    # y hacer transparente la calibración en el editor. 1.0 = sin calibración.
+    pre_calibration_unit_price: Optional[float] = None
+    applied_calibration_factor: Optional[float] = None
 
 # --- ICL & RLHF Fragment Entities (Many-Shot Engine) ---
 class HeuristicContext(BaseModel):
@@ -114,7 +143,18 @@ class BudgetPartida(BaseModel):
     quantity: float
     unitPrice: float
     totalPrice: float
+    # BC3 — doble precio (Precio BC3 vs Precio IA) + mediciones estructuradas.
+    # None en presupuestos que no provienen de un archivo .bc3.
+    bc3_unit_price: Optional[float] = None       # precio unitario del propio BC3
+    ai_unit_price: Optional[float] = None         # estimación IA (catálogo + Vertex)
+    active_price_source: Optional[Literal['bc3', 'ai']] = None
+    measurements: Optional[List[Dict[str, Any]]] = None  # estado de mediciones estructurado
     originalTask: Optional[str] = None
+    # Material solicitado explícitamente por el cliente (p.ej. "cerámica"). Se usa
+    # como hint de generación para el Swarm y como anotación de auditoría. NO debe
+    # verse en el PDF entregado. Antes viajaba embebido en `description` como
+    # "[MATERIAL EXPLÍCITO: X]"; ahora es un campo dedicado (limpiado al ensamblar).
+    explicitMaterial: Optional[str] = None
     note: Optional[str] = None
     ai_justification: Optional[str] = None
     sourceDatabase: Optional[str] = None
@@ -125,6 +165,26 @@ class BudgetPartida(BaseModel):
     reasoning: Optional[str] = None
     breakdown: Optional[List[BudgetBreakdownComponent]] = None
     relatedMaterial: Optional[Dict[str, Any]] = None # Could be strictly typed if needed
+    # Fase 5.E — trazabilidad v005 del Judge hacia la UI. Ambos Optional para que
+    # presupuestos históricos (sin estos campos en Firestore) sigan leyéndose sin
+    # romper. `unit_conversion_applied` se guarda como dict plano (no como el
+    # modelo pydantic original `UnitConversionRecord`) para serializar directo a
+    # Firestore y ser consumible por la UI de Next.js sin conversiones.
+    match_kind: Optional[Literal['1:1', '1:N', 'from_scratch']] = None
+    unit_conversion_applied: Optional[Dict[str, Any]] = None
+    # Fase 6.D — IDs de los HeuristicFragments (v006) que el Swarm inyectó en el
+    # prompt del Pro al tasar esta partida. `None` = no se buscó fragments;
+    # `[]` (no lo emitimos en este sprint) sería "se buscó y no había ninguno".
+    applied_fragments: Optional[List[str]] = None
+    # Phase 17 — flags de reconciliación. Marca partidas donde el LLM devolvió
+    # breakdown con divergencia >= 2% del unit_price (no auto-fixable).
+    # El editor frontend muestra chip ⚠️ y banner para revisión humana.
+    needs_reconciliation: bool = False
+    divergence_pct: Optional[float] = None  # ratio absoluto (0.05 = 5%)
+    divergence_amount: Optional[float] = None  # diff en € (sum_breakdown - unit_price)
+    last_reconciled_at: Optional[datetime] = None
+    reconciled_by: Optional[str] = None  # uid del admin
+    original_unit_price_before_reconciliation: Optional[float] = None
 
 class BudgetMaterial(BaseModel):
     type: Literal['MATERIAL'] = 'MATERIAL'
@@ -175,6 +235,9 @@ class Budget(BaseModel):
     id: str
     leadId: str
     clientSnapshot: PersonalInfo
+    # Título del presupuesto — opcional. Rellenado por el wizard NL o
+    # auto-extraído del header del PDF en measurements/vision.
+    title: Optional[str] = None
     status: BudgetStatus
     createdAt: datetime
     updatedAt: datetime
@@ -190,3 +253,7 @@ class Budget(BaseModel):
     quickQuote: Optional[Dict[str, Any]] = None
     renders: Optional[List[Dict[str, Any]]] = None
     telemetry: Optional[BudgetTelemetry] = None
+    # Phase 15 — versión de calibración con que fue producido este budget.
+    # 'phase15' indica que partidas almacenan raw PEM (markup distribuido por editor).
+    # Ausencia o 'phase14' indica calibración legacy (partidas all-in).
+    calibrationVersion: Optional[str] = None

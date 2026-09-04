@@ -1,115 +1,170 @@
 import logging
 import math
-import os
-from typing import List, Dict, Any
+from typing import Any, Dict, List, Optional
+
 from firebase_admin import firestore
-from google.cloud.firestore_v1.vector import Vector
-from google.cloud.firestore_v1.base_vector_query import DistanceMeasure
 from google.cloud.firestore_v1.base_query import FieldFilter
+from google.cloud.firestore_v1.base_vector_query import DistanceMeasure
+from google.cloud.firestore_v1.vector import Vector
 
 from src.budget.application.ports.ports import IVectorSearch
 
 logger = logging.getLogger(__name__)
 
+# Factor de degradación aplicado al `matchScore` cuando la unidad del
+# candidato no es compatible dimensionalmente con la partida. No se excluye
+# el candidato — el Judge aguas abajo decide; solo se le baja el ranking.
+_DIMENSIONAL_MISMATCH_FACTOR = 0.3
+
+# P2 — Down-weight de procedencia. Las partidas from_scratch que el constructor
+# guarda en su libro desde el editor se etiquetan `source == "ai_generated"` en
+# la MISMA colección `price_book_2025` (sin `kind`, con embedding 768). El
+# vector search las surfacea junto al catálogo oficial COAATMCA. Hasta estar
+# validadas NO deben competir de igual a igual: se degrada su `matchScore` por
+# este factor para que, ante scores similares, gane el match oficial. NO se
+# excluyen — el Judge/rerank aguas abajo sigue viéndolas; solo se relegan.
+# 0.85 = penalización suave (~15%), suficiente para romper empates sin enterrar
+# un buen match de IA cuando no hay alternativa oficial cercana.
+_AI_GENERATED_SOURCE_FACTOR = 0.85
+
+
 class FirestorePriceBookAdapter(IVectorSearch):
-    """
-    Adapter for connecting to Google Cloud Firestore's native Vector Search.
-    Hybrid Semantic + Keyword reranking over the price book.
+    """Adapter de vector search sobre `price_book_2025`.
+
+    La colección contiene documentos de dos `kind`:
+      - `item`: la partida padre del libro (LVC010, etc.).
+      - `breakdown`: un componente individual de una partida (oficial,
+        material, maquinaria…).
+
+    El adapter devuelve ambos kinds tal cual los indexamos — el Judge
+    razona distinto según el kind. El campo `kind` se preserva en el dict
+    de salida, junto con `unit_dimension` para que el caller pueda seguir
+    razonando sobre compatibilidad.
+
+    Filtro dimensional opcional: cuando el caller pasa la
+    `partida_unit_dimension`, los candidatos con dimensión física distinta
+    ven su `matchScore` degradado por `_DIMENSIONAL_MISMATCH_FACTOR`. Los
+    candidatos sin `unit_dimension` (legacy / vacío) NO se degradan —
+    preferimos ser permisivos y dejar que el Judge decida.
     """
 
-    def __init__(self, collection_name: str = None):
-        self.db = firestore.client()
-        # `price_book_items` is the collection the Next.js app writes and reads,
-        # and the one migrated into this project. The older `price_book_v004`
-        # holds vectors from a different embedding model and is not comparable.
-        self.collection_name = collection_name or os.environ.get(
-            "PRICE_BOOK_COLLECTION", "price_book_items"
-        )
+    def __init__(self, db: Optional[Any] = None) -> None:
+        # db inyectable para tests; en producción default al cliente de
+        # firebase_admin inicializado globalmente.
+        self.db = db if db is not None else firestore.client()
 
     def _cosine_similarity(self, vec_a: List[float], vec_b: List[float]) -> float:
-        """Calculate cosine similarity between two vectors."""
         if len(vec_a) != len(vec_b):
             return 0.0
-        
         dot_product = sum(a * b for a, b in zip(vec_a, vec_b))
         norm_a = math.sqrt(sum(a * a for a in vec_a))
         norm_b = math.sqrt(sum(b * b for b in vec_b))
-        
         if norm_a == 0 or norm_b == 0:
             return 0.0
-            
         return dot_product / (norm_a * norm_b)
 
-    def search_similar_items(self, query_vector: List[float], query_text: str = "", limit: int = 3, score_threshold: float = 0.5, chapter_filters: List[str] = None) -> List[Dict[str, Any]]:
-        """
-        Executes a Hybrid Firestore vector search:
-        1. Fetches candidate pool via Cosine distance.
-        2. Computes precise cosine similarity score.
-        3. Reranks using keywords from the original query text.
-        4. Applies strict array IN filtering if chapter_filters are provided.
+    def search_similar_items(
+        self,
+        query_vector: List[float],
+        query_text: str = "",
+        limit: int = 3,
+        score_threshold: float = 0.5,
+        chapter_filters: Optional[List[str]] = None,
+        partida_unit_dimension: Optional[str] = None,
+    ) -> List[Dict[str, Any]]:
+        """Hybrid Firestore vector search con reranking léxico + filtro dimensional.
+
+        Args:
+          query_vector: embedding de la query (se trunca a 768 por compat).
+          query_text: texto original — habilita reranking léxico si no vacío.
+          limit: número de candidatos a devolver tras reranking.
+          score_threshold: umbral (actualmente informativo, no filtra).
+          chapter_filters: lista de capítulos permitidos (max 10 por Firestore).
+          partida_unit_dimension: si se pasa, degradamos candidatos con
+            `unit_dimension` distinta para que queden al final del ranking.
         """
         try:
-            collection_ref = self.db.collection(self.collection_name)
-            
-            # Fetch a larger candidate pool to rerank
+            # Firestore vector length safety truncation.
+            query_vector = query_vector[:768]
+
+            logger.info(f"Searching Firestore with {len(query_vector)} dimensions...")
+            collection_ref = self.db.collection("price_book_2025")
+
+            # Fetch a larger candidate pool to rerank.
             candidate_limit = limit * 3 if query_text else limit
-            
+
             if chapter_filters and len(chapter_filters) > 0:
-                # Max 10 items in `in` clause natively in Firestore
+                # Max 10 items in `in` clause natively in Firestore.
                 safe_filters = chapter_filters[:10]
-                vector_query = collection_ref.where(filter=FieldFilter("chapter", "in", safe_filters)).find_nearest(
+                vector_query = collection_ref.where(
+                    filter=FieldFilter("chapter", "in", safe_filters)
+                ).find_nearest(
                     vector_field="embedding",
                     query_vector=Vector(query_vector),
                     distance_measure=DistanceMeasure.COSINE,
-                    limit=candidate_limit
+                    limit=candidate_limit,
                 )
             else:
                 vector_query = collection_ref.find_nearest(
                     vector_field="embedding",
                     query_vector=Vector(query_vector),
                     distance_measure=DistanceMeasure.COSINE,
-                    limit=candidate_limit
+                    limit=candidate_limit,
                 )
-            
+
             docs = vector_query.get()
-            candidates = []
-            
+            candidates: List[Dict[str, Any]] = []
+
             for doc in docs:
                 data = doc.to_dict()
-                stored_embedding = data.get('embedding')
+                stored_embedding = data.get("embedding")
                 match_score = 0.0
-                
-                # Compute exact cosine similarity
+
                 if stored_embedding:
                     vec = list(stored_embedding)
                     match_score = self._cosine_similarity(query_vector, vec)
-                    
-                data['matchScore'] = match_score
+
+                data["matchScore"] = match_score
                 data["id"] = doc.id
-                
-                # Remove large embedding
-                if 'embedding' in data:
-                    del data['embedding']
-                    
+
+                # Remove large embedding from the payload returned upstream.
+                if "embedding" in data:
+                    del data["embedding"]
+
                 candidates.append(data)
-                
-            # Hybrid Keyword Reranking
+
+            # Hybrid Keyword Reranking.
             if query_text:
                 keywords = [k for k in query_text.lower().split() if len(k) > 2]
-                
                 for candidate in candidates:
-                    text = (candidate.get('description', '') or '').lower()
+                    text = (candidate.get("description", "") or "").lower()
                     matches = sum(1 for kw in keywords if kw in text)
-                    
                     keyword_score = (matches / len(keywords)) if keywords else 0.0
-                    
-                    # New Score = Vector * (1 + 0.5 * KeywordScore)
-                    candidate['matchScore'] *= (1 + 0.5 * keyword_score)
-                    
-            # Final Sort and Limit
-            candidates.sort(key=lambda x: x.get('matchScore', 0), reverse=True)
+                    candidate["matchScore"] *= (1 + 0.5 * keyword_score)
+
+            # Dimensional degradation: solo si el caller aportó la dim de la
+            # partida Y el candidato tiene su propia dim declarada. Los
+            # candidatos sin `unit_dimension` no se degradan (permissive).
+            if partida_unit_dimension:
+                for candidate in candidates:
+                    cand_dim = candidate.get("unit_dimension")
+                    if cand_dim and cand_dim != partida_unit_dimension:
+                        candidate["matchScore"] *= _DIMENSIONAL_MISMATCH_FACTOR
+
+            # P2 — Down-weight de procedencia `ai_generated`. Se aplica SIEMPRE
+            # (no depende de ningún filtro del caller) y sobre el score ya
+            # reranqueado/degradado, justo antes del sort final, para que los
+            # candidatos oficiales COAATMCA ganen los empates. `source` viaja en
+            # el propio doc de Firestore (`data.get("source")`), así que no hay
+            # nada que propagar aguas arriba.
+            for candidate in candidates:
+                if candidate.get("source") == "ai_generated":
+                    candidate["matchScore"] *= _AI_GENERATED_SOURCE_FACTOR
+
+            # Final Sort and Limit.
+            candidates.sort(key=lambda x: x.get("matchScore", 0), reverse=True)
             return candidates[:limit]
-            
+
         except Exception as e:
             logger.error(f"Failed to execute native Firestore hybrid search: {str(e)}")
             return []

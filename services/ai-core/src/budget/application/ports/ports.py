@@ -32,14 +32,27 @@ class ILLMProvider(ABC):
 class IVectorSearch(ABC):
     """Port for finding catalog matches in a Vector Database."""
     @abstractmethod
-    async def search_similar_items(self, query_vector: List[float], query_text: str = "", limit: int = 3, score_threshold: float = 0.5, chapter_filters: List[str] = None) -> List[Dict[str, Any]]:
-        """Returns a list of candidate items matching the query."""
+    async def search_similar_items(
+        self,
+        query_vector: List[float],
+        query_text: str = "",
+        limit: int = 3,
+        score_threshold: float = 0.5,
+        chapter_filters: List[str] = None,
+        partida_unit_dimension: Optional[str] = None,
+    ) -> List[Dict[str, Any]]:
+        """Returns a list of candidate items matching the query.
+
+        `partida_unit_dimension` (opcional, v005): si se pasa, los candidatos
+        con `unit_dimension` incompatible se degradan en el ranking. Los
+        adapters legacy que no lo implementen simplemente ignoran el param.
+        """
         pass
 
 class IGenerationEmitter(ABC):
     """Port for real-time streaming of progress events to the client."""
     @abstractmethod
-    def emit_event(self, lead_id: str, event_type: str, data: Dict[str, Any]) -> None:
+    def emit_event(self, budget_id: str, event_type: str, data: Dict[str, Any]) -> None:
         """Publishes an event to the underlying messaging system (e.g. Firestore, WebSockets)."""
         pass
 

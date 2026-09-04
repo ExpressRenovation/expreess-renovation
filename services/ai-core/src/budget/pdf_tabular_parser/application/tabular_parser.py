@@ -1,0 +1,892 @@
+"""TabularParser — orquestador principal del parser TABULAR coord-based.
+
+Flujo por página:
+1. extract_words + width/height vía pdfplumber.
+2. detect_header_in_page — busca la cabecera; si se encuentra, actualiza
+   el ColumnMapper memorizado.
+3. Si hay mapping vigente, agrupa palabras en TabularRows.
+4. Para cada row: intenta detectar declaración de capítulo/subcap/apartado.
+5. Si no es declaración: intenta detectar cabecera de partida; si lo es,
+   abre nueva partida y la registra con la jerarquía actual.
+6. Si la row siguiente es summary `<CANT> <PRECIO> <IMPORTE>`, fija qty.
+
+El parser NO emite eventos SSE por sí mismo — la emisión ocurre en el
+caller (`pdf_extractor_service.py`) para mantener este módulo libre de
+acoplamientos al pipeline.
+
+Si después de procesar todo, qty_rate < 0.80 o chapter_rate < 0.80:
+`result.is_viable() == False` y el caller debe caer a LLM Vision.
+"""
+from __future__ import annotations
+
+import logging
+import re
+import time
+from typing import Callable, Dict, List, Optional
+
+from src.budget.pdf_tabular_parser.application.annexed_detector import (
+    detect_annexed_transition_page,
+    extract_totals_from_annexed_pages,
+)
+from src.budget.pdf_tabular_parser.application.column_mapper import ColumnMapper
+from src.budget.pdf_tabular_parser.application.header_detector import detect_header_in_page
+from src.budget.pdf_tabular_parser.application.hierarchy_tracker import (
+    apply_detection_to_hierarchy,
+    detect_hierarchy_in_line,
+)
+from src.budget.pdf_tabular_parser.application.mu02_detector import (
+    count_mu02_pages_with_header,
+    detect_mu02_layout,
+)
+from src.budget.pdf_tabular_parser.application.mu02_extractor import (
+    extract_mu02_partidas,
+)
+from src.budget.pdf_tabular_parser.application.partida_extractor import (
+    detect_partida_header_from_text,
+    detect_summary_row,
+    extract_quantity_from_row,
+)
+from src.budget.pdf_tabular_parser.application.partida_header_annexed import (
+    detect_partida_header_annexed,
+)
+from src.budget.pdf_tabular_parser.application.row_grouper import group_words_into_rows
+from src.budget.pdf_tabular_parser.domain.column import ColumnConcept
+from src.budget.pdf_tabular_parser.domain.hierarchy import ChapterHierarchy
+from src.budget.pdf_tabular_parser.domain.result import (
+    PageMetrics,
+    TabularExtractionResult,
+    TabularPartida,
+)
+from src.budget.pdf_tabular_parser.domain.row import TabularRow
+from src.budget.pdf_tabular_parser.infrastructure.pdfplumber_adapter import iter_pages
+
+logger = logging.getLogger(__name__)
+
+# Si extraemos más de este threshold % páginas sin cabecera ANTES de la
+# primera detección → no es un PDF PRESTO, fallback inmediato.
+MAX_PAGES_WITHOUT_HEADER_BEFORE_ABORT = 3
+
+
+class TabularParser:
+    """Orquestador del parser TABULAR.
+
+    Idempotente — instanciar una vez y reusar es seguro. No mantiene estado
+    entre llamadas a `parse()`.
+
+    El parser soporta TRES modos (en orden de prioridad):
+
+    1. **MU02_INLINE** (Fase E): cabecera tabular MU02
+       (`Nº Ud Descripción Cantidad Precio Total`) en >=2 páginas. Partidas
+       con código jerárquico, descripción multilínea y total final inline
+       (`720,00 m²`). Va PRIMERO porque su cabecera es muy específica.
+
+    2. **PRESTO ANNEXED** (Fase D): cabeceras de partida en primer tercio del
+       PDF + totales `Total <code> <qty>` en último tercio. Activado cuando
+       `detect_annexed_transition_page` retorna un page number válido
+       (>= 50% del PDF).
+
+    3. **INLINE / TABULAR** (Fase A): cabecera CIFRE/PRESTO con columnas
+       (CÓDIGO, RESUMEN, ..., CANTIDAD), descripciones y mediciones inline
+       en cada partida. Activado cuando se detecta la cabecera en una página.
+
+    Si ninguno aplica, retorna `result.reason="no_layout_recognized"`.
+    """
+
+    def parse(
+        self,
+        pdf_bytes: bytes,
+        event_callback: Optional[Callable[[str, dict], None]] = None,
+    ) -> TabularExtractionResult:
+        """Parsea un PDF completo. Retorna el resultado con métricas.
+
+        Args:
+            pdf_bytes: bytes del PDF.
+            event_callback: opcional, función ``(event_name, payload)`` que
+                emite eventos de telemetría (e.g. SSE). Si es None, no se
+                emiten eventos.
+        """
+        start = time.time()
+
+        result = TabularExtractionResult()
+        hierarchy = ChapterHierarchy()
+        mapper = ColumnMapper()
+
+        partidas: List[TabularPartida] = []
+        last_partida: Optional[TabularPartida] = None
+        pending_qty_for_last: bool = False
+
+        pages_seen = 0
+        pages_without_header_streak = 0
+        pages_with_header = 0
+
+        # Pre-extract todo el texto + words por página para poder hacer
+        # detección ANNEXED ANTES de descartar via "no header detected".
+        text_per_page: List[str] = []
+        pages_buffer: List = []
+        try:
+            for page_data in iter_pages(pdf_bytes):
+                pages_buffer.append(page_data)
+                text_per_page.append(page_data.raw_text or "")
+        except Exception as e:  # noqa: BLE001
+            logger.exception("TabularParser: error iterando PDF: %s", e)
+            result.duration_seconds = time.time() - start
+            result.pages_total = len(pages_buffer)
+            result.reason = f"exception:{type(e).__name__}"
+            return result
+
+        if not pages_buffer:
+            result.duration_seconds = time.time() - start
+            result.reason = "empty_pdf"
+            return result
+
+        # --- EXTRACCIÓN DE METADATA DEL DOCUMENTO (Fase F) ---
+        # Antes de decidir el modo: extraer title + address de la primera
+        # página. Los datos viven ANTES de la estructura tabular y son
+        # críticos para el Budget downstream (título, contexto del proyecto).
+        try:
+            from src.budget.pdf_tabular_parser.application.document_metadata import (
+                extract_document_metadata,
+            )
+            doc_meta = extract_document_metadata(text_per_page)
+            result.document_title = doc_meta.title
+            result.document_address = doc_meta.address
+        except Exception as meta_exc:  # noqa: BLE001
+            # No bloquear el parseo si la extracción de metadata falla.
+            logger.warning("Document metadata extraction falló: %s", meta_exc)
+
+        # --- DETECCIÓN DE MODO MU02 (Fase E) ---
+        # MU02 va PRIMERO porque su cabecera tabular
+        # `Nº Ud Descripción Cantidad Precio Total` es muy específica y no se
+        # confunde con CIFRE ni ANNEXED.
+        if detect_mu02_layout(text_per_page):
+            pages_with_mu02_header = count_mu02_pages_with_header(text_per_page)
+            logger.info(
+                "TabularParser: modo MU02_INLINE detectado (%d/%d páginas con cabecera)",
+                pages_with_mu02_header,
+                len(text_per_page),
+            )
+            _emit(event_callback, "mu02_layout_detected", {
+                "pagesWithHeader": pages_with_mu02_header,
+                "totalPages": len(text_per_page),
+            })
+            self._parse_mu02(
+                text_per_page=text_per_page,
+                pages_with_mu02_header=pages_with_mu02_header,
+                result=result,
+                event_callback=event_callback,
+            )
+            result.duration_seconds = time.time() - start
+            result.pages_total = len(text_per_page)
+            result.is_viable()
+            return result
+
+        # --- DETECCIÓN DE MODO ANNEXED ---
+        transition_page = detect_annexed_transition_page(text_per_page)
+        if transition_page is not None:
+            logger.info(
+                "TabularParser: modo ANNEXED detectado, transition_page=%d/%d",
+                transition_page,
+                len(text_per_page),
+            )
+            _emit(event_callback, "annexed_transition_detected", {
+                "transitionPage": transition_page,
+                "totalPages": len(text_per_page),
+            })
+            self._parse_annexed(
+                text_per_page=text_per_page,
+                transition_page=transition_page,
+                result=result,
+                event_callback=event_callback,
+            )
+            result.duration_seconds = time.time() - start
+            result.pages_total = len(text_per_page)
+            result.is_viable()
+            return result
+
+        # --- MODO INLINE/TABULAR (Fase A — sin cambios) ---
+        try:
+            for page_data in pages_buffer:
+                pages_seen += 1
+                page_number = page_data.page_number
+                words = page_data.words
+
+                # 1. Detectar cabecera en esta página.
+                header_detection = detect_header_in_page(words, page_number)
+                if header_detection.found:
+                    mapper.update_from_detection(header_detection)
+                    pages_with_header += 1
+                    pages_without_header_streak = 0
+                else:
+                    pages_without_header_streak += 1
+
+                # Si nunca hemos visto cabecera y ya pasamos varias páginas → abort.
+                if (
+                    not mapper.has_mapping()
+                    and pages_without_header_streak >= MAX_PAGES_WITHOUT_HEADER_BEFORE_ABORT
+                ):
+                    logger.info(
+                        "TabularParser: no header in first %d pages, aborting",
+                        pages_without_header_streak,
+                    )
+                    result.partidas = partidas
+                    result.duration_seconds = time.time() - start
+                    result.pages_total = pages_seen
+                    result.pages_with_header = pages_with_header
+                    result.reason = "no_header_detected"
+                    return result
+
+                # Si no hay mapping aún, no podemos procesar la página.
+                if not mapper.has_mapping():
+                    result.page_metrics.append(
+                        PageMetrics(
+                            page_number=page_number,
+                            has_header=False,
+                            rows_found=0,
+                            partidas_extracted=0,
+                            qty_found=0,
+                        )
+                    )
+                    continue
+
+                # 2. Agrupar palabras en filas tabulares.
+                columns = mapper.get_columns()
+                # header_y: si esta página tiene cabecera, usamos su y_center;
+                # si no, asumimos que el body empieza después del top de la
+                # primera línea (heurístico).
+                header_y = (
+                    header_detection.y_center
+                    if header_detection.found
+                    else _estimate_body_start_y(words)
+                )
+
+                rows = group_words_into_rows(
+                    words=words,
+                    columns=columns,
+                    header_y=header_y if header_y is not None else 0.0,
+                    page_number=page_number,
+                )
+
+                # 3. Procesar filas.
+                partidas_in_page = 0
+                for row in rows:
+                    consumed = self._process_row(
+                        row=row,
+                        hierarchy=hierarchy,
+                        partidas=partidas,
+                        last_partida_ref=last_partida,
+                        pending_qty_ref=pending_qty_for_last,
+                    )
+                    # Devolver estado mutado (pattern manual; no usamos Optional in/out).
+                    last_partida = consumed["last_partida"]
+                    pending_qty_for_last = consumed["pending_qty"]
+                    if consumed["created_partida"]:
+                        partidas_in_page += 1
+
+                qty_found_in_page = sum(
+                    1 for p in partidas[-partidas_in_page:] if p.quantity is not None
+                ) if partidas_in_page else 0
+
+                result.page_metrics.append(
+                    PageMetrics(
+                        page_number=page_number,
+                        has_header=header_detection.found,
+                        rows_found=len(rows),
+                        partidas_extracted=partidas_in_page,
+                        qty_found=qty_found_in_page,
+                    )
+                )
+
+        except Exception as e:  # noqa: BLE001 - dejamos al caller decidir
+            logger.exception("TabularParser fallo procesando PDF: %s", e)
+            result.partidas = partidas
+            result.duration_seconds = time.time() - start
+            result.pages_total = pages_seen
+            result.pages_with_header = pages_with_header
+            result.reason = f"exception:{type(e).__name__}"
+            return result
+
+        result.partidas = partidas
+        result.duration_seconds = time.time() - start
+        result.pages_total = pages_seen
+        result.pages_with_header = pages_with_header
+        result.mode = "INLINE"
+        # Llamamos a is_viable() para que pueble `result.reason` si aplica.
+        result.is_viable()
+        return result
+
+    def _process_row(
+        self,
+        row: TabularRow,
+        hierarchy: ChapterHierarchy,
+        partidas: List[TabularPartida],
+        last_partida_ref: Optional[TabularPartida],
+        pending_qty_ref: bool,
+    ) -> dict:
+        """Procesa una fila. Retorna diccionario con estado actualizado."""
+        last_partida = last_partida_ref
+        pending_qty = pending_qty_ref
+        created_partida = False
+
+        if row.is_empty():
+            return {
+                "last_partida": last_partida,
+                "pending_qty": pending_qty,
+                "created_partida": False,
+            }
+
+        text = row.get_full_text()
+
+        # Paso A: ¿Es una declaración jerárquica?
+        h_detection = detect_hierarchy_in_line(text)
+        if h_detection.level is not None:
+            apply_detection_to_hierarchy(hierarchy, h_detection)
+            return {
+                "last_partida": last_partida,
+                "pending_qty": pending_qty,
+                "created_partida": False,
+            }
+
+        # Paso B: ¿Es una fila summary `CANT PRECIO IMPORTE`?
+        if pending_qty and last_partida is not None:
+            summary = detect_summary_row(text)
+            if summary.is_summary and summary.quantity is not None:
+                last_partida.quantity = summary.quantity
+                pending_qty = False
+                return {
+                    "last_partida": last_partida,
+                    "pending_qty": pending_qty,
+                    "created_partida": False,
+                }
+
+        # Paso C: ¿Es una cabecera de partida?
+        header = detect_partida_header_from_text(text)
+        if header.is_partida:
+            # Si la partida ANTERIOR no tenía qty extraída, ya no la conseguiremos.
+            # Marca explícita: pending_qty se cierra.
+            new_partida = TabularPartida(
+                code=header.code,
+                description=header.title,
+                unit=header.unit,
+                quantity=None,
+                chapter=hierarchy.get_chapter_label(),
+                sub_chapter=hierarchy.get_sub_chapter_label(),
+                apartado=(
+                    f"{hierarchy.apartado_code} {hierarchy.apartado_name}".strip()
+                    if hierarchy.apartado_code
+                    else None
+                ),
+                page_number=row.page_number,
+                hierarchy_snapshot=hierarchy.snapshot(),
+            )
+
+            # Intentar leer qty directamente de la celda CANTIDAD si la fila la tiene.
+            qty_direct = extract_quantity_from_row(row)
+            if qty_direct is not None and qty_direct > 0.0:
+                new_partida.quantity = qty_direct
+                pending_qty = False
+            else:
+                pending_qty = True  # buscar summary row más adelante
+
+            partidas.append(new_partida)
+            last_partida = new_partida
+            created_partida = True
+            return {
+                "last_partida": last_partida,
+                "pending_qty": pending_qty,
+                "created_partida": True,
+            }
+
+        # Paso D: línea de medición zonal — añadimos cantidad si el row tiene
+        # celda CANTIDAD positiva y la partida actual aún no tiene qty.
+        #
+        # Sprint 4 Fase K — fix duplicación 2x en layout "mediciones detalladas":
+        # PDFs como Quatre Cantons / Marina 8 / Vivienda 31 tienen una partida
+        # con N filas parciales (Baño 1, Dormitorio 1, ...) y AL FINAL una
+        # línea de "total agregado" con SOLO un número en columna CANTIDAD,
+        # sin descripción, uds, longitud, anchura ni altura.
+        #
+        # Algoritmo viejo: sumaba parciales + total agregado → qty × 2.
+        # Algoritmo nuevo: si detecta total agregado, SUSTITUYE las parciales
+        # acumuladas con ese valor (el total agregado es la verdad escrita por
+        # el medidor humano y validada visualmente en el documento).
+        used_for_quantity = False
+        if last_partida is not None and pending_qty:
+            if _is_partida_aggregated_total_row(row, last_partida.quantity):
+                qty_total = _extract_quantity_from_measurement_row(row)
+                if qty_total is not None and qty_total > 0.0:
+                    # SUSTITUIR (no acumular). El total agregado prevalece.
+                    last_partida.quantity = qty_total
+                    pending_qty = False  # partida cerrada
+                    used_for_quantity = True
+            else:
+                qty_in_measure = _extract_quantity_from_measurement_row(row)
+                if qty_in_measure is not None and qty_in_measure > 0.0:
+                    # Acumulamos parciales (comportamiento histórico).
+                    current = last_partida.quantity or 0.0
+                    last_partida.quantity = current + qty_in_measure
+                    used_for_quantity = True
+
+        # Paso E: si la fila NO fue clasificada como cabecera/jerarquía/qty,
+        # y hay una partida activa, acumular el texto como continuación de
+        # la descripción técnica. Esto soluciona el bug donde INLINE guardaba
+        # SOLO el title de la cabecera (avg 27 chars en private_residence_palma)
+        # perdiendo las 5-15 líneas de descripción técnica que vienen DESPUÉS.
+        if (
+            last_partida is not None
+            and not used_for_quantity
+            and _row_is_descriptive_continuation(row, text)
+        ):
+            last_partida.description = _append_to_description(
+                last_partida.description or "", text,
+            )
+
+        return {
+            "last_partida": last_partida,
+            "pending_qty": pending_qty,
+            "created_partida": False,
+        }
+
+
+    # --- MU02 MODE METHODS (Fase E) ---
+
+    def _parse_mu02(
+        self,
+        text_per_page: List[str],
+        pages_with_mu02_header: int,
+        result: TabularExtractionResult,
+        event_callback: Optional[Callable[[str, dict], None]] = None,
+    ) -> None:
+        """Parsea un PDF en modo MU02_INLINE.
+
+        Estrategia:
+        1. `extract_mu02_partidas` recorre el texto línea por línea
+           detectando cabeceras tabulares (skip), capítulos, cabeceras de
+           partida y totales inline.
+        2. Devuelve la lista completa de partidas con quantity, chapter,
+           code, unit, title y page_number.
+        3. Emit evento `mu02_extraction_complete` con métricas.
+
+        Args:
+            text_per_page: texto por página (1-indexed implícito).
+            pages_with_mu02_header: número de páginas con cabecera MU02
+                detectada (para telemetría).
+            result: TabularExtractionResult a poblar.
+            event_callback: callback opcional para eventos SSE.
+        """
+        partidas = extract_mu02_partidas(text_per_page)
+
+        result.partidas = partidas
+        result.mode = "MU02_INLINE"
+        result.mu02_pages_with_header = pages_with_mu02_header
+        # Reutilizamos pages_with_header como métrica equivalente al modo INLINE,
+        # de modo que las heurísticas downstream que la inspeccionan sigan funcionando.
+        result.pages_with_header = pages_with_mu02_header
+
+        partidas_count = len(partidas)
+        qty_rate = (
+            sum(1 for p in partidas if p.quantity is not None) / partidas_count
+            if partidas_count
+            else 0.0
+        )
+        chapter_rate = (
+            sum(
+                1 for p in partidas
+                if p.chapter and p.chapter.strip()
+            ) / partidas_count
+            if partidas_count
+            else 0.0
+        )
+
+        _emit(event_callback, "mu02_extraction_complete", {
+            "partidasCount": partidas_count,
+            "qtyRate": round(qty_rate, 4),
+            "chapterRate": round(chapter_rate, 4),
+        })
+
+        logger.info(
+            "MU02_INLINE: %d partidas, qty_rate=%.2f%% chapter_rate=%.2f%% pages_with_header=%d/%d",
+            partidas_count, 100.0 * qty_rate, 100.0 * chapter_rate,
+            pages_with_mu02_header, len(text_per_page),
+        )
+
+
+    # --- ANNEXED MODE METHODS (Fase D) ---
+
+    @staticmethod
+    def _build_full_annexed_description(title: str, desc_lines: List[str]) -> str:
+        """Construye la descripción completa de una partida ANNEXED.
+
+        Concatena el `title` de la cabecera con todas las líneas de continuación
+        acumuladas entre cabeceras consecutivas. Aplica:
+        - Filtro de identificadores cortos del aparejador (`SPC0010 zona`, etc.).
+        - Dedupe del title si aparece repetido como primera línea (caso RdLL).
+        - Normalización de whitespace.
+
+        Si no hay líneas válidas tras el filtro, retorna sólo el title.
+        """
+        if not desc_lines:
+            return title.strip()
+
+        # Filtra identificadores cortos tipo "SPC0010", "SPC0010 zona", "TC-1.3.1"
+        # que son metadata del aparejador, NO descripción técnica.
+        # Patrón: 2-4 letras + 3-6 dígitos + opcionalmente texto corto.
+        _METADATA_RE = re.compile(r"^[A-Z]{2,4}\d{3,6}(\s+\S{1,30})?$")
+        filtered: List[str] = []
+        for line in desc_lines:
+            line = line.strip()
+            if not line:
+                continue
+            if _METADATA_RE.match(line) and len(line) < 60:
+                continue
+            filtered.append(line)
+
+        if not filtered:
+            return title.strip()
+
+        joined = " ".join(filtered)
+        joined = re.sub(r"\s+", " ", joined).strip()
+
+        # Dedupe: si el bloque empieza con el title (caso RdLL repite el título),
+        # no prependearlo de nuevo. Comparación case-insensitive.
+        title_clean = title.strip()
+        if joined.upper().startswith(title_clean.upper()):
+            return joined
+        return f"{title_clean} {joined}".strip()
+
+    def _parse_annexed(
+        self,
+        text_per_page: List[str],
+        transition_page: int,
+        result: TabularExtractionResult,
+        event_callback: Optional[Callable[[str, dict], None]] = None,
+    ) -> None:
+        """Parsea un PDF en modo PRESTO ANNEXED.
+
+        Estrategia:
+        1. Recorrer las páginas 1..transition_page-1 línea-por-línea.
+        2. Detectar declaraciones de capítulo (`XX Capítulo NOMBRE` y
+           variantes) con hierarchy_tracker.
+        3. Detectar cabeceras de partida con `detect_partida_header_annexed`
+           (regex relajado).
+        4. Construir totals dict desde transition_page hasta el final.
+        5. Para cada cabecera detectada: lookup en totals dict y asignar
+           quantity (o None si miss).
+        6. Emit eventos `annexed_transition_detected` y `annexed_mapping_complete`.
+
+        Args:
+            text_per_page: texto por página (1-indexed implícito).
+            transition_page: 1-indexed page donde inician los totales.
+            result: TabularExtractionResult a poblar.
+            event_callback: callback opcional para eventos SSE.
+        """
+        partidas: List[TabularPartida] = []
+        hierarchy = ChapterHierarchy()
+        seen_codes: set[str] = set()  # dedupe por code dentro del PDF
+
+        # 1. Extraer totals dict primero (para luego matchear).
+        totals = extract_totals_from_annexed_pages(
+            text_per_page, start_page=transition_page,
+        )
+        result.annexed = True
+        result.mode = "ANNEXED"
+        result.annexed_transition_page = transition_page
+        result.annexed_totals_found = len(totals)
+
+        # 2. Recorrer la fase de descripciones (páginas 1..transition_page-1).
+        #
+        # Mantiene un buffer `current_desc_lines` con las líneas no-cabecera,
+        # no-jerarquía que aparecen DESPUÉS de cada cabecera de partida y que
+        # forman su descripción técnica. Cuando aparece otra cabecera, cambio
+        # de jerarquía o fin del PDF, se "cierra" la partida activa asignándole
+        # la descripción acumulada via `_build_full_annexed_description`.
+        descriptions_end = max(1, transition_page - 1)
+        current_partida: Optional[TabularPartida] = None
+        current_title: str = ""
+        current_desc_lines: List[str] = []
+
+        def _flush_current_partida() -> None:
+            """Cierra la partida activa con la descripción acumulada."""
+            nonlocal current_partida, current_title, current_desc_lines
+            if current_partida is not None and current_desc_lines:
+                current_partida.description = TabularParser._build_full_annexed_description(
+                    current_title, current_desc_lines,
+                )
+            current_partida = None
+            current_title = ""
+            current_desc_lines = []
+
+        for page_idx in range(0, descriptions_end):
+            page_text = text_per_page[page_idx]
+            if not page_text:
+                continue
+            page_number_1idx = page_idx + 1
+
+            partidas_in_page = 0
+            for line in page_text.splitlines():
+                line_clean = line.strip()
+                if not line_clean:
+                    continue
+
+                # Paso A: declaración jerárquica (capítulo/subcap/apartado).
+                h_detection = detect_hierarchy_in_line(line_clean)
+                if h_detection.level is not None:
+                    _flush_current_partida()
+                    apply_detection_to_hierarchy(hierarchy, h_detection)
+                    continue
+
+                # Paso B: cabecera de partida (regex relajado ANNEXED).
+                header = detect_partida_header_annexed(line_clean)
+                if header.is_partida:
+                    if header.code in seen_codes:
+                        continue  # dedupe
+                    seen_codes.add(header.code)
+                    _flush_current_partida()
+
+                    new_partida = TabularPartida(
+                        code=header.code,
+                        description=header.title,  # placeholder; flush lo reemplazará
+                        unit=header.unit,
+                        quantity=None,
+                        chapter=hierarchy.get_chapter_label(),
+                        sub_chapter=hierarchy.get_sub_chapter_label(),
+                        apartado=(
+                            f"{hierarchy.apartado_code} {hierarchy.apartado_name}".strip()
+                            if hierarchy.apartado_code
+                            else None
+                        ),
+                        page_number=page_number_1idx,
+                        hierarchy_snapshot=hierarchy.snapshot(),
+                    )
+                    partidas.append(new_partida)
+                    current_partida = new_partida
+                    current_title = header.title
+                    current_desc_lines = []
+                    partidas_in_page += 1
+                    continue
+
+                # Paso C: línea ordinaria → acumular como descripción de la
+                # partida activa (si la hay).
+                if current_partida is not None:
+                    current_desc_lines.append(line_clean)
+
+            result.page_metrics.append(
+                PageMetrics(
+                    page_number=page_number_1idx,
+                    has_header=False,  # ANNEXED no usa cabecera tabular
+                    rows_found=len(page_text.splitlines()),
+                    partidas_extracted=partidas_in_page,
+                    qty_found=0,  # qty se asigna en el mapping post-loop
+                )
+            )
+
+        # Fin del PDF: cerrar última partida activa.
+        _flush_current_partida()
+
+        # 3. Mapeo de cada cabecera con su total.
+        matched = 0
+        orphans = 0
+        for p in partidas:
+            qty = totals.get(p.code)
+            if qty is not None:
+                p.quantity = qty
+                matched += 1
+            else:
+                orphans += 1
+                logger.debug(
+                    "ANNEXED: cabecera %s sin total (página %s) — huérfana",
+                    p.code, p.page_number,
+                )
+
+        result.annexed_matched = matched
+        result.annexed_orphans = orphans
+        result.partidas = partidas
+
+        match_rate = (matched / len(partidas)) if partidas else 0.0
+        _emit(event_callback, "annexed_mapping_complete", {
+            "headersTotal": len(partidas),
+            "matched": matched,
+            "orphans": orphans,
+            "matchRate": round(match_rate, 4),
+            "totalsFound": len(totals),
+        })
+
+        logger.info(
+            "ANNEXED: %d cabeceras, %d totales, %d matched, %d huérfanas (match_rate=%.2f%%)",
+            len(partidas), len(totals), matched, orphans, 100.0 * match_rate,
+        )
+
+
+def _emit(
+    callback: Optional[Callable[[str, dict], None]],
+    event_name: str,
+    payload: dict,
+) -> None:
+    """Helper safe-emit de eventos (no falla si callback es None o lanza).
+
+    No afecta al flujo principal si el callback falla.
+    """
+    if callback is None:
+        return
+    try:
+        callback(event_name, payload)
+    except Exception:  # noqa: BLE001
+        logger.exception("TabularParser: callback de evento %s falló", event_name)
+
+
+def _estimate_body_start_y(words) -> Optional[float]:
+    """Heurística: si la página no tiene cabecera explícita, asumimos que
+    el contenido del body empieza después del top quintil de la página."""
+    if not words:
+        return None
+    ys = sorted(w.y_center for w in words)
+    if not ys:
+        return None
+    # Top 5% como ruido (numeración, headers de impresora) — devolvemos su limite.
+    idx = max(0, int(len(ys) * 0.05))
+    return ys[idx] - 1.0
+
+
+def _extract_quantity_from_measurement_row(row: TabularRow) -> Optional[float]:
+    """Extrae cantidad de fila de medición zonal `desc UDS LONG ANCH ALT CANT`.
+
+    Prefiere la columna CANTIDAD si existe; si no, busca en PARCIALES.
+    """
+    from src.budget.pdf_tabular_parser.application.spanish_number import parse_spanish_number
+
+    if row.has_cell(ColumnConcept.CANTIDAD):
+        qty = parse_spanish_number(row.get_cell(ColumnConcept.CANTIDAD))
+        if qty is not None:
+            return qty
+
+    if row.has_cell(ColumnConcept.PARCIALES):
+        qty = parse_spanish_number(row.get_cell(ColumnConcept.PARCIALES))
+        if qty is not None:
+            return qty
+
+    return None
+
+
+def _is_partida_aggregated_total_row(row: TabularRow, current_accumulated_qty: Optional[float]) -> bool:
+    """Detecta la línea de "total agregado" al final de una partida con
+    mediciones detalladas (layout Quatre Cantons / Marina 8 / Vivienda 31).
+
+    Características de la línea total agregado:
+      - Tiene CANTIDAD (o PARCIALES) con un único número.
+      - NO tiene RESUMEN/DESCRIPCIÓN (la línea de total no lleva etiqueta).
+      - NO tiene UDS (no es una fila parcial con "Baño 1   2   2,000").
+      - NO tiene LONGITUD/ANCHURA/ALTURA (sería una medición geométrica).
+      - La partida ya tiene cantidad acumulada de las parciales (es el
+        cierre, no el inicio).
+
+    Sprint 4 Fase K — fix duplicación 2x.
+    """
+    # Debe haber CANTIDAD o PARCIALES poblado.
+    has_qty_cell = (
+        row.has_cell(ColumnConcept.CANTIDAD) or row.has_cell(ColumnConcept.PARCIALES)
+    )
+    if not has_qty_cell:
+        return False
+
+    # NO debe tener descripción/etiqueta ni dimensiones — las filas parciales
+    # siempre tienen al menos RESUMEN ("Baño 1", "Dormitorio 2", ...).
+    if row.has_cell(ColumnConcept.RESUMEN):
+        return False
+    if row.has_cell(ColumnConcept.UDS):
+        return False
+    if row.has_cell(ColumnConcept.LONGITUD):
+        return False
+    if row.has_cell(ColumnConcept.ANCHURA):
+        return False
+    if row.has_cell(ColumnConcept.ALTURA):
+        return False
+
+    # La partida ya debe haber acumulado al menos una parcial; si no, la
+    # primera fila con qty es la inicial, no un total.
+    if not current_accumulated_qty or current_accumulated_qty <= 0.0:
+        return False
+
+    return True
+
+
+# --- Helpers para acumulación de descripción multilínea en INLINE -----------
+# Sprint 4 Fase F — soluciona el bug de descripciones cortas en modo INLINE
+# (private_residence_palma avg 27 chars vs 200-500 reales).
+
+# Patrones de filas que NO deben acumularse como descripción técnica:
+# - Filas tabulares de medición (`<zona> <UDS> <LONG> <ANCH> <ALT> <CANT>`).
+# - Filas de subtotal aislado (`<NUM> <NUM>` repetido o `Subtotal <NUM>`).
+# - Filas de identificador interno corto (`SPC0010 zona`).
+# - Líneas de paginación (`Página N`).
+# - Líneas que son solo unidades/cantidades.
+_DESC_SKIP_RE_LIST = [
+    re.compile(r"^\s*Subtotal\s+\d", re.IGNORECASE),
+    re.compile(r"^\s*P[áa]g(?:ina)?\s+\d", re.IGNORECASE),
+    re.compile(r"^\s*[A-Z]{2,4}\d{3,6}(\s+\S{1,30})?\s*$"),  # SPC0010, SPC0010 Solar
+    re.compile(r"^\s*Total\s+", re.IGNORECASE),  # subtotales de partida
+    # Filas tabulares puras: 3-6 números decimales separados por espacios.
+    re.compile(r"^\s*\d+[,.]\d+(\s+\d+[,.]\d+){2,5}\s*$"),
+]
+
+# Cabeceras tabulares que se repiten en cada página (skip).
+_HEADER_BAND_RE_LIST = [
+    re.compile(r"Area\s+(?:Largo|Prof|Ancho)\s+(?:Ancho|Prof|Alto)\s+", re.IGNORECASE),
+    re.compile(r"C[óo]digo\s+(?:Nat\s+)?Ud\s+", re.IGNORECASE),
+    re.compile(r"N[°ºo]\s+Ud\s+Descripci[óo]n", re.IGNORECASE),
+    re.compile(r"UDS\s+LONGITUD\s+ANCHURA", re.IGNORECASE),
+]
+
+
+def _row_is_descriptive_continuation(row: "TabularRow", text: str) -> bool:
+    """Decide si una fila INLINE no clasificada es texto descriptivo de
+    continuación de la partida actual.
+
+    Filtra:
+    - Filas vacías o muy cortas (<5 chars).
+    - Cabeceras tabulares repetidas en cada página.
+    - Filas de subtotal/total/Página/SPC0010.
+    - Filas de medición tabular pura (solo decimales).
+    - Filas con muchos decimales y poco texto (probablemente medición zonal).
+    """
+    if not text or len(text.strip()) < 5:
+        return False
+
+    text_clean = text.strip()
+
+    # Skip cabeceras tabulares.
+    for pattern in _HEADER_BAND_RE_LIST:
+        if pattern.search(text_clean):
+            return False
+
+    # Skip patrones de no-descripción.
+    for pattern in _DESC_SKIP_RE_LIST:
+        if pattern.match(text_clean):
+            return False
+
+    # Filtro adicional: si la fila tiene >=3 números decimales, probablemente
+    # es una fila de medición zonal aunque tenga texto al principio (caso
+    # "VIVIENDA [A] 117,9 117,90"). Solo aceptar 0-2 decimales — descripciones
+    # típicas pueden mencionar dimensiones ("10cm", "50m2") pero no más.
+    decimal_count = len(re.findall(r"\d+[,.]\d+", text_clean))
+    if decimal_count >= 3:
+        return False
+
+    return True
+
+
+def _append_to_description(current: str, new_text: str) -> str:
+    """Concatena `new_text` a la descripción actual con normalización.
+
+    - Whitespace normalizado (sin dobles espacios).
+    - Skip si `new_text` ya es subcadena del current (evita duplicaciones
+      cuando el title se repite como primera línea).
+    """
+    new_clean = re.sub(r"\s+", " ", new_text.strip())
+    if not new_clean:
+        return current
+    if not current:
+        return new_clean
+    # Dedupe: si `new_clean` ya está en current, no añadir.
+    if new_clean.lower() in current.lower():
+        return current
+    combined = f"{current} {new_clean}"
+    return re.sub(r"\s+", " ", combined).strip()
