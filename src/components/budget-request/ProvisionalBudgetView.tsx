@@ -7,6 +7,8 @@ import { DetailedFormValues } from './schema';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import { BudgetDocument } from '@/components/pdf/BudgetDocument';
+// BudgetDocument (portado de dochevi) exige `company` para el branding del PDF.
+import { DEFAULT_COMPANY_CONFIG } from '@/backend/platform/domain/company-config';
 
 interface BudgetCostBreakdown {
     materialExecutionPrice: number;
@@ -225,6 +227,7 @@ export const ProvisionalBudgetView = ({ data, lineItems, totalEstimated, costBre
                             }}
                             date={today}
                             logoUrl={typeof window !== 'undefined' ? `${window.location.origin}/images/logo.png` : undefined}
+                            company={DEFAULT_COMPANY_CONFIG}
                         />
                     }
                     fileName={`Presupuesto-ExpressRenovation-${today.replace(/\//g, '-')}.pdf`}

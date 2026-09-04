@@ -1,8 +1,10 @@
-﻿'use client';
+'use client';
 
 import React from 'react';
 import { Page, Text, View, Document, StyleSheet, Image, Font } from '@react-pdf/renderer';
-import { formatCurrency } from '@/lib/utils';
+import { formatCurrency, formatNumberES } from '@/lib/utils';
+import { stripExplicitMaterialTag } from '@/lib/budget/explicit-material';
+import type { CompanyConfig } from '@/backend/platform/domain/company-config';
 
 const styles = StyleSheet.create({
     page: {
@@ -20,16 +22,31 @@ const styles = StyleSheet.create({
         borderColor: '#E2E8F0',
         flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems: 'flex-end'
+        alignItems: 'flex-start'
     },
     logoSection: {
-        width: '40%'
+        width: '50%'
     },
     companyLogo: {
-        width: 140,
-        height: 60,
-        marginBottom: 10,
+        width: 210,
+        height: 90,
+        marginBottom: 8,
         objectFit: 'contain'
+    },
+    // Bloque de datos del emisor bajo el logo (cabecera, columna izquierda).
+    issuerBlock: {
+        marginTop: 6,
+    },
+    issuerName: {
+        fontSize: 9,
+        fontWeight: 'bold',
+        color: '#0F172A',
+        marginBottom: 1,
+    },
+    issuerLine: {
+        fontSize: 7.5,
+        color: '#64748B',
+        lineHeight: 1.45,
     },
     metaSection: {
         textAlign: 'right',
@@ -87,35 +104,66 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderBottomColor: '#F1F5F9', // Subtle divider between items
     },
+    // Header de columnas — repetido al inicio de cada capítulo para legibilidad.
+    columnHeaderRow: {
+        flexDirection: 'row',
+        alignItems: 'flex-end',
+        borderBottomWidth: 0.5,
+        borderBottomColor: '#94A3B8',
+        paddingBottom: 3,
+        marginBottom: 6,
+    },
+    columnHeaderText: {
+        fontSize: 7,
+        fontWeight: 'bold',
+        color: '#64748B',
+        textTransform: 'uppercase',
+    },
     itemMainRow: {
         flexDirection: 'row',
         alignItems: 'flex-start',
         marginBottom: 4,
     },
+    // Distribución 6 columnas (suma 100%): Code | Description | Ud | Cant | Precio | Total
     itemCode: {
-        width: '12%',
+        width: '10%',
         fontSize: 9,
         fontWeight: 'bold',
-        color: '#000000'
-    },
-    itemUnit: {
-        width: '5%',
-        fontSize: 9,
-        fontWeight: 'bold',
-        color: '#000000'
+        color: '#000000',
+        paddingRight: 4,
     },
     itemTitleColumn: {
-        width: '68%',
+        width: '40%',
         flexDirection: 'column',
-        paddingRight: 10,
+        paddingRight: 8,
     },
     itemTitle: {
         fontSize: 9,
         color: '#334155',
         lineHeight: 1.3
     },
-    itemTotal: {
+    itemUnit: {
+        width: '8%',
+        fontSize: 9,
+        color: '#000000',
+        textAlign: 'center',
+    },
+    itemQty: {
+        width: '10%',
+        fontSize: 9,
+        color: '#000000',
+        textAlign: 'right',
+        paddingRight: 4,
+    },
+    itemPrice: {
         width: '15%',
+        fontSize: 9,
+        color: '#000000',
+        textAlign: 'right',
+        paddingRight: 4,
+    },
+    itemTotal: {
+        width: '17%',
         fontSize: 10,
         fontWeight: 'bold',
         color: '#000000',
@@ -130,14 +178,16 @@ const styles = StyleSheet.create({
     },
     breakdownRow: {
         flexDirection: 'row',
-        marginLeft: '17%', // Indent under description
+        marginLeft: '10%', // Indent bajo la columna de código (10% width)
         marginBottom: 2,
     },
     bdCode: { width: '15%', fontSize: 7, color: '#475569' },
     bdQty: { width: '10%', fontSize: 7, color: '#475569', textAlign: 'right', paddingRight: 5 },
     bdUnit: { width: '5%', fontSize: 7, color: '#475569' },
-    bdDesc: { width: '45%', fontSize: 7, color: '#475569', paddingRight: 5 },
-    bdPrice: { width: '12%', fontSize: 7, color: '#475569', textAlign: 'right' },
+    // Phase 17.9 — `bdDesc` absorbe el 12% que liberó `bdPrice` (eliminada).
+    // Cliente final ve solo CÓD | CANT | UD | DESCRIPCIÓN | TOTAL para evitar
+    // ambigüedad con multiplicadores ICL embedded en `total`.
+    bdDesc: { width: '57%', fontSize: 7, color: '#475569', paddingRight: 5 },
     bdTotal: { width: '13%', fontSize: 7, color: '#475569', textAlign: 'right' },
 
     totalSection: {
@@ -211,50 +261,98 @@ interface BudgetDocumentProps {
     items: any[];
     costBreakdown: any;
     date: string;
+    /** Logo específico del presupuesto. Si no se pasa, se usa company.logoUrl. */
     logoUrl?: string;
     notes?: string;
     budgetConfig?: { tax: number; marginGG: number; marginBI: number };
+    /** Phase 17 — controla si el PDF multiplica por markupFactor (legacy
+     * 'phase15') o lee precios as-is (nuevo 'phase17-markup-baked'). */
+    calibrationVersion?: 'phase14' | 'phase15' | 'phase17-markup-baked';
+    /** Phase 17.3 — snapshot del config con que se bakearon las partidas en
+     * backend. Necesario para soportar live-edit de GG/BI: el PDF aplica
+     * displayFactor = current/baked y refleja los cambios del admin sin
+     * regenerar el budget desde IA. */
+    bakedConfig?: { tax: number; marginGG: number; marginBI: number };
+    executionMode?: 'complete' | 'execution' | 'labor';
+    renders?: any[];
+    /** IDs de renders seleccionados para incluir en el anexo visual. Vacío/undefined = sin anexo. */
+    selectedRenderIds?: string[];
+    /** Datos de la empresa emisora. Fuente única para header, footer y branding del PDF. */
+    company: CompanyConfig;
+    /**
+     * Sprint 4 — solicitud owner. Controla si el PDF muestra el desglose de
+     * componentes (materiales, mano de obra, %) bajo cada partida.
+     *   - true (default): vista técnica con descompuesto completo.
+     *   - false: vista comercial — solo la fila principal de la partida.
+     */
+    includeBreakdown?: boolean;
 }
 
-const Footer = ({ pageNumber, companyName, cif, address }: { pageNumber: number, companyName?: string, cif?: string, address?: string }) => {
-    const defaultCompany = 'Express Renovation Mallorca';
+const Footer = ({ company }: { company: CompanyConfig }) => {
+    // Línea fiscal mínima (los datos completos del emisor van en la cabecera).
+    const line = [company.legalName || company.name, company.cif && `CIF: ${company.cif}`, company.address]
+        .filter(Boolean)
+        .join(' · ');
     return (
         <View style={styles.footerContainer} fixed>
             <View style={styles.footerLine} />
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Text style={styles.footerText}>
-                    {companyName || defaultCompany} {cif ? `- CIF: ${cif}` : ''} {address ? `- ${address}` : ''}
-                </Text>
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-                    <Text style={{ fontSize: 6, color: '#CBD5E1', fontStyle: 'italic' }}>Generado con Express Renovation Mallorca</Text>
-                    <Text style={[styles.footerText, { marginLeft: 10 }]}>Página {pageNumber}</Text>
-                </View>
+                <Text style={styles.footerText}>{line}</Text>
+                {/* `render` se evalúa por página física, así que el número es correcto
+                    incluso cuando una <Page> desborda en varias páginas. */}
+                <Text
+                    style={styles.footerText}
+                    render={({ pageNumber, totalPages }) => `Página ${pageNumber} / ${totalPages}`}
+                    fixed
+                />
             </View>
+            {company.footerText && (
+                <Text style={{ fontSize: 6, color: '#94A3B8', marginTop: 2 }}>{company.footerText}</Text>
+            )}
         </View>
     );
 };
 
-const Header = ({ budgetNumber, date, logoUrl, companyName }: { budgetNumber: string, date: string, logoUrl?: string, companyName?: string }) => (
-    <View style={styles.header}>
-        <View style={styles.logoSection}>
-            {logoUrl ? (
-                <Image
-                    src={logoUrl}
-                    style={styles.companyLogo}
-                />
-            ) : (
-                <Image
-                    src="/images/logo-negro.png"
-                    style={{ height: 32, marginBottom: 10, objectFit: 'contain' }}
-                />
-            )}
+const Header = ({ budgetNumber, date, logoUrl, company, totalAmount }: { budgetNumber: string; date: string; logoUrl?: string; company: CompanyConfig; totalAmount?: number }) => {
+    const resolvedLogo = logoUrl || company.logoUrl;
+    return (
+        <View style={styles.header}>
+            <View style={styles.logoSection}>
+                {resolvedLogo ? (
+                    <Image src={resolvedLogo} style={styles.companyLogo} />
+                ) : (
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#0F172A' }}>{company.name}</Text>
+                )}
+                {company.tagline && (
+                    <Text style={{ fontSize: 8, color: '#64748B', marginTop: 2 }}>{company.tagline}</Text>
+                )}
+                {/* Datos de la empresa emisora bajo el logo. */}
+                <View style={styles.issuerBlock}>
+                    {(company.legalName || company.name) && (
+                        <Text style={styles.issuerName}>{company.legalName || company.name}</Text>
+                    )}
+                    {company.cif && <Text style={styles.issuerLine}>CIF: {company.cif}</Text>}
+                    {company.address && <Text style={styles.issuerLine}>{company.address}</Text>}
+                    {(company.phone || company.email) && (
+                        <Text style={styles.issuerLine}>
+                            {[company.phone, company.email].filter(Boolean).join('  ·  ')}
+                        </Text>
+                    )}
+                    {company.web && <Text style={styles.issuerLine}>{company.web}</Text>}
+                </View>
+            </View>
+            <View style={styles.metaSection}>
+                <Text style={styles.bold}>PRESUPUESTO Nº {budgetNumber}</Text>
+                <Text>Fecha: {date}</Text>
+                {totalAmount !== undefined && totalAmount > 0 && (
+                    <Text style={{ fontSize: 11, fontWeight: 'bold', color: '#0F172A', marginTop: 4 }}>
+                        Total: {formatCurrency(totalAmount)}
+                    </Text>
+                )}
+            </View>
         </View>
-        <View style={styles.metaSection}>
-            <Text style={styles.bold}>PRESUPUESTO Nº {budgetNumber}</Text>
-            <Text>Fecha: {date}</Text>
-        </View>
-    </View>
-);
+    );
+};
 
 export const BudgetDocument = ({
     budgetNumber,
@@ -266,8 +364,22 @@ export const BudgetDocument = ({
     date,
     logoUrl,
     notes,
-    budgetConfig
+    budgetConfig,
+    calibrationVersion,
+    bakedConfig,
+    executionMode = 'complete',
+    renders = [],
+    selectedRenderIds,
+    company,
+    includeBreakdown = true,
 }: BudgetDocumentProps) => {
+    const selectedRenders = selectedRenderIds && selectedRenderIds.length > 0
+        ? renders.filter((r: any) => selectedRenderIds.includes(r.id))
+        : [];
+    const renderPages: any[][] = [];
+    for (let i = 0; i < selectedRenders.length; i += 2) {
+        renderPages.push(selectedRenders.slice(i, i + 2));
+    }
 
     // Group items by chapter
     const itemsByChapter = items.reduce((acc: Record<string, any[]>, item) => {
@@ -283,13 +395,13 @@ export const BudgetDocument = ({
         <Document>
             {/* --- PAGES: DETAILED BUDGET (NOW COMES FIRST) --- */}
             <Page size="A4" style={styles.page}>
-                <Header budgetNumber={budgetNumber} date={date} logoUrl={logoUrl} companyName={clientEmail} />
+                <Header budgetNumber={budgetNumber} date={date} logoUrl={logoUrl} company={company} totalAmount={costBreakdown.total} />
 
                 <View style={{ marginTop: 20, marginBottom: 30 }}>
                     <Text style={styles.title}>Propuesta Técnica y Económica</Text>
                     <View style={{ flexDirection: 'row', gap: 10, marginTop: 5 }}>
                         <Text style={styles.badge}>Reforma Personalizada</Text>
-                        <Text style={styles.badge}>Estándar de Calidad</Text>
+                        <Text style={styles.badge}>{company.name} · Estándar de Calidad</Text>
                     </View>
                 </View>
 
@@ -304,44 +416,109 @@ export const BudgetDocument = ({
                     <View key={chapterName} style={{ marginBottom: 15 }}>
                         <Text style={styles.chapterHeader} wrap={false}>{chapterName}</Text>
 
+                        {/* Header de columnas (repetido por capítulo para legibilidad si rompe página). */}
+                        <View style={styles.columnHeaderRow} wrap={false}>
+                            <Text style={[styles.columnHeaderText, { width: '10%' }]}>Cód</Text>
+                            <Text style={[styles.columnHeaderText, { width: '40%' }]}>Descripción</Text>
+                            <Text style={[styles.columnHeaderText, { width: '8%', textAlign: 'center' }]}>Ud</Text>
+                            <Text style={[styles.columnHeaderText, { width: '10%', textAlign: 'right' }]}>Cant.</Text>
+                            <Text style={[styles.columnHeaderText, { width: '15%', textAlign: 'right' }]}>Precio</Text>
+                            <Text style={[styles.columnHeaderText, { width: '17%', textAlign: 'right' }]}>Total</Text>
+                        </View>
+
                         {itemsByChapter[chapterName].map((item: any, index: number) => {
-                            const bTotal = (item.item?.totalPrice || item.item?.price || 0);
+                            let bTotal = (item.item?.totalPrice || item.item?.price || 0);
                             const qTotal = (item.item?.quantity || 1);
 
-                            // Prevent duplicating title into description if they are implicitly the same 
-                            const showDescription = item.item?.description && item.item.description.trim() !== "" && item.item.description.trim() !== item.originalTask.trim();
+                            // Adjust bTotal dynamically for PDF based on execution mode
+                            const activeBreakdown = item.item?.breakdown || [];
+                            if (executionMode === 'execution' && activeBreakdown.length > 0) {
+                                const vCost = activeBreakdown
+                                    .filter((c: any) => c.is_variable === true || c.is_variable === 'true' || c.isVariable === true)
+                                    .reduce((acc: number, c: any) => acc + (c.totalPrice || c.total || ((c.unitPrice || c.price || 0) * (c.quantity || c.yield || 1))), 0);
+                                bTotal = Math.max(0, bTotal - (vCost * qTotal));
+                            } else if (executionMode === 'labor' && activeBreakdown.length > 0) {
+                                const laborCost = activeBreakdown
+                                    .filter((c: any) => c.code && String(c.code).toLowerCase().startsWith('mo'))
+                                    .reduce((acc: number, c: any) => acc + (c.totalPrice || c.total || ((c.unitPrice || c.price || 0) * (c.quantity || c.yield || 1))), 0);
+                                bTotal = Math.max(0, laborCost * qTotal);
+                            }
+
+                            // Phase 17.3 — display factor version-aware con soporte live-edit.
+                            //   phase17: factor = currentFactor / bakedFactor.
+                            //     - Sin cambios de GG/BI: factor = 1 (precios baked tal cual).
+                            //     - Con edición de GG/BI: factor != 1 → PDF refleja el cambio.
+                            //   phase15 (legacy): factor = currentFactor (asimetría histórica resuelta
+                            //     porque ahora aplicamos también a componentes).
+                            const isMarkupBaked = calibrationVersion === 'phase17-markup-baked';
+                            const currentFactor = 1 + ((budgetConfig?.marginGG || 0) + (budgetConfig?.marginBI || 0)) / 100;
+                            const bakedFactor = isMarkupBaked
+                                ? 1 + ((bakedConfig?.marginGG || 0) + (bakedConfig?.marginBI || 0)) / 100
+                                : 1;
+                            const markupFactor = isMarkupBaked
+                                ? (bakedFactor > 0 ? currentFactor / bakedFactor : 1)
+                                : currentFactor;
+                            const bTotalAllIn = bTotal * markupFactor;
+
+                            // Limpiamos la marca interna "[MATERIAL EXPLÍCITO: X]" (hint de
+                            // generación) para que no se entregue en el PDF al cliente.
+                            const cleanTitle = stripExplicitMaterialTag(item.originalTask);
+                            const cleanDescription = stripExplicitMaterialTag(item.item?.description);
+                            // Prevent duplicating title into description if they are implicitly the same
+                            const showDescription = cleanDescription && cleanDescription.trim() !== "" && cleanDescription.trim() !== cleanTitle.trim();
+
+                            // Phase 16.C — precio unitario all-in (raw × markupFactor) para mostrar al cliente.
+                            const unitPriceRaw = item.item?.unitPrice || 0;
+                            const unitPriceAllIn = unitPriceRaw * markupFactor;
 
                             return (
                                 <View key={item.id || index} style={styles.itemContainer} wrap={false}>
-                                    {/* Main Row: Code | Unit | Titles Column | Total */}
+                                    {/* Main Row: 6 columnas (Code | Description | Ud | Cant | Precio | Total) */}
                                     <View style={styles.itemMainRow}>
                                         <Text style={styles.itemCode}>{item.item?.code || '-'}</Text>
-                                        <Text style={styles.itemUnit}>{item.item?.unit || 'ud'}</Text>
                                         <View style={styles.itemTitleColumn}>
-                                            <Text style={styles.itemTitle}>{item.originalTask}</Text>
+                                            <Text style={styles.itemTitle}>{cleanTitle}</Text>
                                             {showDescription && (
-                                                <Text style={styles.itemDescription}>{item.item.description}</Text>
+                                                <Text style={styles.itemDescription}>{cleanDescription}</Text>
                                             )}
                                         </View>
-                                        <Text style={styles.itemTotal}>{bTotal.toLocaleString('es-ES', { minimumFractionDigits: 2 })}</Text>
+                                        <Text style={styles.itemUnit}>{item.item?.unit || 'ud'}</Text>
+                                        <Text style={styles.itemQty}>{formatNumberES(qTotal, 2)}</Text>
+                                        <Text style={styles.itemPrice}>{formatNumberES(unitPriceAllIn, 2)}</Text>
+                                        <Text style={styles.itemTotal}>{formatNumberES(bTotalAllIn, 2)}</Text>
                                     </View>
 
-                                    {/* Detailed Breakdown nested correctly */}
-                                    {item.item?.breakdown && item.item.breakdown.length > 0 && (
+                                    {/* Detailed Breakdown nested correctly. Sprint 4: el
+                                        owner puede ocultarlo via prop `includeBreakdown` para
+                                        generar vista comercial sin componentes desglosados. */}
+                                    {includeBreakdown && activeBreakdown.length > 0 && (
                                         <View style={{ marginTop: 2 }}>
-                                            {item.item.breakdown.map((b: any, bIdx: number) => {
-                                                const unitPrice = b.price || 0;
+                                            {activeBreakdown.map((b: any, bIdx: number) => {
+                                                if (executionMode === 'execution' && (b.is_variable === true || b.is_variable === 'true' || b.isVariable === true)) return null;
+                                                if (executionMode === 'labor' && !(b.code && String(b.code).toLowerCase().startsWith('mo'))) return null;
+                                                // Phase 17 — aplicar markupFactor también a componentes para que
+                                                // sumen el unit_price total. En phase17 markupFactor=1 (no-op porque
+                                                // ya viene baked); en phase15 multiplica igual que el header (fix asimetría).
+                                                const unitPrice = (b.price || 0) * markupFactor;
                                                 const qty = b.quantity || 1;
-                                                const lineTotal = unitPrice * qty;
+                                                // Phase 17.8 — preferir b.total stored (autoritativo) sobre qty × unitPrice.
+                                                // El agente puede haber embedded multiplicadores ocultos (× dimensión × ICL)
+                                                // en `total`. Sin esto, el PDF muestra suma desajustada vs unit_price.
+                                                const storedTotal = typeof b.total === 'number' && b.total > 0 ? b.total : null;
+                                                const lineTotal = storedTotal !== null
+                                                    ? storedTotal * markupFactor
+                                                    : unitPrice * qty;
 
                                                 return (
                                                     <View key={bIdx} style={styles.breakdownRow}>
                                                         <Text style={styles.bdCode}>{b.code || '-'}</Text>
-                                                        <Text style={styles.bdQty}>{parseFloat(qty.toString()).toLocaleString('es-ES', { minimumFractionDigits: 3 })}</Text>
+                                                        <Text style={styles.bdQty}>{formatNumberES(parseFloat(qty.toString()), 3)}</Text>
                                                         <Text style={styles.bdUnit}>{b.unit?.toLowerCase() === '%' ? 'h' : (b.unit || 'u')}</Text>
-                                                        <Text style={styles.bdDesc}>{b.description}</Text>
-                                                        <Text style={styles.bdPrice}>{unitPrice.toLocaleString('es-ES', { minimumFractionDigits: 2 })}</Text>
-                                                        <Text style={styles.bdTotal}>{lineTotal.toLocaleString('es-ES', { minimumFractionDigits: 2 })}</Text>
+                                                        <Text style={styles.bdDesc}>{b.description || b.concept}</Text>
+                                                        {/* Phase 17.9 — columna PRECIO eliminada del PDF cliente.
+                                                            Multiplicadores ICL embedded en `total` causaban "1×58,93≠90,33"
+                                                            visualmente confuso. Admin ve PRECIO en el editor. */}
+                                                        <Text style={styles.bdTotal}>{formatNumberES(lineTotal, 2)}</Text>
                                                     </View>
                                                 );
                                             })}
@@ -353,17 +530,16 @@ export const BudgetDocument = ({
                     </View>
                 ))}
 
+                {/* Phase 15 — Resumen económico simplificado: Base Imponible + IVA + Total.
+                    Sin GG/BI como líneas separadas (markup distribuido implícitamente entre partidas).
+                    Convención de presupuesto al cliente final. */}
                 <View style={[styles.totalSection, { marginTop: 20 }]} wrap={false}>
                     <View style={styles.totalRow}>
-                        <Text style={styles.totalLabel}>Base Imponible (P.E.M.):</Text>
-                        <Text style={styles.totalValue}>{formatCurrency(costBreakdown.materialExecutionPrice)}</Text>
+                        <Text style={styles.totalLabel}>Base Imponible:</Text>
+                        <Text style={styles.totalValue}>{formatCurrency(costBreakdown.materialExecutionPrice + costBreakdown.overheadExpenses + costBreakdown.industrialBenefit)}</Text>
                     </View>
                     <View style={styles.totalRow}>
-                        <Text style={styles.totalLabel}>Gastos Generales / Org.:</Text>
-                        <Text style={styles.totalValue}>{formatCurrency(costBreakdown.overheadExpenses)}</Text>
-                    </View>
-                    <View style={styles.totalRow}>
-                        <Text style={styles.totalLabel}>IVA ({budgetConfig?.tax || 21}%):</Text>
+                        <Text style={styles.totalLabel}>IVA ({budgetConfig?.tax || 10}%):</Text>
                         <Text style={styles.totalValue}>{formatCurrency(costBreakdown.tax)}</Text>
                     </View>
                     <View style={[styles.totalRow, { marginTop: 8 }]}>
@@ -384,12 +560,12 @@ export const BudgetDocument = ({
                         * Este documento es una estimación técnica preliminar. Un experto contactará con usted para realizar una visita técnica y refinar los detalles finales del presupuesto.
                     </Text>
                 </View>
-                <Footer pageNumber={1} companyName={clientEmail} cif={clientEmail ? "Presupuesto" : undefined} address={clientEmail ? "Presupuesto" : undefined} />
+                <Footer company={company} />
             </Page>
 
             {/* --- PAGE: METHODOLOGY & INFO (MOVED TO THE END) --- */}
             <Page size="A4" style={styles.page}>
-                <Header budgetNumber={budgetNumber} date={date} logoUrl={logoUrl} companyName={clientEmail} />
+                <Header budgetNumber={budgetNumber} date={date} logoUrl={logoUrl} company={company} totalAmount={costBreakdown.total} />
 
                 <Text style={styles.sectionTitle}>1. Por qué es importante leer este presupuesto hasta el final</Text>
                 <Text style={styles.textBlock}>
@@ -402,7 +578,7 @@ export const BudgetDocument = ({
 
                 <Text style={styles.sectionTitle}>2. Precio y Validez del Presupuesto</Text>
                 <Text style={styles.textBlock}>
-                    El precio total estimado para este proyecto es de <Text style={styles.bold}>{costBreakdown.total.toLocaleString('es-ES', { style: 'currency', currency: 'EUR' })}</Text>.
+                    El precio total estimado para este proyecto es de <Text style={styles.bold}>{formatCurrency(costBreakdown.total)}</Text>.
                 </Text>
                 <Text style={styles.textBlock}>
                     <Text style={styles.bold}>Validez del presupuesto:</Text> hasta el 15 días posteriores a la fecha de emisión.
@@ -467,8 +643,55 @@ export const BudgetDocument = ({
                     </Text>
                 </View>
 
-                <Footer pageNumber={2} companyName={clientEmail} cif={clientEmail ? "Presupuesto" : undefined} address={clientEmail ? "Presupuesto" : undefined} />
+                <Footer company={company} />
             </Page>
+
+            {/* --- AI VISUAL PROPOSAL PAGES (antes / después) --- */}
+            {renderPages.map((pageRenders, pageIdx) => (
+                <Page key={`renders-${pageIdx}`} size="A4" style={styles.page}>
+                    <Header budgetNumber={budgetNumber} date={date} logoUrl={logoUrl} company={company} totalAmount={costBreakdown.total} />
+
+                    {pageIdx === 0 && (
+                        <>
+                            <Text style={[styles.sectionTitle, { fontSize: 16, borderBottomWidth: 2 }]}>Anexo: Propuesta Visual Conceptual</Text>
+                            <Text style={styles.textBlock}>
+                                Las siguientes infografías han sido generadas mediante inteligencia artificial paramétrica. Tienen carácter exclusivamente conceptual y orientativo para comprender el estilo, la distribución espacial y la paleta de colores propuestos. No poseen valor contractual sobre mobiliario o acabados finales.
+                            </Text>
+                        </>
+                    )}
+
+                    <View style={{ marginTop: pageIdx === 0 ? 20 : 0, flex: 1, flexDirection: 'column', gap: 20 }}>
+                        {pageRenders.map((render: any, idx: number) => (
+                            <View key={render.id || idx} style={{ flex: 1, backgroundColor: '#F8FAFC', padding: 8, borderRadius: 8, border: 1, borderColor: '#E2E8F0' }}>
+                                <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 6 }}>
+                                    <Text style={[styles.bold, { fontSize: 10 }]}>{render.roomType} · {render.style}</Text>
+                                </View>
+                                {render.originalUrl ? (
+                                    <View style={{ flexDirection: 'row', gap: 8 }}>
+                                        <View style={{ flex: 1 }}>
+                                            <Text style={{ fontSize: 7, color: '#64748B', marginBottom: 3, textTransform: 'uppercase' }}>Antes</Text>
+                                            <Image src={render.originalUrl} style={{ width: '100%', height: 200, objectFit: 'cover', borderRadius: 4 }} />
+                                        </View>
+                                        <View style={{ flex: 1 }}>
+                                            <Text style={{ fontSize: 7, color: '#64748B', marginBottom: 3, textTransform: 'uppercase' }}>Después</Text>
+                                            <Image src={render.url} style={{ width: '100%', height: 200, objectFit: 'cover', borderRadius: 4 }} />
+                                        </View>
+                                    </View>
+                                ) : (
+                                    <Image src={render.url} style={{ width: '100%', height: 220, objectFit: 'cover', borderRadius: 4 }} />
+                                )}
+                                {render.prompt && (
+                                    <Text style={{ fontSize: 7, color: '#94A3B8', marginTop: 6, fontStyle: 'italic', textAlign: 'center' }}>
+                                        {render.prompt}
+                                    </Text>
+                                )}
+                            </View>
+                        ))}
+                    </View>
+
+                    <Footer company={company} />
+                </Page>
+            ))}
         </Document>
     );
 };

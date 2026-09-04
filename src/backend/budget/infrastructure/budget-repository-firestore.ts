@@ -2,6 +2,7 @@
 import { Budget, BudgetRepository } from '../domain/budget';
 import { getFirestore } from 'firebase-admin/firestore';
 import { initFirebaseAdminApp } from '@/backend/shared/infrastructure/firebase/admin-app';
+import { generateNextBudgetNumber } from './budget-number-generator';
 
 /**
  * Firestore implementation of the BudgetRepository.
@@ -24,7 +25,31 @@ export class BudgetRepositoryFirestore implements BudgetRepository {
     
     // Hydrate chapters from subcollection
     const chaptersSnap = await this.collection.doc(id).collection('chapters').orderBy('order', 'asc').get();
-    const chapters = chaptersSnap.docs.map(cDoc => cDoc.data());
+    const rawChapters = chaptersSnap.docs.map(cDoc => cDoc.data());
+    
+    // --- AUTO-HEALING: Deduplicate chapters explicitly by name and order ---
+    // Because of a previous bug, some budgets may have accumulated hundreds of ghost chapters.
+    // This cleans it up strictly before sending it to the client, preventing the 1MB payload crush upon Save.
+    const uniqueChapters = new Map<string, any>();
+    
+    for (const chap of rawChapters) {
+        // Use normalized name+order as a unique logical key for a chapter
+        const logicalKey = `${chap.order}-${(chap.name || '').toLowerCase().trim()}`;
+        
+        if (!uniqueChapters.has(logicalKey)) {
+            // Further deduplicate items inside the chapter based on item.id
+            const uniqueItems = new Map<string, any>();
+            for (const item of (chap.items || [])) {
+                if (!uniqueItems.has(item.id)) {
+                    uniqueItems.set(item.id, item);
+                }
+            }
+            chap.items = Array.from(uniqueItems.values());
+            uniqueChapters.set(logicalKey, chap);
+        }
+    }
+    const chapters = Array.from(uniqueChapters.values());
+    // ------------------------------------------------------------------------
     
     return this.mapDocToBudget(doc, chapters);
   }
@@ -35,6 +60,22 @@ export class BudgetRepositoryFirestore implements BudgetRepository {
     return snapshot.docs.map(doc => this.mapDocToBudget(doc, []));
   }
 
+  async findByAcceptanceToken(token: string): Promise<Budget | null> {
+    if (!token) return null;
+    const snapshot = await this.collection
+      .where('acceptanceToken', '==', token)
+      .limit(1)
+      .get();
+    if (snapshot.empty) return null;
+    const doc = snapshot.docs[0];
+    // Chapters no necesarios para la página de aceptación (sólo total +
+    // breakdown), pero los cargamos por consistencia con findById si la
+    // página los quisiera mostrar más adelante.
+    const chaptersSnap = await doc.ref.collection('chapters').orderBy('order', 'asc').get();
+    const chapters = chaptersSnap.docs.map(c => c.data());
+    return this.mapDocToBudget(doc, chapters);
+  }
+
   async findAll(): Promise<Budget[]> {
     const snapshot = await this.collection.orderBy('createdAt', 'desc').get();
     // For list views, we do not fetch chapters.
@@ -43,10 +84,21 @@ export class BudgetRepositoryFirestore implements BudgetRepository {
 
   async save(budget: Budget): Promise<void> {
     console.log(`[Infrastructure] Saving budget to Firestore (Subcollections): ${budget.id}`);
-    
+
+    // Asigna un número de presupuesto legible tipo factura (YYYY-MM/NNNN) la
+    // primera vez que se persiste. Atómico vía transacción sobre un contador.
+    // Se mutará también el objeto entrante para que el caller lo vea de inmediato.
+    if (!budget.budgetNumber) {
+      try {
+        budget.budgetNumber = await generateNextBudgetNumber(this.db);
+      } catch (err) {
+        console.error('[Infrastructure] No se pudo generar budgetNumber (se continúa sin él):', err);
+      }
+    }
+
     const batch = this.db.batch();
     const docRef = this.collection.doc(budget.id);
-    
+
     const { chapters, ...budgetMeta } = budget;
 
     batch.set(docRef, {
@@ -64,6 +116,44 @@ export class BudgetRepositoryFirestore implements BudgetRepository {
       }
     }
 
+    await batch.commit();
+  }
+
+  async updatePartial(id: string, updates: Partial<Budget>): Promise<void> {
+    const batch = this.db.batch();
+    const docRef = this.collection.doc(id);
+    
+    // Safety check just in case the doc doesn't exist, though typically handled via Action
+    const docSnap = await docRef.get();
+    if (!docSnap.exists) {
+      throw new Error(`Budget ${id} not found in Firestore.`);
+    }
+
+    const { chapters, ...budgetMeta } = updates;
+
+    if (Object.keys(budgetMeta).length > 0) {
+      batch.update(docRef, {
+        ...budgetMeta,
+        updatedAt: new Date()
+      });
+    }
+
+    if (chapters && chapters.length > 0) {
+      // Purgar capítulos antiguos para evitar fantasmas por arrastre histórico
+      const oldChaptersSnap = await docRef.collection('chapters').get();
+      for (const oldDoc of oldChaptersSnap.docs) {
+        batch.delete(oldDoc.ref);
+      }
+
+      for (const [index, chapter] of chapters.entries()) {
+        const chapId = String(chapter.id || `chap_${index}`);
+        const chapRef = docRef.collection('chapters').doc(chapId);
+        // Sobreescribir el capítulo exactamente como viene
+        batch.set(chapRef, chapter);
+      }
+    }
+
+    console.log(`[Infrastructure] Partial budget update (Delta sync) in Firestore: ${id}`);
     await batch.commit();
   }
 

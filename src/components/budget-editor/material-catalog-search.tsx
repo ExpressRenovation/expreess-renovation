@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/dialog';
 import { searchMaterialsAction } from '@/actions/material-catalog/search-materials.action';
 import { MaterialItem } from '@/backend/material-catalog/domain/material-item';
+import { formatCurrency } from '@/lib/utils';
 
 interface MaterialCatalogSearchProps {
     onSelect: (item: MaterialItem) => void;
@@ -31,6 +32,16 @@ export function MaterialCatalogSearch({ onSelect, trigger, open: controlledOpen,
     const [query, setQuery] = React.useState('');
     const [loading, setLoading] = React.useState(false);
     const [results, setResults] = React.useState<MaterialItem[]>([]);
+    const [expandedDesc, setExpandedDesc] = React.useState<Set<string>>(new Set());
+
+    const toggleDesc = (id: string) => {
+        setExpandedDesc((prev) => {
+            const next = new Set(prev);
+            if (next.has(id)) next.delete(id);
+            else next.add(id);
+            return next;
+        });
+    };
 
     // Simple debounce implementation if hook doesn't exist
     React.useEffect(() => {
@@ -90,9 +101,13 @@ export function MaterialCatalogSearch({ onSelect, trigger, open: controlledOpen,
                     )}
 
                     <div className="space-y-2">
-                        {results && results.map((item) => (
+                        {results && results.map((item) => {
+                            const rowId = item.id || item.sku;
+                            const isDescOpen = expandedDesc.has(rowId);
+                            const canExpandDesc = (item.description || '').trim().length > 90;
+                            return (
                             <div
-                                key={item.id || item.sku}
+                                key={rowId}
                                 className="flex items-start justify-between p-3 border rounded-lg hover:bg-accent cursor-pointer transition-colors"
                                 onClick={() => {
                                     onSelect(item);
@@ -101,19 +116,32 @@ export function MaterialCatalogSearch({ onSelect, trigger, open: controlledOpen,
                             >
                                 <div>
                                     <div className="font-medium">{item.name}</div>
-                                    <div className="text-xs text-muted-foreground line-clamp-2">{item.description}</div>
+                                    <div className={`text-xs text-muted-foreground ${isDescOpen ? '' : 'line-clamp-2'}`}>{item.description}</div>
+                                    {canExpandDesc && (
+                                        <button
+                                            type="button"
+                                            className="text-[11px] text-primary hover:underline mt-0.5"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                toggleDesc(rowId);
+                                            }}
+                                        >
+                                            {isDescOpen ? 'Ver menos' : 'Ver descripción completa'}
+                                        </button>
+                                    )}
                                     <div className="mt-1 text-xs bg-secondary inline-block px-1.5 py-0.5 rounded text-secondary-foreground">
                                         Ref: {item.sku}
                                     </div>
                                 </div>
                                 <div className="text-right whitespace-nowrap ml-4">
                                     <div className="font-bold text-lg">
-                                        {new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' }).format(item.price)}
+                                        {formatCurrency(item.price)}
                                     </div>
                                     <div className="text-xs text-muted-foreground">/ {item.unit}</div>
                                 </div>
                             </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 </ScrollArea>
             </DialogContent>

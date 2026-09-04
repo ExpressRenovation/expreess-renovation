@@ -9,68 +9,95 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { ChevronDown, ChevronUp, MoreHorizontal, Percent } from "lucide-react";
-import { Reorder } from "framer-motion";
+import { ChevronDown, ChevronUp, MoreHorizontal, Percent, FilePlus2 } from "lucide-react";
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { useDroppable } from '@dnd-kit/core';
+import { CHAPTER_DROPPABLE_PREFIX } from './reorder';
 import { TableRowItem } from './TableRowItem';
+import { useBudgetEditorContext } from '../BudgetEditorContext';
+import { useMarkupFactor } from '@/hooks/use-markup-factor';
 
 interface ChapterSectionProps {
     chapterName: string;
     items: any[];
-    onReorder: (newItems: any[]) => void;
-    onUpdate: (id: string, changes: any) => void;
-    onRemove: (id: string) => void;
-    onDuplicate: (id: string) => void;
-    onRename: (newName: string) => void;
-    onDelete: () => void;
     showGhostMode?: boolean;
-    isExecutionOnly?: boolean;
     onOpenBreakdown: (item: any) => void;
     onOpenMarkup: (chapterName: string) => void;
-    isReadOnly?: boolean;
-    leadId?: string;
+    /** Phase 17 — abre modal de reconciliación con foco en una partida. */
+    onOpenReconciliation?: (partidaId: string) => void;
+    /** Abre el diálogo de alta manual preseleccionando este capítulo. */
+    onAddPartida?: (chapterName: string) => void;
 }
 
 export const ChapterSection = ({
     chapterName,
     items,
-    onReorder,
-    onUpdate,
-    onRemove,
-    onDuplicate,
-    onRename,
-    onDelete,
     showGhostMode,
-    isExecutionOnly,
     onOpenBreakdown,
     onOpenMarkup,
-    isReadOnly,
-    leadId
+    onOpenReconciliation,
+    onAddPartida,
 }: ChapterSectionProps) => {
+    const {
+        state,
+        renameChapter,
+        removeChapter, 
+        updateItem,
+        removeItem,
+        duplicateItem,
+        isReadOnly,
+        leadId
+    } = useBudgetEditorContext();
+
+    const executionMode = state.executionMode;
     const [isExpanded, setIsExpanded] = useState(true);
     const [isEditingName, setIsEditingName] = useState(false);
     const [nameDraft, setNameDraft] = useState(chapterName);
 
+    // Zona droppable del capítulo — permite soltar partidas en un capítulo vacío
+    // o al final de la lista (@dnd-kit). Se resalta cuando algo se arrastra encima.
+    const { setNodeRef: setDropRef, isOver } = useDroppable({ id: `${CHAPTER_DROPPABLE_PREFIX}${chapterName}` });
+
     const handleRenameSubmit = () => {
         if (nameDraft.trim() && nameDraft !== chapterName) {
-            onRename(nameDraft.trim());
+            renameChapter(chapterName, nameDraft.trim());
         }
         setIsEditingName(false);
     };
 
-    const totalChapter = items.reduce((acc: number, i: any) => {
+    // Phase 17.4 — factor de display centralizado en `useMarkupFactor`.
+    const { markupFactor } = useMarkupFactor();
+
+    const totalChapterRaw = items.reduce((acc: number, i: any) => {
         let total = i.item?.totalPrice || 0;
-        if (isExecutionOnly && i.item?.breakdown) {
+        let deduct = 0;
+
+        if (executionMode === 'execution' && i.item?.breakdown) {
             const vCost = i.item.breakdown
-                .filter((comp: any) => comp.is_variable === true)
+                .filter((comp: any) => comp.is_variable === true || comp.is_variable === 'true' || comp.isVariable === true)
                 .reduce((cAcc: number, comp: any) => {
                     const cPrice = comp.unitPrice || comp.price || 0;
                     const cQuantity = comp.quantity || comp.yield || 1;
                     return cAcc + (comp.totalPrice || comp.total || (cPrice * cQuantity));
                 }, 0);
-            total = Math.max(0, total - vCost);
+            deduct = vCost * (i.item?.quantity || 1);
+        } else if (executionMode === 'labor' && i.item?.breakdown) {
+            const laborCosts = i.item.breakdown
+                .filter((comp: any) => comp.code && String(comp.code).toLowerCase().startsWith('mo'))
+                .reduce((cAcc: number, comp: any) => {
+                    const cPrice = comp.unitPrice || comp.price || 0;
+                    const cQuantity = comp.quantity || comp.yield || 1;
+                    return cAcc + (comp.totalPrice || comp.total || (cPrice * cQuantity));
+                }, 0);
+            const totalLaborCosts = laborCosts * (i.item?.quantity || 1);
+            deduct = total - totalLaborCosts;
         }
-        return acc + total;
+
+        return acc + Math.max(0, total - deduct);
     }, 0);
+
+    // Total mostrado = raw × markupFactor (consistente con Base Imponible).
+    const totalChapter = totalChapterRaw * markupFactor;
 
     return (
         <>
@@ -136,12 +163,18 @@ export const ChapterSection = ({
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
+                                {onAddPartida && (
+                                    <DropdownMenuItem onClick={() => onAddPartida(chapterName)}>
+                                        <FilePlus2 className="w-4 h-4 mr-2 text-slate-500" />
+                                        Añadir partida
+                                    </DropdownMenuItem>
+                                )}
                                 <DropdownMenuItem onClick={() => onOpenMarkup(chapterName)}>
                                     <Percent className="w-4 h-4 mr-2 text-slate-500" />
                                     Ajustar Precios de Capítulo
                                 </DropdownMenuItem>
                                 <DropdownMenuItem onClick={() => setIsEditingName(true)}>Renombrar</DropdownMenuItem>
-                                <DropdownMenuItem className="text-red-600" onClick={onDelete}>Eliminar Capítulo</DropdownMenuItem>
+                                <DropdownMenuItem className="text-red-600" onClick={() => removeChapter(chapterName)}>Eliminar Capítulo</DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
                         )}
@@ -151,34 +184,39 @@ export const ChapterSection = ({
 
             {/* Draggable Items */}
             {isExpanded && (
-                <Reorder.Group
-                    as="div"
-                    axis="y"
-                    values={items}
-                    onReorder={onReorder}
-                    className="flex flex-col"
-                >
-                    {items.map((item: any) => (
-                        <TableRowItem
-                            key={item.id}
-                            item={item}
-                            onUpdate={onUpdate}
-                            onRemove={onRemove}
-                            onDuplicate={onDuplicate}
-                            showGhostMode={showGhostMode}
-                            isExecutionOnly={isExecutionOnly}
-                            onOpenBreakdown={onOpenBreakdown}
-                            onOpenMarkup={onOpenMarkup}
-                            isReadOnly={isReadOnly}
-                            leadId={leadId}
-                        />
-                    ))}
-                    {items.length === 0 && (
-                        <div className="text-center py-8 text-slate-400 border-dashed border-b w-full">
-                            Arrastra partidas aquí o añade nuevas desde la biblioteca
-                        </div>
-                    )}
-                </Reorder.Group>
+                <SortableContext items={items.map((i: any) => i.id)} strategy={verticalListSortingStrategy}>
+                    <div
+                        ref={setDropRef}
+                        className={`flex flex-col ${isOver ? 'bg-primary/5 ring-1 ring-inset ring-primary/30' : ''}`}
+                    >
+                        {items.map((item: any) => (
+                            <TableRowItem
+                                key={item.id}
+                                item={item}
+                                onUpdate={updateItem}
+                                onRemove={removeItem}
+                                onDuplicate={duplicateItem}
+                                showGhostMode={showGhostMode}
+                                executionMode={executionMode}
+                                onOpenBreakdown={onOpenBreakdown}
+                                onOpenMarkup={onOpenMarkup}
+                                onOpenReconciliation={onOpenReconciliation}
+                                isReadOnly={isReadOnly}
+                                leadId={leadId}
+                            />
+                        ))}
+                        {items.length === 0 && (
+                            <div className="flex flex-col items-center gap-2 py-8 text-slate-400 border-dashed border-b w-full">
+                                <span>Arrastra partidas aquí o añade nuevas desde la biblioteca</span>
+                                {onAddPartida && !isReadOnly && (
+                                    <Button variant="outline" size="sm" className="h-7 gap-1 border-dashed" onClick={() => onAddPartida(chapterName)}>
+                                        <FilePlus2 className="w-3.5 h-3.5" /> Añadir partida
+                                    </Button>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                </SortableContext>
             )}
         </>
     );

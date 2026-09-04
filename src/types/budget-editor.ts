@@ -1,4 +1,4 @@
-import { BudgetCostBreakdown, BudgetBreakdownComponent } from '@/backend/budget/domain/budget';
+import { BudgetCostBreakdown, BudgetBreakdownComponent, MatchKind, UnitConversionRecord, MeasurementLine } from '@/backend/budget/domain/budget';
 
 export interface LegacyBudgetLineItemDetails {
     quantity: number;
@@ -13,6 +13,7 @@ export interface EditableBudgetLineItem {
     id: string;
     order: number;
     originalTask?: string;
+    original_item?: any; // Añadido para preservar el OCR PDF de entrada
     type?: 'PARTIDA' | 'MATERIAL'; // Distinction for Adaptive UI
 
     // The legacy grid expects a nested 'item' object for the actual data
@@ -28,6 +29,23 @@ export interface EditableBudgetLineItem {
         needsHumanReview?: boolean; // Highlight alert for human review
         aiResolution?: any; // Telemetry and reasoning from Zero-Leak pipeline
         ai_justification?: string; // Additional reasoning trace from Python engine
+        // Fase 5.F — v005 trace surfaced to the audit panel.
+        match_kind?: MatchKind;
+        unit_conversion_applied?: UnitConversionRecord;
+        // Fase 6.D — v006 trace: fragments históricos inyectados al Pro.
+        applied_fragments?: string[];
+        // Phase 17 — flags de reconciliación marcadas por el backend.
+        needs_reconciliation?: boolean;
+        divergence_pct?: number;
+        divergence_amount?: number;
+        last_reconciled_at?: string | null;
+        reconciled_by?: string | null;
+        original_unit_price_before_reconciliation?: number | null;
+        // BC3 — doble precio + mediciones estructuradas.
+        bc3_unit_price?: number | null;     // precio del propio archivo BC3
+        ai_unit_price?: number | null;      // estimación IA (catálogo + Vertex)
+        active_price_source?: 'bc3' | 'ai'; // fuente de precio activa
+        measurements?: MeasurementLine[];   // estado de mediciones estructurado
     };
 
     // Editor State
@@ -50,6 +68,8 @@ export interface BudgetConfig {
 }
 
 
+export type ExecutionMode = 'complete' | 'execution' | 'labor';
+
 export interface BudgetEditorState {
     items: EditableBudgetLineItem[];
     costBreakdown: BudgetCostBreakdown;
@@ -62,26 +82,38 @@ export interface BudgetEditorState {
     lastSavedAt?: Date;
     isSaving: boolean;
     chapters: string[]; // List of chapter names in order
-    isExecutionOnly: boolean; // Toggle for Execution Only mode
+    executionMode: ExecutionMode; // Toggle for Execution modes
     config: BudgetConfig;
+    // Phase 17 — controla si el editor multiplica por markupFactor (legacy
+    // 'phase15') o lee precios as-is (nuevo 'phase17-markup-baked'). Para
+    // budgets sin stamp se asume legacy (compat con históricos pre-Phase 15).
+    calibrationVersion?: 'phase14' | 'phase15' | 'phase17-markup-baked';
+    // Phase 17.3 — snapshot inmutable del config con el que las partidas
+    // fueron baked en backend. Permite live-edit de GG/BI:
+    //   displayFactor = (1 + currentGG+BI/100) / (1 + bakedGG+BI/100)
+    // Solo se asigna al INIT_STATE para budgets phase17. Para legacy queda
+    // undefined (rama legacy ignora este campo).
+    bakedConfig?: BudgetConfig;
 }
 
 export type BudgetEditorAction =
     | { type: 'SET_ITEMS'; payload: EditableBudgetLineItem[] }
-    | { type: 'UPDATE_ITEM'; payload: { id: string; changes: Partial<EditableBudgetLineItem> } }
+    | { type: 'UPDATE_ITEM'; payload: { id: string; changes: Partial<EditableBudgetLineItem>; transient?: boolean } }
     | { type: 'ADD_ITEM'; payload: EditableBudgetLineItem }
     | { type: 'DUPLICATE_ITEM'; payload: string }
     | { type: 'REMOVE_ITEM'; payload: string }
     | { type: 'REORDER_ITEMS'; payload: EditableBudgetLineItem[] }
+    | { type: 'SET_ITEMS_ORDER'; payload: EditableBudgetLineItem[] }
     | { type: 'ADD_CHAPTER'; payload: string }
     | { type: 'REMOVE_CHAPTER'; payload: string }
     | { type: 'RENAME_CHAPTER'; payload: { oldName: string; newName: string } }
     | { type: 'REORDER_CHAPTERS'; payload: string[] }
     | { type: 'UNDO' }
     | { type: 'REDO' }
-    | { type: 'TOGGLE_EXECUTION_MODE' }
+    | { type: 'SET_EXECUTION_MODE'; payload: ExecutionMode }
     | { type: 'UPDATE_CONFIG'; payload: Partial<BudgetConfig> }
     | { type: 'APPLY_MARKUP'; payload: { scope: 'global' | 'chapter' | 'item'; targetId?: string; percentage: number } }
+    | { type: 'SET_PRICE_SOURCE'; payload: { id: string; source: 'bc3' | 'ai' } }
     | { type: 'SAVE_START' }
     | { type: 'SAVE_SUCCESS'; payload: Date }
     | { type: 'SAVE_ERROR' };

@@ -3,6 +3,36 @@ import { PersonalInfo } from '@/backend/lead/domain/lead';
 
 export type BudgetLineItemType = 'PARTIDA' | 'MATERIAL';
 
+/**
+ * Fase 5.E — trazabilidad auditable del Judge v005.
+ * `bridge` es un dict abierto porque las claves canonical dependen del tipo de
+ * conversión: `thickness_m`, `density_kg_m3`, `piece_length_m`.
+ */
+export type MatchKind = '1:1' | '1:N' | 'from_scratch';
+
+export interface UnitConversionRecord {
+  value: number;          // cantidad original (en la unidad de partida)
+  from_unit: string;      // canonical: m2 / ml / kg / ...
+  to_unit: string;        // canonical del candidato
+  bridge: Record<string, number>; // {"thickness_m": 0.10} | {"density_kg_m3": 2400}
+  result: number;         // resultado de la conversión (en to_unit)
+}
+
+/**
+ * Línea del estado de mediciones de un BC3 (FIEBDC-3).
+ * Subtotal = units × (length|1) × (width|1) × (height|1).
+ * Las líneas de sección (`is_section`) son encabezados sin cantidad (p.ej. "PLANTA BAJA").
+ */
+export interface MeasurementLine {
+  comment: string;            // estancia / ubicación / comentario
+  units?: number | null;
+  length?: number | null;
+  width?: number | null;
+  height?: number | null;
+  subtotal?: number | null;
+  is_section?: boolean;
+}
+
 export interface BudgetPartida {
   type: 'PARTIDA';
   id: string;
@@ -13,7 +43,20 @@ export interface BudgetPartida {
   quantity: number;
   unitPrice: number; // Includes labor + materials
   totalPrice: number;
+  // BC3 — doble precio + mediciones estructuradas (Optional; ausentes salvo import BC3).
+  bc3_unit_price?: number | null;     // precio del propio archivo BC3
+  ai_unit_price?: number | null;      // estimación IA (catálogo + Vertex)
+  active_price_source?: 'bc3' | 'ai'; // fuente de precio activa (default: bc3 si existe)
+  measurements?: MeasurementLine[];   // estado de mediciones estructurado
   originalTask?: string; // The user intent that generated this
+  /**
+   * Material solicitado explícitamente por el cliente (p.ej. "cerámica",
+   * "resina antideslizante"). Se usa para la búsqueda/selección de la IA y como
+   * anotación de auditoría. NO se muestra en el PDF entregado (ya está reflejado
+   * en la descripción/descompuesto). Antes viajaba embebido en `description` como
+   * "[MATERIAL EXPLÍCITO: X]"; ahora es un campo dedicado.
+   */
+  explicitMaterial?: string | null;
   note?: string;
   ai_justification?: string; // Telemetry logic from the Judge Agent
   sourceDatabase?: string; // e.g. '2025_catalog'
@@ -32,6 +75,20 @@ export interface BudgetPartida {
     unitPrice: number;
     url?: string;
   };
+  // Fase 5.E — v005 trace fields (Optional; ausentes en presupuestos históricos).
+  match_kind?: MatchKind;
+  unit_conversion_applied?: UnitConversionRecord;
+  // Fase 6.D — v006: IDs de HeuristicFragments inyectados al Pro al tasar.
+  applied_fragments?: string[];
+  // Phase 17 — flags de reconciliación. Marcadas por el backend cuando el LLM
+  // devuelve breakdown con divergencia >= 2% del unit_price (no auto-fixable).
+  // El editor frontend muestra chip ⚠️ + banner para revisión humana.
+  needs_reconciliation?: boolean;
+  divergence_pct?: number;        // ratio absoluto (0.05 = 5%)
+  divergence_amount?: number;     // diff en € (sum_breakdown - unit_price)
+  last_reconciled_at?: Date | string | null;
+  reconciled_by?: string | null;
+  original_unit_price_before_reconciliation?: number | null;
 }
 
 export interface BudgetBreakdownComponent {
@@ -39,10 +96,19 @@ export interface BudgetBreakdownComponent {
   concept: string; // e.g. "Mano de obra", "Material: Keraben Forest"
   type: 'LABOR' | 'MATERIAL' | 'MACHINERY' | 'OTHER';
   price: number; // Unit price of this component
+  unitPrice?: number; // Alias for price used by AI occasionally
   yield?: number; // Rendimiento (e.g. 0.05 h/m2)
+  quantity?: number; // Alias for yield used by AI occasionally
   waste?: number; // Merma % (only for materials)
   total: number; // price * yield * (1+waste)
+  totalPrice?: number; // Alias for total
+  is_variable?: boolean; // Flag para el modo Sólo Ejecución
   isSubstituted?: boolean; // True if this component was swapped by AI
+  alternativeComponents?: any[]; // Unselected semantic candidates to swap this ingredient manually
+  // Phase 17 — snapshot raw PEM antes de bakear GG+BI. Permite recalcular
+  // con margen distinto sin perder fidelidad al catálogo COAATMCA.
+  rawPrice?: number;
+  rawTotal?: number;
 }
 
 export interface BudgetMaterial {
@@ -80,6 +146,8 @@ export interface BudgetCostBreakdown {
   tax: number; // IVA
   globalAdjustment: number;
   total: number; // PEC + IVA
+  executionOnlyTotal?: number; // Total expícito SIN materiales variables
+  completeTotal?: number; // Total explícito CON materiales variables
 }
 
 export interface BudgetTelemetryMetrics {
@@ -122,11 +190,28 @@ export interface BudgetTelemetry {
 export interface Budget {
   id: string;
 
+  /**
+   * Número de presupuesto legible tipo factura, formato `YYYY-MM/NNNN`
+   * (p.ej. "2026-06/0001"). La secuencia reinicia cada mes natural. Se asigna
+   * de forma atómica (transacción Firestore sobre un contador) la primera vez
+   * que el presupuesto se persiste. Los presupuestos históricos sin este campo
+   * caen al fragmento del `id` vía `displayBudgetNumber()`.
+   */
+  budgetNumber?: string;
+
   // Owner Reference (Linked to Lead Module)
   leadId: string;
 
   // Snapshot of client data at budget creation time (Immutable record)
   clientSnapshot: PersonalInfo;
+
+  /**
+   * Título del presupuesto — opcional pero útil para identificarlo cuando un
+   * mismo cliente tiene varios. Lo rellena el usuario en el wizard NL o se
+   * extrae automáticamente del header del PDF en flujos measurements/vision.
+   * Ejemplos: "Reforma cocina Calle Mayor 23", "Obra nueva nave Almazora".
+   */
+  title?: string;
 
   // Metadata
   status: 'draft' | 'pending_review' | 'approved' | 'sent';
@@ -158,6 +243,23 @@ export interface Budget {
     extractionConfidence?: number;
   };
 
+  /**
+   * Phase 15 — versión de calibración con que fue producido este budget.
+   * - 'phase14' o undefined: partidas almacenan precios all-in (markup baked-in
+   *   por calibración). El editor debe forzar GG=BI=0 al renderizar para no
+   *   double-countar.
+   * - 'phase15': partidas almacenan raw PEM. El editor distribuye GG+BI según
+   *   `config` para producir precios all-in al cliente.
+   *
+   * Nuevos budgets generados por la IA tras Phase 15 se stampean 'phase15'.
+   *
+   * Phase 17 — 'phase17-markup-baked': partidas almacenan PVP all-in (markup
+   * GG+BI ya distribuido en backend). El editor NO debe multiplicar por
+   * markupFactor. Snapshot raw preservado en aiResolution.calculated_unit_price_raw
+   * y breakdown[].rawPrice/rawTotal.
+   */
+  calibrationVersion?: 'phase14' | 'phase15' | 'phase17-markup-baked';
+
   // Quick Consultation Response
   quickQuote?: {
     price: number;
@@ -170,6 +272,51 @@ export interface Budget {
 
   // AI Telemetry & Traceability
   telemetry?: BudgetTelemetry;
+
+  // F6 — Cuando el admin envía el presupuesto al cliente.
+  /** PDF subido a Storage cuando se envió al cliente final. */
+  pdfUrl?: string;
+  /** Timestamp del envío al cliente (transición approved → sent). */
+  sentAt?: Date;
+
+  // F7.B — Aceptación pública con token.
+  /**
+   * Token random opaque que el cliente recibe en el email de envío del
+   * presupuesto. Permite acceder a la página pública de aceptación sin
+   * autenticación. Se regenera si el admin reenvía el presupuesto.
+   */
+  acceptanceToken?: string;
+  acceptanceTokenIssuedAt?: Date;
+  /**
+   * Aceptación firmada del cliente. Una vez registrada, el deal asociado
+   * se mueve a CLOSED_WON. La firma es legalmente "electrónica simple"
+   * (nombre + IP + timestamp) — suficiente para acuerdo comercial pero
+   * no equivale a firma cualificada.
+   */
+  acceptance?: {
+    acceptedAt: Date;
+    signatureName: string;
+    ipAddress?: string;
+    userAgent?: string;
+  };
+  /**
+   * Solicitudes de cambios del cliente desde la página pública. Cada
+   * entrada vuelve el budget a `pending_review` y notifica al admin.
+   */
+  changeRequests?: {
+    requestedAt: Date;
+    comment: string;
+    ipAddress?: string;
+  }[];
+}
+
+/**
+ * Número de presupuesto a mostrar al usuario. Usa el `budgetNumber` tipo factura
+ * si existe; si no (presupuestos históricos), cae al fragmento corto del `id` en
+ * mayúsculas para conservar compatibilidad visual.
+ */
+export function displayBudgetNumber(budget: Pick<Budget, 'id' | 'budgetNumber'>): string {
+  return budget.budgetNumber || budget.id.substring(0, 8).toUpperCase();
 }
 
 export interface BudgetRender {
@@ -180,6 +327,7 @@ export interface BudgetRender {
   style: string;
   roomType: string;
   createdAt: Date;
+  includeInPdf?: boolean;
 }
 
 /**
@@ -189,6 +337,8 @@ export interface BudgetRepository {
   findById(id: string): Promise<Budget | null>;
   findByLeadId(leadId: string): Promise<Budget[]>;
   findAll(): Promise<Budget[]>;
+  /** Devuelve el budget asociado a un acceptanceToken activo, o null. */
+  findByAcceptanceToken(token: string): Promise<Budget | null>;
   save(budget: Budget): Promise<void>;
   delete(id: string): Promise<void>;
 }

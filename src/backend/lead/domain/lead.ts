@@ -5,6 +5,17 @@ export interface PersonalInfo {
     phone: string;
     address?: string;
     web?: string; // NEW: Optional website
+
+    // Datos fiscales / facturación. Todos opcionales — un Lead inicial sólo
+    // necesita nombre+email+phone. Se rellenan al crear obra o al confirmar
+    // datos del cliente desde el editor de presupuestos (portado de dochevi).
+    nif?: string;                // DNI / NIF / CIF
+    companyName?: string;        // Razón social si es empresa
+    billingAddress?: string;     // Dirección fiscal (si difiere de `address`)
+    billingCity?: string;
+    billingPostalCode?: string;
+    billingProvince?: string;
+    billingCountry?: string;
 }
 
 // ── Client Profile (Typeform-style profiling) ──

@@ -10,62 +10,117 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { FolderPlus } from "lucide-react";
+import { FolderPlus, FilePlus2 } from "lucide-react";
 import { EditableBudgetLineItem } from "@/types/budget-editor";
-import { BudgetBreakdownSheet } from './BudgetBreakdownSheet';
+import { AIReasoningSheet } from './table/AIReasoningSheet';
 import { ChapterSection } from './table/ChapterSection';
+import { ManualPartidaDialog } from './ManualPartidaDialog';
+import {
+    DndContext,
+    closestCorners,
+    PointerSensor,
+    KeyboardSensor,
+    useSensor,
+    useSensors,
+    type DragEndEvent,
+} from '@dnd-kit/core';
+import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
+import { reorderOnDragEnd } from './table/reorder';
+import { useBudgetEditorContext } from './BudgetEditorContext';
+import { ReconciliationBanner } from './ReconciliationBanner';
+import { ReconciliationDiffModal } from './ReconciliationDiffModal';
 
 interface BudgetEditorTableProps {
-    items: EditableBudgetLineItem[];
-    chapters: string[];
-    onReorder: (newItems: EditableBudgetLineItem[]) => void;
-    onUpdate: (id: string, changes: Partial<EditableBudgetLineItem>) => void;
-    onRemove: (id: string) => void;
-    onDuplicate: (id: string) => void;
-    onAddChapter: (name: string) => void;
-    onRemoveChapter: (name: string) => void;
-    onRenameChapter: (oldName: string, newName: string) => void;
-    onReorderChapters: (newOrder: string[]) => void;
-    showGhostMode?: boolean;
-    isExecutionOnly?: boolean;
-    isAdmin?: boolean;
-    applyMarkup?: (scope: 'global' | 'chapter' | 'item', percentage: number, targetId?: string) => void;
-    isReadOnly?: boolean;
-    leadId?: string;
+    showGhostMode?: boolean; // Dejamos esto como prop opcional si depende del Toolbar en el futuro, o lo leemos.
+    /** Phase 17 — necesario para el server action de reconciliación. */
+    budgetId?: string;
 }
 
-export function BudgetEditorTable({
-    items,
-    chapters,
-    onReorder,
-    onUpdate,
-    onRemove,
-    onDuplicate,
-    onAddChapter,
-    onRemoveChapter,
-    onRenameChapter,
-    onReorderChapters,
-    showGhostMode,
-    isExecutionOnly,
-    isAdmin,
-    applyMarkup,
-    isReadOnly,
-    leadId
-}: BudgetEditorTableProps) {
-    const [breakdownItem, setBreakdownItem] = useState<EditableBudgetLineItem | null>(null);
+export function BudgetEditorTable({ showGhostMode, budgetId }: BudgetEditorTableProps) {
+    const {
+        state,
+        updateItem,
+        removeItem,
+        duplicateItem,
+        addItem,
+        setItemsOrder,
+        addChapter,
+        removeChapter,
+        renameChapter,
+        reorderChapters,
+        applyMarkup,
+        isAdmin,
+        isReadOnly,
+        leadId,
+        reorderItems
+    } = useBudgetEditorContext();
+
+    const [breakdownItemId, setBreakdownItemId] = useState<string | null>(null);
     const [breakdownOpen, setBreakdownOpen] = useState(false);
+    // Item VIVO desde state.items (no un snapshot congelado al abrir): así los
+    // borrados/ediciones del descompuesto dentro del sheet se reflejan al instante
+    // (antes se re-renderizaba el item viejo y la fila borrada no desaparecía).
+    const breakdownItem = breakdownItemId
+        ? (state.items.find((i) => i.id === breakdownItemId) ?? null)
+        : null;
+
+    // Alta manual de partida (con descompuestos escritos a teclado).
+    const [manualPartidaOpen, setManualPartidaOpen] = useState(false);
+    const [manualInitialChapter, setManualInitialChapter] = useState<string | undefined>(undefined);
+
+    const openManualPartida = (chapter?: string) => {
+        setManualInitialChapter(chapter);
+        setManualPartidaOpen(true);
+    };
+
+    // Phase 17 — modal per-partida (chip click → focus single)
+    const [reconcileFocusedId, setReconcileFocusedId] = useState<string | null>(null);
 
     // Markup Dialog State
     const [markupState, setMarkupState] = useState<{ open: boolean; scope: 'global' | 'chapter' | 'item'; targetId?: string; percentage: number }>({ open: false, scope: 'global', percentage: 0 });
 
     const handleOpenBreakdown = (item: EditableBudgetLineItem) => {
-        setBreakdownItem(item);
+        setBreakdownItemId(item.id);
         setBreakdownOpen(true);
+    };
+
+    // BC3 doble precio: mostramos "Precio BC3" + "Precio IA" solo si el presupuesto
+    // viene de un .bc3 con precios (alguna partida trae bc3_unit_price).
+    const hasDualPrice = state.items.some((i: any) => i.item?.bc3_unit_price != null);
+
+    // Drag-and-drop entre capítulos (@dnd-kit). El PointerSensor con umbral de 6px
+    // evita que un simple click en la fila dispare un arrastre.
+    const sensors = useSensors(
+        useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
+        useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+    );
+
+    const handleDragEnd = (event: DragEndEvent) => {
+        const { active, over } = event;
+        if (!over) return;
+        const newItems = reorderOnDragEnd(state.items, state.chapters, String(active.id), String(over.id));
+        if (newItems) setItemsOrder(newItems);
     };
 
     return (
         <div className="w-full bg-white dark:bg-zinc-900 rounded-xl border border-slate-200 dark:border-white/10 shadow-sm overflow-hidden auto-cols-auto overflow-x-auto">
-            <div className="flex flex-col min-w-[800px]">
+            {budgetId && (
+                <ReconciliationBanner
+                    items={state.items}
+                    budgetId={budgetId}
+                    calibrationVersion={state.calibrationVersion}
+                />
+            )}
+            {budgetId && (
+                <ReconciliationDiffModal
+                    open={reconcileFocusedId !== null}
+                    onOpenChange={(o) => !o && setReconcileFocusedId(null)}
+                    items={state.items}
+                    budgetId={budgetId}
+                    focusedPartidaId={reconcileFocusedId}
+                />
+            )}
+            <div className="flex flex-col" style={{ minWidth: hasDualPrice ? 900 : 800 }}>
                 {/* Header Grid */}
                 <div className="flex bg-slate-50/50 dark:bg-white/5 border-b border-slate-200 dark:border-white/10 text-sm font-medium text-slate-500">
                     <div className="w-[40px] shrink-0 p-3"></div>
@@ -73,30 +128,32 @@ export function BudgetEditorTable({
                     <div className="flex-1 min-w-[300px] p-3">Descripción / Código</div>
                     <div className="w-[80px] shrink-0 text-center p-3">Ud</div>
                     <div className="w-[100px] shrink-0 text-right p-3">Cant.</div>
-                    <div className="w-[120px] shrink-0 text-right p-3">Precio</div>
+                    {hasDualPrice ? (
+                        <>
+                            <div className="w-[110px] shrink-0 text-right p-3">Precio BC3</div>
+                            <div className="w-[110px] shrink-0 text-right p-3">Precio IA</div>
+                        </>
+                    ) : (
+                        <div className="w-[120px] shrink-0 text-right p-3">Precio</div>
+                    )}
                     <div className="w-[120px] shrink-0 text-right p-3">Total</div>
                     <div className="w-[50px] shrink-0 p-3"></div>
                 </div>
 
-                {chapters.map((chapterName) => (
-                    <ChapterSection
-                        key={chapterName}
-                        chapterName={chapterName}
-                        items={items.filter(i => i.chapter === chapterName)}
-                        onReorder={onReorder}
-                        onUpdate={onUpdate}
-                        onRemove={onRemove}
-                        onDuplicate={onDuplicate}
-                        onRename={(newName: string) => onRenameChapter(chapterName, newName)}
-                        onDelete={() => onRemoveChapter(chapterName)}
-                        showGhostMode={showGhostMode}
-                        isExecutionOnly={isExecutionOnly}
-                        onOpenBreakdown={handleOpenBreakdown}
-                        onOpenMarkup={(chapterName: string) => setMarkupState({ open: true, scope: 'chapter', targetId: chapterName, percentage: 0 })}
-                        isReadOnly={isReadOnly}
-                        leadId={leadId}
-                    />
-                ))}
+                <DndContext sensors={sensors} collisionDetection={closestCorners} onDragEnd={handleDragEnd}>
+                    {state.chapters.map((chapterName: string) => (
+                            <ChapterSection
+                                key={chapterName}
+                                chapterName={chapterName}
+                                items={state.items.filter((i: any) => i.chapter === chapterName)}
+                                showGhostMode={showGhostMode}
+                                onOpenBreakdown={handleOpenBreakdown}
+                                onOpenMarkup={(chapterName: string) => setMarkupState({ open: true, scope: 'chapter', targetId: chapterName, percentage: 0 })}
+                                onOpenReconciliation={budgetId ? (partidaId: string) => setReconcileFocusedId(partidaId) : undefined}
+                                onAddPartida={openManualPartida}
+                            />
+                    ))}
+                </DndContext>
             </div>
 
             {!isReadOnly && (
@@ -104,19 +161,35 @@ export function BudgetEditorTable({
                     <Button
                         variant="outline"
                         className="border-dashed"
-                        onClick={() => onAddChapter(`Capítulo ${chapters.length + 1}`)}
+                        onClick={() => addChapter(`Capítulo ${state.chapters.length + 1}`)}
                     >
                         <FolderPlus className="w-4 h-4 mr-2" />
                         Nuevo Capítulo
                     </Button>
+                    <Button
+                        variant="outline"
+                        className="border-dashed"
+                        onClick={() => openManualPartida(state.chapters[0])}
+                    >
+                        <FilePlus2 className="w-4 h-4 mr-2" />
+                        Nueva Partida
+                    </Button>
                 </div>
             )}
-
-            <BudgetBreakdownSheet
+            <ManualPartidaDialog
+                open={manualPartidaOpen}
+                onOpenChange={setManualPartidaOpen}
+                chapters={state.chapters}
+                initialChapter={manualInitialChapter}
+                items={state.items}
+                onAdd={(item) => addItem(item)}
+            />
+            {/* AUDIT MASTER PANEL */}
+            <AIReasoningSheet
                 item={breakdownItem}
                 open={breakdownOpen}
                 onOpenChange={setBreakdownOpen}
-                onUpdate={onUpdate}
+                onUpdate={updateItem}
                 isAdmin={isAdmin}
             />
 
