@@ -1,4 +1,7 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
+import dynamic from 'next/dynamic';
 import { Card, CardContent } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { BudgetCostBreakdown } from '@/backend/budget/domain/budget';
@@ -9,7 +12,12 @@ import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { Settings2, Check, ArrowRight, FileDown, Loader2, Download, Save, Images, Info, ChevronDown, ChevronUp, FileText } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { PDFDownloadLink } from '@react-pdf/renderer';
+// Client-only: @react-pdf/renderer en SSR/hidratación rompe el DOM a nivel
+// document ("Only one element on document allowed"). Cargar solo en cliente.
+const PDFDownloadLink: any = dynamic(
+    () => import('@react-pdf/renderer').then((m) => m.PDFDownloadLink as any),
+    { ssr: false },
+);
 import { BudgetDocument } from '@/components/pdf/BudgetDocument';
 import type { CompanyConfig } from '@/backend/platform/domain/company-config';
 import { SendToClientButton } from './SendToClientButton';
@@ -492,7 +500,7 @@ export const BudgetEconomicSummary = ({
                                         }
                                         fileName={`Presupuesto-${budgetNumber}.pdf`}
                                     >
-                                        {({ loading }) => (
+                                        {({ loading }: { loading: boolean }) => (
                                             <Button
                                                 disabled={loading}
                                                 onClick={() => {
