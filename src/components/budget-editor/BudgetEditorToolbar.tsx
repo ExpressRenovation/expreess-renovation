@@ -26,13 +26,7 @@ import {
 } from "@/components/ui/popover";
 import { cn } from '@/lib/utils';
 import { Logo } from '@/components/logo';
-import dynamic from 'next/dynamic';
-// Client-only: @react-pdf/renderer renderizado en SSR/hidratación rompe el DOM a
-// nivel document ("Only one element on document allowed"). Cargar solo en cliente.
-const PDFDownloadLink: any = dynamic(
-    () => import('@react-pdf/renderer').then((m) => m.PDFDownloadLink as any),
-    { ssr: false },
-);
+import { PDFDownloadLink } from '@react-pdf/renderer';
 import { BudgetDocument } from '@/components/pdf/BudgetDocument';
 import { EditableBudgetLineItem, ExecutionMode } from '@/types/budget-editor';
 import { BudgetCostBreakdown } from '@/backend/budget/domain/budget';

@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import dynamic from 'next/dynamic';
+import { PDFDownloadLink } from '@react-pdf/renderer';
+import { ClientOnly } from './ClientOnly';
 import { Card, CardContent } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { BudgetCostBreakdown } from '@/backend/budget/domain/budget';
@@ -12,12 +13,6 @@ import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { Settings2, Check, ArrowRight, FileDown, Loader2, Download, Save, Images, Info, ChevronDown, ChevronUp, FileText } from 'lucide-react';
 import { cn } from '@/lib/utils';
-// Client-only: @react-pdf/renderer en SSR/hidratación rompe el DOM a nivel
-// document ("Only one element on document allowed"). Cargar solo en cliente.
-const PDFDownloadLink: any = dynamic(
-    () => import('@react-pdf/renderer').then((m) => m.PDFDownloadLink as any),
-    { ssr: false },
-);
 import { BudgetDocument } from '@/components/pdf/BudgetDocument';
 import type { CompanyConfig } from '@/backend/platform/domain/company-config';
 import { SendToClientButton } from './SendToClientButton';
@@ -477,6 +472,7 @@ export const BudgetEconomicSummary = ({
                                 )}
                                 <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto order-1 sm:order-2">
                                     <Button variant="outline" className="w-full sm:w-auto" onClick={() => setIsPdfModalOpen(false)}>Cancelar</Button>
+                                    <ClientOnly fallback={<Button disabled className="w-full sm:w-auto bg-indigo-600 text-white font-semibold flex items-center justify-center gap-2 opacity-70"><Loader2 className="w-4 h-4 animate-spin" />Preparando…</Button>}>
                                     <PDFDownloadLink
                                         document={
                                             <BudgetDocument
@@ -516,6 +512,7 @@ export const BudgetEconomicSummary = ({
                                             </Button>
                                         )}
                                     </PDFDownloadLink>
+                                    </ClientOnly>
                                 </div>
                             </div>
                         </DialogContent>
