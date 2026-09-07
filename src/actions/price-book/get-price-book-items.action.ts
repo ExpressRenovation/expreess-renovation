@@ -10,7 +10,8 @@ export async function getPriceBookItems(year: number, limitCount: number = 50) {
         console.log(`[Action] Fetching price book items for year ${year} (limit: ${limitCount})...`);
         initFirebaseAdminApp();
         const db = getFirestore();
-        const collectionName = year === 2025 ? 'price_book_2025' : 'price_book_items';
+        // express-renovation: datos del libro en `price_book_items` (no price_book_2025).
+        const collectionName = 'price_book_items';
         const collectionRef = db.collection(collectionName);
 
         console.log(`[Action] Querying Firestore...`);

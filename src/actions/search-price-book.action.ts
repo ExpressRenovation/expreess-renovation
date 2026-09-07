@@ -16,7 +16,9 @@ export async function searchPriceBookAction(query: string, year: number = 2025):
 
         // Dependency Injection (Manual for now)
         // In a larger app, we might use a container or singleton instance
-        const collectionName = year === 2025 ? 'price_book_2025' : 'price_book_items';
+        // express-renovation tiene el libro vectorizado en `price_book_items`
+        // (1.688 items + índice vectorial). `price_book_2025` está vacío.
+        const collectionName = 'price_book_items';
         const repository = new FirestorePriceBookRepository(collectionName);
         const vectorizer = new RestApiVectorizerAdapter();
         const useCase = new SemanticSearchUseCase(repository, vectorizer);
