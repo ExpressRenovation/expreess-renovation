@@ -83,7 +83,9 @@ export function MeasurementsPipelineFlow() {
                 file,
                 uid,
                 leadId: uid,
-                strategy: 'ANNEXED',
+                // INLINE habilita el fast-path del parser tabular coord-based
+                // (lee la columna de medición); ANNEXED lo bypassa -> qty=0.
+                strategy: 'INLINE',
                 onUploadProgress: (f) => setUploadPct(Math.round(f * 100)),
                 onPhaseChange: (p) => {
                     if (p === 'dispatching') setPhase('dispatching');

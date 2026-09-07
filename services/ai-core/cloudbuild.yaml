@@ -94,7 +94,7 @@ steps:
       - --cpu=${_SERVICE_CPU}
       - --timeout=${_SERVICE_TIMEOUT}
       - --service-account=firebase-adminsdk-fbsvc@${PROJECT_ID}.iam.gserviceaccount.com
-      - --update-env-vars=WORKER_JOB_NAME=projects/${PROJECT_ID}/locations/${_REGION}/jobs/${_JOB_NAME}
+      - --update-env-vars=WORKER_JOB_NAME=projects/${PROJECT_ID}/locations/${_REGION}/jobs/${_JOB_NAME},USE_TABULAR_PARSER=true,MAX_LLM_VISION_PAGES=50
       - --quiet
 
   # -- 4. Deploy Cloud Run Job (worker) ------------------------------------
@@ -120,6 +120,7 @@ steps:
       - --parallelism=${_JOB_PARALLELISM}
       - --tasks=${_JOB_TASK_COUNT}
       - --service-account=ai-core-worker-sa@${PROJECT_ID}.iam.gserviceaccount.com
+      - --update-env-vars=USE_TABULAR_PARSER=true,MAX_LLM_VISION_PAGES=50
       - --command=python
       - --args=-m,src.core.jobs.worker_main
       - --quiet
