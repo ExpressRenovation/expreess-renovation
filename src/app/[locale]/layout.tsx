@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/context/auth-context';
 import { BudgetWidgetProvider } from '@/context/budget-widget-context';
+import { Providers } from '@/components/providers/query-provider';
 import i18nConfig from '../../../i18nConfig';
 import { notFound } from 'next/navigation';
 import { getDictionary } from '@/lib/dictionaries';
@@ -103,6 +104,7 @@ export default async function RootLayout({
           themes={['theme-luxury', 'dark-theme-luxury']}
         >
           <NextIntlClientProvider messages={messages}>
+            <Providers>
             <AuthProvider>
               <BudgetWidgetProvider>
                 {children}
@@ -111,6 +113,7 @@ export default async function RootLayout({
                 <Toaster />
               </BudgetWidgetProvider>
             </AuthProvider>
+            </Providers>
           </NextIntlClientProvider>
         </ThemeProvider>
       </body>
