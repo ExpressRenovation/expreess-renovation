@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Lightbulb, Maximize2, Ruler, Wrench, X, MessageSquarePlus, Paintbrush, Hammer, ChevronRight, ChevronLeft } from 'lucide-react';
+import { Lightbulb, Maximize2, Ruler, Wrench, X, MessageSquarePlus, Paintbrush, Hammer } from 'lucide-react';
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription, DrawerClose } from '@/components/ui/drawer';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -16,7 +16,20 @@ export function BudgetWizardTips({ setInput }: BudgetWizardTipsProps) {
     const isMobile = useIsMobile();
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [hasOpenedBefore, setHasOpenedBefore] = useState(false);
-    const [isDesktopExpanded, setIsDesktopExpanded] = useState(false);
+    const [isDesktopOpen, setIsDesktopOpen] = useState(true);
+
+    useEffect(() => {
+        const stored = localStorage.getItem('grupo_rg_wizard_tips_expanded');
+        if (stored !== null) {
+            setIsDesktopOpen(stored === 'true');
+        }
+    }, []);
+
+    const toggleDesktop = () => {
+        const newVal = !isDesktopOpen;
+        setIsDesktopOpen(newVal);
+        localStorage.setItem('grupo_rg_wizard_tips_expanded', String(newVal));
+    };
 
     // Auto-open on mobile on first load
     useEffect(() => {
@@ -166,40 +179,44 @@ export function BudgetWizardTips({ setInput }: BudgetWizardTipsProps) {
 
     // Desktop View
     return (
-        <motion.div 
-            initial={{ width: 64 }}
-            animate={{ width: isDesktopExpanded ? 320 : 64 }}
-            transition={{ duration: 0.3, ease: 'easeInOut' }}
-            className="hidden md:flex flex-col shrink-0 border-l border-slate-200 dark:border-white/10 bg-white dark:bg-[#1e1f20]/50 backdrop-blur-xl h-full overflow-hidden z-10 relative"
+        <div 
+            className={cn(
+                "hidden md:flex flex-col shrink-0 border-l border-slate-200 dark:border-white/10 bg-white dark:bg-[#1e1f20]/50 backdrop-blur-xl h-full overflow-y-auto custom-scrollbar auto-cols-auto transition-all duration-300 relative",
+                isDesktopOpen ? "w-[320px] p-6" : "w-[65px] items-center py-6 px-2"
+            )}
         >
-            <div className="absolute top-4 right-0 w-16 flex justify-center z-20">
+            {isDesktopOpen ? (
+                <div className="flex flex-col animate-in fade-in duration-300">
+                    <div className="mb-6 flex items-start justify-between">
+                        <div>
+                            <h3 className="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
+                                <Lightbulb className="w-5 h-5 text-primary" />
+                                Cómo pedirlo
+                            </h3>
+                            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 pr-2">Mejores descripciones = Mejor presupuesto generado por la IA.</p>
+                        </div>
+                        <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            onClick={toggleDesktop} 
+                            className="h-8 w-8 shrink-0 text-slate-400 hover:text-slate-600 dark:hover:text-white -mr-2"
+                        >
+                            <X className="w-4 h-4" />
+                        </Button>
+                    </div>
+                    <TipsContent />
+                </div>
+            ) : (
                 <Button 
                     variant="ghost" 
                     size="icon" 
-                    onClick={() => setIsDesktopExpanded(!isDesktopExpanded)} 
-                    className={cn(
-                        "rounded-full hover:bg-slate-100 dark:hover:bg-white/10 h-10 w-10 transition-colors",
-                        !isDesktopExpanded && "bg-amber-500/10 hover:bg-amber-500/20"
-                    )}
-                    title={isDesktopExpanded ? "Ocultar paneles" : "Cómo pedirlo"}
+                    onClick={toggleDesktop} 
+                    className="w-10 h-10 rounded-full bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary mt-2"
+                    title="Ver Tips y Plantillas"
                 >
-                    {isDesktopExpanded ? <ChevronRight className="w-5 h-5 text-slate-500" /> : <Lightbulb className="w-5 h-5 text-amber-500" />}
+                    <Lightbulb className="w-5 h-5" />
                 </Button>
-            </div>
-
-            <div 
-                className="p-6 h-full overflow-y-auto custom-scrollbar flex flex-col min-w-[320px] transition-opacity duration-200" 
-                style={{ opacity: isDesktopExpanded ? 1 : 0, pointerEvents: isDesktopExpanded ? 'auto' : 'none' }}
-            >
-                <div className="mb-6 pr-8">
-                    <h3 className="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
-                        <Lightbulb className="w-5 h-5 text-primary" />
-                        Cómo pedirlo
-                    </h3>
-                    <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Mejores descripciones = Mejor presupuesto generado por la IA.</p>
-                </div>
-                <TipsContent />
-            </div>
-        </motion.div>
+            )}
+        </div>
     );
 }

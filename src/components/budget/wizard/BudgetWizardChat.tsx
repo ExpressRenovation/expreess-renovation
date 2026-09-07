@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useRef, useEffect, useState } from 'react';
+import Link from 'next/link';
+import { v4 as uuidv4 } from 'uuid';
 import { Sparkles, Home, Hammer, Layers, Square, Send, Info, FileText, Image as ImageIcon, Mic, ChevronRight, CheckCircle2, ChevronDown, Bot, Loader2, PlayCircle, PlusCircle, PenTool, Paperclip, ExternalLink, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useBudgetWizard, Message, ConversationThread } from './useBudgetWizard';
@@ -12,24 +14,33 @@ import { cn } from '@/lib/utils';
 import { RequirementCard } from './RequirementCard';
 import { BudgetRequirement } from '@/backend/budget/domain/budget-requirements';
 import { BudgetGenerationProgress, GenerationStep } from '@/components/budget/BudgetGenerationProgress';
-import { useRouter } from 'next/navigation';
+import { Bc3DetectCard } from './Bc3DetectCard';
+import { detectBc3Action, type Bc3DetectResult } from '@/actions/budget/detect-bc3.action';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Badge } from '@/components/ui/badge';
 import { useTranslations } from 'next-intl';
 import { Drawer, DrawerContent, DrawerTitle, DrawerDescription, DrawerHeader } from '@/components/ui/drawer';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
-import { Trash2, MessageSquare, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
+import { Trash2, MessageSquare, PanelLeftClose, PanelLeftOpen, Pencil, Check, X as XIcon } from 'lucide-react';
 // removed sileo imports
-import { Logo } from '@/components/logo';
 import { Budget } from '@/backend/budget/domain/budget';
 import { BudgetWizardTips } from './BudgetWizardTips';
-import { isPipelineJobsEnabled } from '@/lib/feature-flags';
-import { dispatchPipelineJobAction } from '@/actions/pipeline/dispatch-pipeline-job.action';
-import { v4 as uuidv4 } from 'uuid';
+import { PhaseStepper } from './PhaseStepper';
+import { BudgetSummaryBar } from './BudgetSummaryBar';
+import { computeBudgetStats } from './budget-summary-stats';
+import type { SubEvent } from '@/components/budget/budget-generation-events';
+import { useAuth } from '@/hooks/use-auth';
 
 
 export function BudgetWizardChat({ isAdmin = false, isPublicMode = false }: { isAdmin?: boolean, isPublicMode?: boolean }) {
     const t = useTranslations('home');
-    const w = t.raw('basis.wizardChat');
+    const w = t.raw('platform.wizardChat');
     const {
         messages,
         input,
@@ -39,23 +50,450 @@ export function BudgetWizardChat({ isAdmin = false, isPublicMode = false }: { is
         state,
         setState,
         requirements,
-        conversations, conversationId, isLoadingChats, startNewConversation, switchConversation, deleteConversation, resetConversation
+        conversations, conversationId, isLoadingChats, isLoadingMessages, startNewConversation, switchConversation, deleteConversation, renameConversation, resetConversation
     } = useBudgetWizard(isAdmin);
+
+    // Inline edit del título de cada conversación en la sidebar.
+    const [editingConvId, setEditingConvId] = React.useState<string | null>(null);
+    const [editingTitle, setEditingTitle] = React.useState('');
+
+    const beginEditConversation = (id: string, currentTitle: string) => {
+        setEditingConvId(id);
+        setEditingTitle(currentTitle || '');
+    };
+    const cancelEditConversation = () => {
+        setEditingConvId(null);
+        setEditingTitle('');
+    };
+    const saveEditConversation = async () => {
+        if (!editingConvId) return;
+        const trimmed = editingTitle.trim();
+        if (!trimmed) {
+            cancelEditConversation();
+            return;
+        }
+        await renameConversation(editingConvId, trimmed);
+        cancelEditConversation();
+    };
     const { leadId, closeWidget, initialPrompt, setInitialPrompt } = useWidgetContext();
+    // Auth context: needed by the new pipeline-jobs flow to scope Storage
+    // uploads under `pipeline_uploads/{uid}/...` per the Storage rules.
+    const { user } = useAuth();
+    // Si el admin llega con ?leadId=xxx (refinando un lead concreto desde el
+    // detalle), todo lo que se genere se asociará a ese lead real, no al
+    // 'admin-user' genérico.
+    const searchParams = useSearchParams();
+    const targetLeadIdFromQuery = isAdmin ? (searchParams?.get('leadId') || null) : null;
+    const effectiveId = isAdmin
+        ? (targetLeadIdFromQuery || 'admin-user')
+        : (leadId || 'unknown-lead');
     const { isRecording, startRecording, stopRecording, recordingTime } = useAudioRecorder();
     const router = useRouter();
+
+    // Banner del lead cuando refinamos uno concreto. Cargado lazy desde la action.
+    const [refineBanner, setRefineBanner] = React.useState<{
+        name: string;
+        email: string;
+        projectType?: string;
+        city?: string;
+        postalCode?: string;
+        approxSquareMeters?: number;
+        decision?: string;
+        score?: number;
+    } | null>(null);
+
+    // Determinar el leadId asociado a la conversación activa para mostrar el
+    // banner SÓLO en esa conversación. Persistimos el mapping
+    // `conversationId → leadId` en localStorage al crear conversación nueva
+    // (en el effect de initialPrompt más abajo).
+    React.useEffect(() => {
+        let leadIdForConv: string | null = null;
+        if (conversationId && typeof window !== 'undefined') {
+            try {
+                const raw = localStorage.getItem('rg_refine_conv_lead') || '{}';
+                const map = JSON.parse(raw);
+                leadIdForConv = map[conversationId] || null;
+            } catch {}
+        }
+        // Fallback: en el momento inicial (antes de que se cree la conv)
+        // todavía no hay mapping; usamos el query param.
+        const effectiveLeadId = leadIdForConv || (conversationId ? null : targetLeadIdFromQuery);
+
+        if (!effectiveLeadId) {
+            setRefineBanner(null);
+            return;
+        }
+        let active = true;
+        import('@/actions/lead/get-lead-brief.action').then(({ getLeadBriefAction }) => {
+            getLeadBriefAction(effectiveLeadId).then(res => {
+                if (!active) return;
+                if (res.success && res.banner) setRefineBanner(res.banner);
+            });
+        });
+        return () => { active = false; };
+    }, [conversationId, targetLeadIdFromQuery]);
     const [generationProgress, setGenerationProgress] = React.useState<{
         step: GenerationStep;
         extractedItems?: number;
         matchedItems?: number;
         currentItem?: string;
         error?: string;
+        budgetId?: string;
+        /** Pipeline Jobs path id (new architecture). Set when the upload went
+         *  through `dispatchMeasurementsJob` so `<BudgetGenerationProgress>`
+         *  can render the Cancel/Retry controls. */
+        pipelineJobId?: string;
     }>({ step: 'idle' });
+
+    // Sprint 4 Fase I — persistencia del job activo en localStorage para que
+    // sobreviva reloads/navegación. Plan original 14-may pendiente:
+    // cuando el usuario sube un PDF al wizard, el job sigue corriendo en
+    // background. Sin persistencia, al recargar la página el cliente perdía
+    // el estado y el SSE se cerraba — el server seguía emitiendo eventos
+    // que nunca se procesaban (causa raíz del bug "52 partidas vs 148 en
+    // editor" donde el cliente sólo veía un subset del progreso).
+    //
+    // Key TTL conservador: 60 min (más que suficiente para RdLL 258pp que
+    // tardó 13m30s; protege contra jobs zombie que nunca completaron).
+    const ACTIVE_JOB_KEY = 'rg_active_pipeline_job';
+    const ACTIVE_JOB_TTL_MS = 60 * 60 * 1000;
+
+    // Sprint 4 Fase J — phase tracking. `running` solo aplica cuando el dispatch
+    // HTTP confirmó OK y el worker está en Cloud Run procesando. El resto son
+    // fases del flujo cliente PRE-dispatch — si un reload cae en cualquiera de
+    // ellas, el job NUNCA arrancó en el backend y hay que avisar al usuario en
+    // lugar de reconectar a una colección de telemetry vacía.
+    type JobPhase = 'uploading' | 'extracting_metadata' | 'awaiting_confirm' | 'dispatching' | 'running';
+
+    type ActiveJobInfo = {
+        budgetId: string;
+        jobId?: string;
+        startedAt: number;
+        leadId?: string;
+        phase: JobPhase;
+        fileName?: string;
+        // gcsUri y strategy permiten reanudar el dispatch desde
+        // `awaiting_confirm` sin re-subir el PDF: el GCS object sobrevive 7d.
+        gcsUri?: string;
+        strategy?: 'INLINE' | 'ANNEXED';
+        // uid del cliente: necesario para reanudar el dispatch desde restore.
+        uid?: string;
+        // Sprint 4 Fase J — vincula el job a una conversación específica del
+        // wizard. Si el usuario navega entre conversaciones, solo mostramos el
+        // progress card en la conv que lanzó el job (no en todas globalmente).
+        conversationId?: string | null;
+        extractedMetadata?: {
+            clientName?: string | null;
+            budgetTitle?: string | null;
+            projectAddress?: string | null;
+            confidence?: number;
+        };
+    };
+
+    const readActiveJob = React.useCallback((): ActiveJobInfo | null => {
+        try {
+            const raw = localStorage.getItem(ACTIVE_JOB_KEY);
+            if (!raw) return null;
+            return JSON.parse(raw) as ActiveJobInfo;
+        } catch {
+            return null;
+        }
+    }, []);
+
+    // `persistActiveJob` ahora hace merge: pasas un parche y se combina con lo
+    // existente. Esto deja que cada paso del flujo solo refleje su propia
+    // transición sin tener que re-derivar el estado completo.
+    const persistActiveJob = React.useCallback((patch: Partial<ActiveJobInfo>) => {
+        try {
+            const prev = readActiveJob();
+            const next: ActiveJobInfo = {
+                budgetId: patch.budgetId ?? prev?.budgetId ?? '',
+                jobId: patch.jobId ?? prev?.jobId,
+                startedAt: patch.startedAt ?? prev?.startedAt ?? Date.now(),
+                leadId: patch.leadId ?? prev?.leadId,
+                phase: patch.phase ?? prev?.phase ?? 'uploading',
+                fileName: patch.fileName ?? prev?.fileName,
+                gcsUri: patch.gcsUri ?? prev?.gcsUri,
+                strategy: patch.strategy ?? prev?.strategy,
+                uid: patch.uid ?? prev?.uid,
+                conversationId: patch.conversationId !== undefined
+                    ? patch.conversationId
+                    : prev?.conversationId,
+                extractedMetadata: patch.extractedMetadata ?? prev?.extractedMetadata,
+            };
+            if (!next.budgetId) return; // sin budgetId no persistimos basura
+            localStorage.setItem(ACTIVE_JOB_KEY, JSON.stringify(next));
+        } catch {
+            /* SSR / private browsing — ignore */
+        }
+    }, [readActiveJob]);
+
+    const clearActiveJob = React.useCallback(() => {
+        try {
+            localStorage.removeItem(ACTIVE_JOB_KEY);
+        } catch {
+            /* ignore */
+        }
+    }, []);
+
+    // Trackea para qué budgetId ya mostramos un systemMessage (cortado o
+    // "Continuamos donde quedaste") para que el restore no spamee mensajes
+    // duplicados cuando el usuario navega entre conversaciones.
+    const restoreNotifiedForBudgetRef = React.useRef<string | null>(null);
+
+    // Restore active job on mount. Decisión por phase:
+    //
+    //   running / dispatching →  Reconectar SSE. El worker está corriendo (o el
+    //     dispatch HTTP ya llegó al backend y muy probable que arrancó). SSE
+    //     refinará con eventos reales — si el job no arrancó, los eventos no
+    //     llegan y el TTL 60min limpia eventualmente.
+    //
+    //   awaiting_confirm con gcsUri + uid + leadId →  Reanudar SIN re-subir el
+    //     PDF. El upload + extract YA están hechos; solo falta confirmar el
+    //     dialog y disparar el dispatch HTTP. Re-abrimos el dialog con metadata
+    //     cacheada y configuramos un resolver custom que invoca el dispatch
+    //     directamente (saltando dispatchMeasurementsJob que requeriría File).
+    //
+    //   uploading / extracting_metadata / awaiting_confirm sin gcsUri →
+    //     El upload no llegó a completarse (o info legacy de pre-fix). El PDF
+    //     no está accesible. Avisamos y pedimos re-subir.
+    React.useEffect(() => {
+        const info = readActiveJob();
+        if (!info) return;
+        if (
+            !info.budgetId
+            || typeof info.startedAt !== 'number'
+            || Date.now() - info.startedAt > ACTIVE_JOB_TTL_MS
+        ) {
+            clearActiveJob();
+            return;
+        }
+
+        // Sprint 4 Fase J — solo restauramos en la conversación que lanzó el
+        // job. El sync useEffect (más abajo) reaccionará cuando el usuario
+        // entre en la conv correcta. Aquí mostraríamos systemMessages /
+        // reabriríamos el dialog en la conv equivocada si no filtramos.
+        if (
+            info.conversationId !== undefined
+            && info.conversationId !== null
+            && info.conversationId !== conversationId
+        ) {
+            return;
+        }
+
+        const phase = info.phase ?? 'running'; // back-compat: docs sin phase eran post-dispatch
+
+        if (phase === 'running' || phase === 'dispatching') {
+            setGenerationProgress({
+                step: 'searching',
+                budgetId: info.budgetId,
+                pipelineJobId: info.jobId,
+            } as any);
+            return;
+        }
+
+        // awaiting_confirm con todo lo necesario para reanudar el dispatch.
+        if (
+            phase === 'awaiting_confirm'
+            && info.gcsUri
+            && info.uid
+            && info.leadId
+            && info.extractedMetadata
+        ) {
+            const alreadyNotified = restoreNotifiedForBudgetRef.current === info.budgetId;
+            if (!alreadyNotified) {
+                restoreNotifiedForBudgetRef.current = info.budgetId;
+                const fileTag = info.fileName ? ` (\`${info.fileName}\`)` : '';
+                addSystemMessage(
+                    `Continuamos donde quedaste${fileTag}. Confirma los datos del cliente y el título para reanudar el cálculo del presupuesto.`,
+                );
+            }
+            setPdfMetadataPromptInitial({
+                clientName: info.extractedMetadata.clientName || '',
+                budgetTitle: info.extractedMetadata.budgetTitle || '',
+                confidence: info.extractedMetadata.confidence || 0,
+            });
+            setState('processing');
+            setGenerationProgress({
+                step: 'extracting',
+                budgetId: info.budgetId,
+                currentItem: 'Esperando confirmación de datos…',
+            } as any);
+            // Resolver custom: cuando el usuario confirme el dialog, hacemos
+            // dispatch HTTP DIRECTO con el gcsUri cacheado en lugar de pasar
+            // por dispatchMeasurementsJob (que esperaría un File).
+            pdfMetadataResolverRef.current = (result) => {
+                if (result === null) {
+                    // Cancelado — el upload se queda huérfano en GCS (lifecycle
+                    // lo elimina en 7d). Limpiamos localStorage y avisamos.
+                    clearActiveJob();
+                    setGenerationProgress({ step: 'idle' });
+                    setState('idle');
+                    addSystemMessage('Has cancelado la reanudación. Vuelve a subir el PDF cuando quieras retomarlo.');
+                    return;
+                }
+                const clientName = result.clientName?.trim() || undefined;
+                const budgetTitle = result.budgetTitle?.trim() || undefined;
+                persistActiveJob({ phase: 'dispatching' });
+                setGenerationProgress({
+                    step: 'extracting',
+                    budgetId: info.budgetId,
+                    currentItem: 'Reanudando envío al motor de cálculo…',
+                } as any);
+                // Fire-and-forget; el dialog ya se cerró y el state queda activo
+                // hasta que SSE empiece a recibir eventos.
+                (async () => {
+                    try {
+                        const { dispatchPipelineJobAction } = await import(
+                            '@/actions/pipeline/dispatch-pipeline-job.action'
+                        );
+                        const res = await dispatchPipelineJobAction({
+                            jobType: 'measurements',
+                            uid: info.uid!,
+                            leadId: info.leadId!,
+                            budgetId: info.budgetId,
+                            payload: {
+                                gcsUri: info.gcsUri!,
+                                strategy: info.strategy || 'INLINE',
+                                clientName,
+                                budgetTitle,
+                            },
+                        });
+                        if (res.success) {
+                            persistActiveJob({
+                                phase: 'running',
+                                jobId: res.jobId,
+                            });
+                            setGenerationProgress({
+                                step: 'searching',
+                                budgetId: info.budgetId,
+                                pipelineJobId: res.jobId,
+                            } as any);
+                        } else {
+                            throw new Error(res.error);
+                        }
+                    } catch (err: any) {
+                        clearActiveJob();
+                        setGenerationProgress({
+                            step: 'error',
+                            error: err?.message || 'Error reanudando el dispatch',
+                        });
+                        addSystemMessage(
+                            `No se pudo reanudar el envío: ${err?.message || 'error desconocido'}. Vuelve a subir el PDF.`,
+                        );
+                    }
+                })();
+            };
+            setPdfMetadataPromptOpen(true);
+            return;
+        }
+
+        // uploading / extracting_metadata / awaiting_confirm sin gcsUri:
+        // no podemos reanudar — el PDF no está accesible.
+        const fileTag = info.fileName ? ` (\`${info.fileName}\`)` : '';
+        const meta = info.extractedMetadata;
+        const metaTag = meta?.clientName || meta?.budgetTitle
+            ? `\n\nDatos detectados antes del corte: **${meta.clientName || ''}** · *${meta.budgetTitle || ''}*`
+            : '';
+        const reasonByPhase: Record<JobPhase, string> = {
+            uploading: 'mientras se subía el PDF',
+            extracting_metadata: 'mientras se analizaba la estructura del documento',
+            awaiting_confirm: 'esperando que confirmaras los datos del cliente',
+            dispatching: '', // no llega aquí
+            running: '',     // no llega aquí
+        };
+        const reason = reasonByPhase[phase] || 'durante la subida';
+
+        if (restoreNotifiedForBudgetRef.current !== info.budgetId) {
+            restoreNotifiedForBudgetRef.current = info.budgetId;
+            addSystemMessage(
+                `Tu subida anterior se cortó ${reason}${fileTag}. ` +
+                `El presupuesto **no llegó a generarse**, así que tendrás que volver a subir el PDF cuando puedas.${metaTag}`,
+            );
+        }
+        clearActiveJob();
+        setGenerationProgress({ step: 'idle' });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [conversationId]);
+
+    // Sprint 4 Fase J — sync inverso: cuando el usuario navega a una conversación
+    // distinta de la que lanzó el job activo, ocultamos el progress card. Sin
+    // esto el BudgetGenerationProgress quedaba visible en TODAS las conversaciones
+    // por culpa de que generationProgress es state global del componente.
+    React.useEffect(() => {
+        const info = readActiveJob();
+        if (!info) return;
+        if (
+            info.conversationId !== undefined
+            && info.conversationId !== null
+            && info.conversationId !== conversationId
+        ) {
+            // Job pertenece a OTRA conv — ocultar progress aquí sin tocar
+            // localStorage (sigue activo para la conv dueña).
+            setGenerationProgress(prev => {
+                if (!prev || prev.step === 'idle' || prev.step === 'complete' || prev.step === 'error') {
+                    return prev;
+                }
+                return { step: 'idle' };
+            });
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [conversationId]);
+
+    // Fix UX: los estados TERMINALES del progress card (error / complete) son
+    // globales al componente, así que se colaban en TODAS las conversaciones
+    // (e incluso en una nueva): tras un error se llama `clearActiveJob()`, así
+    // que `readActiveJob()` es null y los efectos de arriba no los limpiaban.
+    // Al cambiar de conversación los reseteamos — un error/aviso solo tiene
+    // sentido en la conversación donde ocurrió.
+    React.useEffect(() => {
+        setGenerationProgress(prev =>
+            prev && (prev.step === 'error' || prev.step === 'complete')
+                ? { step: 'idle' }
+                : prev
+        );
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [conversationId]);
 
 
 
     // Auto-resume generation after answering the Architect
     const [isAwaitingArchitect, setIsAwaitingArchitect] = React.useState(false);
+
+    // Datos de cliente / título que enriquecen el Budget resultante. Solo se
+    // piden a usuarios admin (en el flujo demo público no tiene sentido).
+    // Si están vacíos al pulsar "Generar", se abre `clientPromptOpen` para
+    // capturarlos antes de invocar la acción.
+    const [clientName, setClientName] = React.useState('');
+    const [budgetTitle, setBudgetTitle] = React.useState('');
+    const [clientPromptOpen, setClientPromptOpen] = React.useState(false);
+
+    // Pre-flight de metadata para el flujo PDF measurements. Después de subir
+    // el PDF, el extractor sync devuelve {clientName, budgetTitle, ...} y
+    // mostramos un Dialog para que el usuario confirme/edite antes del
+    // dispatch. La Promise que devuelve el callback se resuelve cuando el
+    // usuario pulsa Confirmar o Cancelar.
+    const [pdfMetadataPromptOpen, setPdfMetadataPromptOpen] = React.useState(false);
+    const [pdfMetadataPromptInitial, setPdfMetadataPromptInitial] = React.useState<{
+        clientName: string;
+        budgetTitle: string;
+        confidence: number;
+    } | null>(null);
+    const pdfMetadataResolverRef = React.useRef<
+        ((v: { clientName?: string; budgetTitle?: string } | null) => void) | null
+    >(null);
+    
+    // PDF Strategy Triage (legacy — se mantiene por si algún reset lo necesita,
+    // pero la UX nueva captura la estrategia en un dropdown dentro del pill del
+    // adjunto y pasa directo a procesar sin intermediar con dos botones grandes).
+    const [pdfAwaitingStrategy, setPdfAwaitingStrategy] = useState<File | null>(null);
+    // v006 UX: estrategia pre-seleccionada por adjunto PDF. Default 'INLINE' (la
+    // más frecuente según telemetría Grupo RG).
+    const [pdfStrategy, setPdfStrategy] = useState<'INLINE' | 'ANNEXED'>('INLINE');
+
+    // Fase 10.2 — sub-events bubble-up del progress component para alimentar
+    // `BudgetSummaryBar` con datos agregados (partidas, capítulos, PEM…).
+    const [progressSubEvents, setProgressSubEvents] = useState<SubEvent[]>([]);
 
     // Replay logic
     const [isSidebarOpen, setIsSidebarOpen] = React.useState(true);
@@ -82,8 +520,37 @@ export function BudgetWizardChat({ isAdmin = false, isPublicMode = false }: { is
         fileInputRef.current?.click();
     };
 
-    const [showRequirements, setShowRequirements] = useState(false);
+    // De-dup: el mapa estructural (RequirementCard) ahora vive DENTRO del stream
+    // del chat (no encima del input) para que el usuario lo revise inline y decida
+    // generar. Presente por defecto (el botón Layers lo oculta), pero COLAPSADO:
+    // aparece como una cabecera compacta que no tapa el chat y se expande al pulsarla.
+    const [showRequirements, setShowRequirements] = useState(true);
+    const [requirementsExpanded, setRequirementsExpanded] = useState(false);
     const [pendingFiles, setPendingFiles] = useState<File[]>([]);
+    // Micrófono: mientras se transcribe el audio bloqueamos el input (para no
+    // enviar el placeholder por error) y al terminar auto-enviamos la transcripción.
+    const [isTranscribing, setIsTranscribing] = useState(false);
+
+    // F7 — BC3: al preparar un .bc3, lo detectamos (parse rápido en ai-core) para
+    // mostrar la tarjeta con capítulos/partidas/con-precio antes de importar.
+    const [bc3Detect, setBc3Detect] = useState<{ file: string; loading?: boolean; error?: string; data?: Bc3DetectResult } | null>(null);
+    const bc3DetectedNameRef = useRef<string | null>(null);
+    useEffect(() => {
+        const bc3 = pendingFiles.find(f => f.name.toLowerCase().endsWith('.bc3'));
+        if (!bc3) { setBc3Detect(null); bc3DetectedNameRef.current = null; return; }
+        if (bc3DetectedNameRef.current === bc3.name) return; // ya detectado / en curso
+        bc3DetectedNameRef.current = bc3.name;
+        let cancelled = false;
+        setBc3Detect({ file: bc3.name, loading: true });
+        (async () => {
+            const fd = new FormData();
+            fd.append('file', bc3);
+            const res = await detectBc3Action(fd);
+            if (cancelled) return;
+            setBc3Detect(res.ok ? { file: bc3.name, data: res.data } : { file: bc3.name, error: res.error });
+        })();
+        return () => { cancelled = true; };
+    }, [pendingFiles]);
     const [isDragging, setIsDragging] = useState(false);
 
     const handleDragOver = (e: React.DragEvent) => {
@@ -122,48 +589,27 @@ export function BudgetWizardChat({ isAdmin = false, isPublicMode = false }: { is
             const filesToUpload = [...pendingFiles];
             setPendingFiles([]); // clear from UI
             
-            const hasPdf = filesToUpload.some(file => file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf'));
+            // Sprint 4 Fase L — detección polimórfica de archivo de mediciones.
+            // Soportamos PDF (parser TABULAR) y BC3 (parser FIEBDC-3 nativo).
+            const isPdfFile = (f: File) => f.type === 'application/pdf' || f.name.toLowerCase().endsWith('.pdf');
+            const isBc3File = (f: File) => f.name.toLowerCase().endsWith('.bc3');
 
-            if (hasPdf) {
-                 // Fast Track Flow for structural PDFs
-                 setState('processing_pdf');
-                 setGenerationProgress({ step: 'extracting', currentItem: "Analizando presupuesto PDF estructural..." });
-                 
-                 const pdfFile = filesToUpload.find(file => file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf'))!;
-                 const formData = new FormData();
-                 formData.append('file', pdfFile);
+            const bc3File = filesToUpload.find(isBc3File);
+            if (bc3File) {
+                // BC3: dispatch directo (sin extract-metadata, sin dialog). El
+                // parser BC3 ya conoce el title desde el root del árbol.
+                await handleFastTrackBc3(bc3File);
+                return;
+            }
 
-                 try {
-                     const { extractMeasurementPdfAction } = await import('@/actions/budget/extract-measurement-pdf.action');
-                     const result = await extractMeasurementPdfAction(formData, leadId || 'unknown-lead');
-
-                     if (result.success && result.budgetId) {
-                         if (result.isPending) {
-                             // The backend sent HTTP 202. Let the SSE `budget_completed` handle the finish!
-                             return; 
-                         }
-
-                         setGenerationProgress({ step: 'complete', currentItem: "¡Presupuesto Generado!" });
-                         
-                         const viewLink = isAdmin
-                             ? `/dashboard/admin/budgets/${result.budgetId}/edit`
-                             : isPublicMode
-                                 ? `/demo/viewer/${result.budgetId}` 
-                                 : `/budget/${result.budgetId}`;
-
-                         setTimeout(() => {
-                             setGenerationProgress({ step: 'idle' });
-                             addSystemMessage(`¡Estado de Mediciones procesado y tasado con éxito!\n\n[Ver el resultado y Descargar](${viewLink})`);
-                             setState(isPublicMode ? 'generated' : 'idle');
-                         }, 1500);
-                     } else {
-                         throw new Error(result.error);
-                     }
-                 } catch (error: any) {
-                     console.error("Fast Track PDF processing failed", error);
-                     setGenerationProgress({ step: 'error', error: error.message || "Error procesando el PDF." });
-                     setTimeout(() => setState('idle'), 3000);
-                 }
+            const pdfFile = filesToUpload.find(isPdfFile);
+            if (pdfFile) {
+                 // v006 UX: la estrategia ya está pre-seleccionada en el pill del
+                 // adjunto (default 'INLINE', el usuario puede cambiar a 'ANNEXED'
+                 // con el dropdown antes de enviar). Vamos directo a procesar.
+                 setPdfAwaitingStrategy(pdfFile);
+                 // Disparamos el procesamiento con el tipo ya elegido.
+                 await handleConfirmPdfStrategy(pdfStrategy, pdfFile);
                  return;
             }
 
@@ -208,6 +654,273 @@ export function BudgetWizardChat({ isAdmin = false, isPublicMode = false }: { is
         }
     };
 
+    const handleConfirmPdfStrategy = async (
+        strategy: 'INLINE' | 'ANNEXED',
+        fileOverride?: File,
+    ) => {
+        // v006 UX: el callsite nuevo pasa el `fileOverride` explícitamente porque
+        // `setPdfAwaitingStrategy` es async y el state no estaría disponible
+        // todavía. El callsite legacy (dos botones grandes) deja que se use la
+        // variable de estado `pdfAwaitingStrategy`.
+        const effectiveFile = fileOverride ?? pdfAwaitingStrategy;
+        if (!effectiveFile) return;
+
+        // Generamos el budgetId en el cliente para que el panel de actividad abra
+        // el canal de telemetría (pipeline_telemetry/{budgetId}) desde el primer render
+        // y no se pierdan los primeros eventos del servicio Python.
+        const budgetId = uuidv4();
+
+        // Sprint 4 Fase J — persistir el job desde el primer momento, con phase
+        // tracking. Si el usuario recarga durante upload / extract-metadata /
+        // dialog / dispatch, el restore useEffect detecta la phase no-`running`
+        // y le avisa con un mensaje claro en lugar de quedar en un estado
+        // colgado escuchando una colección de telemetry vacía.
+        persistActiveJob({
+            budgetId,
+            leadId: leadId || undefined,
+            startedAt: Date.now(),
+            phase: 'uploading',
+            fileName: effectiveFile.name,
+            uid: user?.uid,
+            strategy,
+            conversationId: conversationId || null,
+        });
+
+        setState('processing');
+        setGenerationProgress({
+            step: 'extracting',
+            currentItem: 'Analizando presupuesto PDF estructural…',
+            budgetId,
+        } as any);
+
+        const formData = new FormData();
+        formData.append('file', effectiveFile);
+        setPdfAwaitingStrategy(null); // Clear triage UI
+
+        try {
+            const { isPipelineJobsEnabled } = await import('@/lib/feature-flags');
+            const effectiveId = isAdmin ? 'admin-user' : (leadId || 'unknown-lead');
+
+            // New architecture path: client-side upload to Storage + dispatcher
+            // → Cloud Run Job. Falls back to legacy BackgroundTasks path when
+            // the flag is off so the canary rollout can be controlled per env.
+            if (isPipelineJobsEnabled() && user?.uid) {
+                const { dispatchMeasurementsJob } = await import(
+                    '@/lib/budget/dispatch-measurements-job'
+                );
+                const newRes = await dispatchMeasurementsJob({
+                    file: effectiveFile,
+                    uid: user.uid,
+                    leadId: effectiveId,
+                    budgetId,
+                    strategy,
+                    // Sprint 4 Fase J — feedback visual durante el upload (~5-30s
+                    // para PDFs grandes). Sin esto el chat queda "Analizando..."
+                    // sin movimiento y el usuario asume cuelgue y recarga.
+                    onUploadProgress: (fraction) => {
+                        const pct = Math.round(fraction * 100);
+                        setGenerationProgress(prev => ({
+                            ...prev,
+                            step: 'extracting',
+                            currentItem: pct < 100
+                                ? `Subiendo PDF al servidor… ${pct}%`
+                                : 'Analizando estructura del documento…',
+                            budgetId,
+                        } as any));
+                    },
+                    // Sprint 4 Fase J — mirror cada transición a localStorage.
+                    // Persistimos gcsUri + strategy + uid para poder reanudar
+                    // el dispatch desde `awaiting_confirm` sin re-subir el PDF.
+                    onPhaseChange: (phase, extra) => {
+                        persistActiveJob({
+                            phase,
+                            uid: user?.uid,
+                            ...(extra?.gcsUri && { gcsUri: extra.gcsUri }),
+                            ...(extra?.strategy && { strategy: extra.strategy }),
+                            ...(extra?.extractedMetadata && {
+                                extractedMetadata: extra.extractedMetadata,
+                            }),
+                        });
+                    },
+                    onMetadataConfirm: isAdmin
+                        ? (extracted) =>
+                              new Promise((resolve) => {
+                                  pdfMetadataResolverRef.current = resolve;
+                                  setPdfMetadataPromptInitial({
+                                      clientName: extracted.clientName || '',
+                                      budgetTitle: extracted.budgetTitle || '',
+                                      confidence: extracted.confidence || 0,
+                                  });
+                                  setPdfMetadataPromptOpen(true);
+                              })
+                        : undefined,
+                });
+                if (newRes.success) {
+                    // Stash pipelineJobId on the progress state so the
+                    // <BudgetGenerationProgress> mount renders the controls.
+                    setGenerationProgress(prev => ({
+                        ...prev,
+                        budgetId: newRes.budgetId,
+                        pipelineJobId: newRes.jobId,
+                    } as any));
+                    // Sprint 4 Fase I — persistir para sobrevivir reload.
+                    persistActiveJob({
+                        budgetId: newRes.budgetId,
+                        jobId: newRes.jobId,
+                        leadId: effectiveId,
+                        startedAt: Date.now(),
+                        phase: 'running',
+                        conversationId: conversationId || null,
+                    });
+                    return; // SSE telemetry takes over from here.
+                }
+                // Surface the failure exactly like the legacy path does.
+                throw new Error(newRes.error);
+            }
+
+            const { extractMeasurementPdfAction } = await import('@/actions/budget/extract-measurement-pdf.action');
+            const result = await extractMeasurementPdfAction(formData, effectiveId, strategy, budgetId);
+
+            if (result.success && result.budgetId) {
+                if (result.isPending) {
+                    // El panel ya está escuchando — los eventos del Python avanzan las fases solos.
+                    // Sprint 4 Fase I — persistir para sobrevivir reload.
+                    persistActiveJob({
+                        budgetId: result.budgetId,
+                        leadId: effectiveId,
+                        startedAt: Date.now(),
+                        phase: 'running',
+                        conversationId: conversationId || null,
+                    });
+                    return;
+                }
+
+                setGenerationProgress({ step: 'complete', currentItem: "¡Presupuesto Generado!" });
+                const viewLink = isAdmin
+                    ? `/dashboard/admin/budgets/${result.budgetId}/edit`
+                    : isPublicMode ? `/demo/viewer/${result.budgetId}` : `/budget/${result.budgetId}`;
+
+                setTimeout(() => {
+                    setGenerationProgress({ step: 'idle' });
+                    addSystemMessage(`¡Estado de Mediciones procesado y tasado con éxito!\n\n[Ver el resultado y Descargar](${viewLink})`);
+                    setState(isPublicMode ? 'generated' : 'idle');
+                }, 1500);
+            } else {
+                throw new Error(result.error);
+            }
+        } catch (error: any) {
+            console.error("Fast Track PDF processing failed", error);
+            setGenerationProgress({ step: 'error', error: error.message || "Error procesando el PDF." });
+            // Sprint 4 Fase I — limpiar persistencia en error.
+            clearActiveJob();
+            setTimeout(() => setState('idle'), 3000);
+        }
+    };
+
+    /**
+     * Sprint 4 Fase L — handler nativo BC3 (FIEBDC-3).
+     *
+     * Flujo simplificado vs PDF:
+     *  - NO necesita `extractPdfMetadataAction` (el BC3 ya trae title del root).
+     *  - NO abre el dialog de confirmación de cliente/título.
+     *  - Upload directo a Storage → dispatch → SSE.
+     *
+     * El backend detecta la extensión `.bc3` del gcsUri y enruta al
+     * `Bc3Parser` saltando el extractor PDF.
+     */
+    const handleFastTrackBc3 = async (file: File) => {
+        const budgetId = uuidv4();
+
+        persistActiveJob({
+            budgetId,
+            leadId: leadId || undefined,
+            startedAt: Date.now(),
+            phase: 'uploading',
+            fileName: file.name,
+            uid: user?.uid,
+            strategy: 'INLINE', // no aplica a BC3 pero el tipo lo requiere
+            conversationId: conversationId || null,
+        });
+
+        setState('processing');
+        setGenerationProgress({
+            step: 'extracting',
+            currentItem: 'Subiendo BC3 al servidor…',
+            budgetId,
+        } as any);
+
+        try {
+            const { isPipelineJobsEnabled } = await import('@/lib/feature-flags');
+            const effectiveId = isAdmin ? 'admin-user' : (leadId || 'unknown-lead');
+
+            if (isPipelineJobsEnabled() && user?.uid) {
+                const { uploadPdfForPipelineJob } = await import('@/lib/firebase/storage-uploader');
+                const { dispatchPipelineJobAction } = await import(
+                    '@/actions/pipeline/dispatch-pipeline-job.action'
+                );
+                // 1. Upload BC3 al bucket (mismo path que PDF — backend detecta extensión).
+                const uploaded = await uploadPdfForPipelineJob({
+                    file,
+                    uid: user.uid,
+                    jobId: budgetId, // reusamos el budgetId como job-relative path
+                    onProgress: (fraction) => {
+                        const pct = Math.round(fraction * 100);
+                        setGenerationProgress(prev => ({
+                            ...prev,
+                            step: 'extracting',
+                            currentItem: pct < 100
+                                ? `Subiendo BC3 al servidor… ${pct}%`
+                                : 'Lanzando el motor de cálculo…',
+                            budgetId,
+                        } as any));
+                    },
+                });
+                persistActiveJob({
+                    phase: 'dispatching',
+                    gcsUri: uploaded.gcsUri,
+                });
+
+                // 2. Dispatch (sin extract-metadata, sin dialog).
+                const res = await dispatchPipelineJobAction({
+                    jobType: 'measurements',
+                    uid: user.uid,
+                    leadId: effectiveId,
+                    budgetId,
+                    payload: {
+                        gcsUri: uploaded.gcsUri,
+                        // strategy se ignora para BC3 en backend, pero el campo es required.
+                        strategy: 'INLINE',
+                    },
+                });
+                if (!res.success) {
+                    throw new Error(res.error);
+                }
+                setGenerationProgress(prev => ({
+                    ...prev,
+                    budgetId,
+                    pipelineJobId: res.jobId,
+                } as any));
+                persistActiveJob({
+                    budgetId,
+                    jobId: res.jobId,
+                    leadId: effectiveId,
+                    startedAt: Date.now(),
+                    phase: 'running',
+                    conversationId: conversationId || null,
+                });
+                return; // SSE telemetry takes over from here.
+            }
+
+            // Sin pipeline jobs (flag off): no soportamos BC3 por el path legacy.
+            throw new Error('BC3 requiere el pipeline de jobs (NEXT_PUBLIC_USE_PIPELINE_JOBS=true).');
+        } catch (error: any) {
+            console.error("Fast Track BC3 processing failed", error);
+            setGenerationProgress({ step: 'error', error: error.message || "Error procesando el BC3." });
+            clearActiveJob();
+            setTimeout(() => setState('idle'), 3000);
+        }
+    };
+
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
         if (!files || files.length === 0) return;
@@ -218,36 +931,48 @@ export function BudgetWizardChat({ isAdmin = false, isPublicMode = false }: { is
     };
 
     const handleMicClick = async () => {
-        if (isRecording) {
-            const blob = await stopRecording();
-            if (blob) {
-                // Create FormData
-                const formData = new FormData();
-                formData.append('audio', blob, 'recording.webm');
-
-                // Optimistic UI update or loading state could go here
-                setInput(w.input.transcribing);
-
-                try {
-                    const { processAudioAction } = await import('@/actions/audio/process-audio.action');
-                    const result = await processAudioAction(formData);
-
-                    if (result.success && result.transcription) {
-                        // Append transcription to current input or replace it? 
-                        // Let's replace for now, or append if input existed.
-                        setInput(prev => prev === w.input.transcribing ? result.transcription : `${prev} ${result.transcription}`);
-                    } else {
-                        console.error(result.error);
-                        setInput(""); // Clear loading text on error
-                        // toast error
-                    }
-                } catch (error) {
-                    console.error("Audio upload failed", error);
-                    setInput("");
-                }
-            }
-        } else {
+        if (!isRecording) {
             await startRecording();
+            return;
+        }
+
+        const blob = await stopRecording();
+        if (!blob) return;
+
+        // Bloqueamos el input mientras transcribimos. NO tocamos `input`: así el
+        // usuario no puede enviar por error el texto "Transcribiendo audio...".
+        setIsTranscribing(true);
+        let text = '';
+        try {
+            const formData = new FormData();
+            formData.append('audio', blob, 'recording.webm');
+
+            const { processAudioAction } = await import('@/actions/audio/process-audio.action');
+            const result = await processAudioAction(formData);
+
+            if (result.success && result.transcription) {
+                text = result.transcription.trim();
+            } else if (!result.success) {
+                console.error(result.error);
+            }
+        } catch (error) {
+            console.error("Audio upload failed", error);
+        } finally {
+            // Desbloqueamos ANTES de enviar, para que el indicador de "procesando"
+            // del stream tome el relevo (y no se quede el estado de transcripción).
+            setIsTranscribing(false);
+        }
+
+        if (!text) return;
+
+        // Auto-envío inmediato: la transcripción va directa al chat sin pulsar Enviar.
+        // (El micrófono sólo se muestra con el input vacío y sin adjuntos, así que
+        // enviar sólo la transcripción es seguro.)
+        if (!isLimitReached && (state as string) !== 'generated' && state !== 'uploading') {
+            await sendMessage(text);
+        } else {
+            // Si no se puede enviar ahora, dejamos el texto editable en el input.
+            setInput(text);
         }
     };
     const handleReset = async () => {
@@ -267,12 +992,23 @@ export function BudgetWizardChat({ isAdmin = false, isPublicMode = false }: { is
 
     const scrollRef = useRef<HTMLDivElement>(null);
 
-    // Auto-scroll to bottom - MUST be before any conditional returns!
+    // Auto-scroll to bottom — reacciona a mensajes nuevos (smooth) y también a
+    // cambios de thread (`conversationId`) y al terminar de cargar un thread
+    // (`isLoadingMessages` → false). En esos dos últimos casos saltamos en
+    // `instant` para no perder tiempo animando el scroll justo al abrir.
     useEffect(() => {
         if (scrollRef.current) {
             scrollRef.current.scrollIntoView({ behavior: 'smooth' });
         }
     }, [messages]);
+
+    useEffect(() => {
+        if (!isLoadingMessages && scrollRef.current) {
+            // Al terminar la carga de un thread: salta directo al fondo, sin
+            // animación suave (evita el "salto visible" de recorrer 2000 px).
+            scrollRef.current.scrollIntoView({ behavior: 'auto' });
+        }
+    }, [conversationId, isLoadingMessages]);
 
     // Auto-resume generation when the Architect question is answered
     useEffect(() => {
@@ -283,99 +1019,233 @@ export function BudgetWizardChat({ isAdmin = false, isPublicMode = false }: { is
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [state, isAwaitingArchitect, generationProgress.step]);
 
-    // Auto-send initial prompt from context if present
+    // Auto-send initial prompt from context if present.
+    // Cuando refinamos un lead concreto (targetLeadIdFromQuery), forzamos una
+    // conversación nueva ANTES de enviar el brief — para no contaminar la
+    // conversación admin previa con el contexto de un lead distinto.
+    //
+    // El cuello de botella era que `sendMessage` early-returns si `conversationId`
+    // es null y, tras `startNewConversation()`, el state aún no había propagado
+    // (closure stale). Solución: refs vivos a `sendMessage` y `conversationId`
+    // + espera activa hasta que el state refleje el nuevo id.
     const initialPromptSentRef = useRef(false);
+    const newConversationForLeadRef = useRef<string | null>(null);
+    const sendMessageRef = useRef(sendMessage);
+    const conversationIdRef = useRef<string | null>(conversationId);
+    useEffect(() => {
+        sendMessageRef.current = sendMessage;
+    }, [sendMessage]);
+    useEffect(() => {
+        conversationIdRef.current = conversationId;
+    }, [conversationId]);
 
     useEffect(() => {
-        if (initialPrompt && initialPrompt.trim() !== '' && !initialPromptSentRef.current) {
-            initialPromptSentRef.current = true;
-            // Give the UI a tiny bit to mount then send
-            setTimeout(() => {
-                sendMessage(initialPrompt);
-                setInitialPrompt(''); // clear so it only happens once
-            }, 300);
-        }
-    }, [initialPrompt, sendMessage, setInitialPrompt]);
+        if (!initialPrompt || initialPrompt.trim() === '') return;
+        if (initialPromptSentRef.current) return;
+        initialPromptSentRef.current = true;
 
+        const promptToSend = initialPrompt;
+        setInitialPrompt('');
+
+        (async () => {
+            if (targetLeadIdFromQuery && newConversationForLeadRef.current !== targetLeadIdFromQuery) {
+                newConversationForLeadRef.current = targetLeadIdFromQuery;
+                try {
+                    const newConvId = await startNewConversation();
+                    if (newConvId) {
+                        // Esperar a que el state propague hasta que el ref refleje
+                        // el nuevo id (sendMessage chequea conversationId interno
+                        // del hook, así que necesitamos que su closure se reestablezca).
+                        const start = Date.now();
+                        while (conversationIdRef.current !== newConvId && Date.now() - start < 2500) {
+                            await new Promise(r => setTimeout(r, 50));
+                        }
+                        // Persistir mapping conv→lead para que el banner se muestre
+                        // sólo en esta conversación específica.
+                        if (typeof window !== 'undefined') {
+                            try {
+                                const raw = localStorage.getItem('rg_refine_conv_lead') || '{}';
+                                const map = JSON.parse(raw);
+                                map[newConvId] = targetLeadIdFromQuery;
+                                localStorage.setItem('rg_refine_conv_lead', JSON.stringify(map));
+                            } catch {}
+                        }
+                    }
+                } catch (err) {
+                    console.error('[BudgetWizardChat] Falló startNewConversation para refinement:', err);
+                }
+            } else {
+                await new Promise(r => setTimeout(r, 300));
+            }
+            // Usar la versión de sendMessage capturada en el último render
+            // (closure ya tiene el conversationId actualizado).
+            sendMessageRef.current(promptToSend);
+        })();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [initialPrompt, setInitialPrompt, targetLeadIdFromQuery, startNewConversation]);
+
+    /**
+     * Punto de entrada del botón "Generar". Si somos admin y aún no tenemos
+     * `clientName` + `budgetTitle`, abre un modal para capturarlos antes de
+     * dispatchear. En modo demo público o lead anónimo se salta el prompt y
+     * pasa directo a `runGeneration`.
+     */
     const handleGenerateBudget = async () => {
         if (!requirements || !requirements.specs) return;
+        if (isAdmin && (!clientName.trim() || !budgetTitle.trim())) {
+            setClientPromptOpen(true);
+            return;
+        }
+        await runGeneration();
+    };
+
+    const handleConfirmClientPrompt = async (name: string, title: string) => {
+        setClientName(name);
+        setBudgetTitle(title);
+        setClientPromptOpen(false);
+        // Esperar un microtask para que el setState se aplique antes de leerlo
+        // en runGeneration via closure (el componente re-renderiza primero).
+        await Promise.resolve();
+        await runGeneration({ overrideClientName: name, overrideBudgetTitle: title });
+    };
+
+    const runGeneration = async (overrides?: { overrideClientName?: string; overrideBudgetTitle?: string }) => {
+        if (!requirements || !requirements.specs) return;
+
+        // Si vienen overrides desde el modal, usamos esos valores (el state aún
+        // puede no haber re-renderizado a tiempo).
+        const effectiveClientName = (overrides?.overrideClientName ?? clientName).trim();
+        const effectiveBudgetTitle = (overrides?.overrideBudgetTitle ?? budgetTitle).trim();
 
         if (!isAdmin && !leadId) {
             console.error("Lead ID missing");
             return;
         }
 
-        // removed mobile modal handling
-        setGenerationProgress({ step: 'extracting' });
+        // Generamos el budgetId en el cliente y lo propagamos tanto al stream como a la action.
+        // Así el EventSource de BudgetGenerationProgress abre el canal correcto
+        // desde el primer render y no pierde los eventos emitidos durante los ~60s de la generación.
+        const budgetId = uuidv4();
+
+        setGenerationProgress({ step: 'extracting', budgetId });
         addSystemMessage(w.progress.generatingMsg);
 
         try {
             const detectedCount = requirements.detectedNeeds?.length || 15;
             setGenerationProgress({
                 step: 'extracting',
-                extractedItems: detectedCount
-            });
+                extractedItems: detectedCount,
+                budgetId,
+            } as any);
+
+            // Enriquecemos la narrativa con TODO el contexto conversacional para que el
+            // Architect reciba los detalles específicos que el Asistente recogió (materiales,
+            // instalaciones concretas, patologías, demoliciones) y no solo los specs abstractos.
+            // Sin esto, el Architect ve un brief pobre y vuelve a pedir clarificación.
+            const userTurns = messages
+                .filter(m => m.role === 'user')
+                .map(m => m.content.trim())
+                .filter(Boolean);
+            const lastAssistantSummary = [...messages]
+                .reverse()
+                .find(m => m.role === 'assistant' && /capítulos|demoliciones|fontanería|albañilería|pintura|electricidad/i.test(m.content))
+                ?.content;
+
+            const existingBrief = (requirements as any).finalBrief || (requirements.specs as any).originalRequest;
+            const narrativeParts = [
+                existingBrief,
+                ...(existingBrief ? [] : userTurns),
+                lastAssistantSummary && `\nResumen consensuado con el cliente:\n${lastAssistantSummary}`,
+            ].filter(Boolean);
+            const consolidatedNarrative = narrativeParts.join('\n\n').trim();
+
+            // Derivamos detectedNeeds desde phaseChecklist si aún está vacío, para
+            // propagar al prompt del Architect la lista exacta de capítulos confirmados.
+            const phaseChecklist = (requirements as any).phaseChecklist || {};
+            const autoDetectedNeeds = (!requirements.detectedNeeds || requirements.detectedNeeds.length === 0)
+                ? Object.entries(phaseChecklist)
+                    .filter(([, status]) => status === 'addressed')
+                    .map(([chapter]) => ({ category: chapter, description: `Trabajos de ${chapter} confirmados en conversación.` }))
+                : requirements.detectedNeeds;
+
+            const enrichedRequirements = {
+                ...requirements,
+                specs: {
+                    ...(requirements.specs || {}),
+                    originalRequest: consolidatedNarrative || (requirements.specs as any).originalRequest,
+                },
+                detectedNeeds: autoDetectedNeeds,
+                // Capturados via prompt antes del dispatch (solo admin). El
+                // action de Python pone el nombre en clientSnapshot.name y el
+                // título en Budget.title.
+                clientName: effectiveClientName || undefined,
+                budgetTitle: effectiveBudgetTitle || undefined,
+            };
 
             let result;
 
             if (isAdmin) {
-                // Flujo async pipeline-jobs (nl-budget) gateado por flag. Con el flag
-                // OFF queda intacto el legacy sincrono (generateBudgetFromSpecsAction).
-                if (isPipelineJobsEnabled()) {
-                    const narrative = [
-                        'Brief del cliente (conversacion del asistente):',
-                        messages.map(m => `${m.role}: ${m.content}`).join('\n'),
-                        '',
-                        'Especificaciones detectadas:',
-                        JSON.stringify(requirements, null, 2),
-                    ].join('\n');
-                    const uid = leadId || 'admin';
-                    const nlBudgetId = uuidv4();
-                    const dispatch = await dispatchPipelineJobAction({
-                        jobType: 'nl-budget',
-                        uid,
-                        leadId: leadId || uid,
-                        budgetId: nlBudgetId,
-                        payload: { narrative },
-                    });
-                    if (dispatch.success) {
-                        setGenerationProgress({ step: 'idle' });
-                        addSystemMessage(
-                            `El presupuesto se está generando en segundo plano.\n\n[Abrir el editor](/dashboard/admin/budgets/${dispatch.budgetId}/edit)`,
-                        );
-                        setState('idle');
-                    } else {
-                        setGenerationProgress({ step: 'error', error: dispatch.error });
-                    }
-                    return;
+                if (targetLeadIdFromQuery) {
+                    // Refinement de un lead real: usamos el dispatcher que crea
+                    // placeholder budget con clientSnapshot + status='pending_review'
+                    // y dispara el motor con el requirement enriquecido por la
+                    // conversación del wizard.
+                    const { dispatchBudgetGenerationAction } = await import('@/actions/admin/dispatch-budget-generation.action');
+                    const dispatchResult = await dispatchBudgetGenerationAction(
+                        targetLeadIdFromQuery,
+                        'from-specs',
+                        enrichedRequirements as any
+                    );
+                    result = dispatchResult.success
+                        ? { success: true, isPending: true, budgetId: dispatchResult.budgetId }
+                        : { success: false, error: dispatchResult.error };
+                } else {
+                    // Admin sin lead asociado: flujo experimental / demo. Va directo
+                    // al motor sin crear placeholder con clientSnapshot.
+                    const { generateBudgetFromSpecsAction } = await import('@/actions/budget/generate-budget-from-specs.action');
+                    result = await generateBudgetFromSpecsAction(leadId || null, enrichedRequirements as any, true, budgetId);
                 }
-                const { generateBudgetFromSpecsAction } = await import('@/actions/budget/generate-budget-from-specs.action');
-                // Ensure specs exists, we have guarded against it above
-                result = await generateBudgetFromSpecsAction(leadId, requirements as any, true);
             } else if (isPublicMode) {
                 if (!leadId) return;
                 const { generatePublicDemoAction } = await import('@/actions/budget/generate-public-demo.action');
-
-                // Format history for the backend
                 const chatHistory = messages.map(m => ({ role: m.role, content: m.content }));
-                result = await generatePublicDemoAction(leadId, requirements as any, chatHistory);
+                result = await generatePublicDemoAction(leadId, enrichedRequirements as any, chatHistory, budgetId);
             } else {
                 if (!leadId) return;
                 const { generateDemoBudgetAction } = await import('@/actions/budget/generate-demo-budget.action');
-                result = await generateDemoBudgetAction(leadId, requirements);
+                result = await generateDemoBudgetAction(leadId, enrichedRequirements, budgetId);
             }
 
-            if (result.success && result.budgetResult) {
+            if (result.success && (result as any).isPending) {
+                // Nueva ruta vía Python (NL→Budget): el job está corriendo en background
+                // y la telemetría llegará por SSE. El panel `BudgetGenerationProgress`
+                // se encarga de cerrar las fases cuando reciba `budget_completed`, y
+                // su callback `onComplete` publicará el mensaje con el link.
+                // Sprint 4 Fase I — persistir para sobrevivir reload.
+                const pendingBudgetId = (result as any).budgetId || budgetId;
+                if (pendingBudgetId) {
+                    persistActiveJob({
+                        budgetId: pendingBudgetId,
+                        leadId: leadId || undefined,
+                        startedAt: Date.now(),
+                        phase: 'running',
+                        conversationId: conversationId || null,
+                    });
+                }
+                return;
+            } else if (result.success && result.budgetResult) {
+                // Flujo síncrono legado (generate-public-demo / generate-demo-budget).
+                const typedResult: any = result;
+                const budgetId = typedResult.budgetId || typedResult.budgetResult?.id;
+
                 setGenerationProgress({
                     step: 'searching',
                     extractedItems: detectedCount,
-                    currentItem: w.progress.searching
+                    currentItem: w.progress.searching,
+                    budgetId: budgetId
                 });
-                const typedResult: any = result;
 
-                const budgetId = typedResult.budgetId || typedResult.budgetResult?.id;
                 const itemCount = typedResult.budgetResult?.chapters?.reduce((acc: number, c: any) => acc + c.items.length, 0) || 0;
-                const total = typedResult.budgetResult?.costBreakdown?.total || typedResult.budgetResult?.totalEstimated || 0;
 
                 setGenerationProgress({
                     step: 'complete',
@@ -385,8 +1255,6 @@ export function BudgetWizardChat({ isAdmin = false, isPublicMode = false }: { is
 
                 await new Promise(r => setTimeout(r, 1500));
 
-                // Instead of breaking the chat UX with a page redirect or a massive PDF viewer,
-                // we keep the immersive chat going by sending a system message with a direct link.
                 const viewLink = isAdmin
                     ? `/dashboard/admin/budgets/${typedResult.budgetId}/edit`
                     : isPublicMode
@@ -395,11 +1263,11 @@ export function BudgetWizardChat({ isAdmin = false, isPublicMode = false }: { is
 
                 setGenerationProgress({ step: 'idle' });
                 addSystemMessage(`¡El presupuesto se ha generado con éxito! \n\n[Ver el resultado y Descargar](${viewLink})`);
-                
+
                 if (isPublicMode) {
-                    setState('generated'); // Lock the wizard ONLY for public demo
+                    setState('generated');
                 } else {
-                    setState('idle'); // Leave open for others
+                    setState('idle');
                 }
 
             } else if ((result as any).isAsking) {
@@ -413,9 +1281,11 @@ export function BudgetWizardChat({ isAdmin = false, isPublicMode = false }: { is
                     step: 'error',
                     error: result.error || w.errors.generateError
                 });
+                clearActiveJob();
             }
         } catch (e) {
             console.error(e);
+            clearActiveJob();
             setGenerationProgress({
                 step: 'error',
                 error: w.errors.generateError
@@ -468,7 +1338,7 @@ export function BudgetWizardChat({ isAdmin = false, isPublicMode = false }: { is
 
 
     return (
-        <div className="flex h-full w-full overflow-hidden md:rounded-3xl md:border md:border-white/20 bg-background md:bg-white/95 md:dark:bg-black/90 md:shadow-2xl md:backdrop-blur-2xl md:ring-1 md:ring-black/5 md:dark:ring-white/10 relative">
+        <div className="flex flex-1 min-h-0 h-full w-full overflow-hidden md:rounded-3xl md:border md:border-white/20 bg-background md:bg-white/95 md:dark:bg-black/90 md:shadow-2xl md:backdrop-blur-2xl md:ring-1 md:ring-black/5 md:dark:ring-white/10 relative">
             {/* Admin Left Sidebar: Chat History */}
             {isAdmin && (
                 <div className={cn(
@@ -478,7 +1348,7 @@ export function BudgetWizardChat({ isAdmin = false, isPublicMode = false }: { is
                     <div className="w-64 flex flex-col h-full">
                         <div className="p-4 border-b border-gray-100 dark:border-white/5">
                             <Button
-                                onClick={startNewConversation}
+                                onClick={() => { setGenerationProgress({ step: 'idle' }); startNewConversation(); }}
                                 disabled={isLoadingChats}
                                 className="w-full justify-start font-medium text-sm transition-all"
                                 variant="outline"
@@ -491,32 +1361,89 @@ export function BudgetWizardChat({ isAdmin = false, isPublicMode = false }: { is
                             {isLoadingChats && conversations.length === 0 ? (
                                 <div className="flex justify-center p-4"><Loader2 className="w-5 h-5 animate-spin text-muted-foreground" /></div>
                             ) : (
-                                conversations.map(chat => (
-                                    <div key={chat.id} className="group flex items-center gap-2">
-                                        <button
-                                            onClick={() => switchConversation(chat.id)}
-                                            className={cn(
-                                                "flex-1 flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-left transition-colors whitespace-nowrap overflow-hidden text-ellipsis",
-                                                conversationId === chat.id
-                                                    ? "bg-primary/10 text-primary font-medium dark:bg-primary/20"
-                                                    : "text-muted-foreground hover:bg-black/5 dark:hover:bg-white/5"
+                                conversations.map(chat => {
+                                    const isEditing = editingConvId === chat.id;
+                                    return (
+                                        <div key={chat.id} className="group flex items-center gap-1">
+                                            {isEditing ? (
+                                                <div className="flex-1 flex items-center gap-1 px-2 py-1 rounded-lg bg-background border border-primary/40 shadow-sm">
+                                                    <MessageSquare className="w-4 h-4 shrink-0 text-muted-foreground" />
+                                                    <input
+                                                        autoFocus
+                                                        value={editingTitle}
+                                                        onChange={(e) => setEditingTitle(e.target.value)}
+                                                        onKeyDown={(e) => {
+                                                            if (e.key === 'Enter') {
+                                                                e.preventDefault();
+                                                                saveEditConversation();
+                                                            } else if (e.key === 'Escape') {
+                                                                e.preventDefault();
+                                                                cancelEditConversation();
+                                                            }
+                                                        }}
+                                                        onBlur={() => saveEditConversation()}
+                                                        maxLength={120}
+                                                        className="flex-1 bg-transparent text-sm focus:outline-none text-foreground placeholder:text-muted-foreground/60 min-w-0"
+                                                        placeholder="Nombre del chat"
+                                                    />
+                                                    <button
+                                                        onMouseDown={(e) => e.preventDefault()}
+                                                        onClick={() => saveEditConversation()}
+                                                        className="p-1 text-muted-foreground hover:text-emerald-500 rounded"
+                                                        title="Guardar (Enter)"
+                                                    >
+                                                        <Check className="w-3.5 h-3.5" />
+                                                    </button>
+                                                    <button
+                                                        onMouseDown={(e) => e.preventDefault()}
+                                                        onClick={cancelEditConversation}
+                                                        className="p-1 text-muted-foreground hover:text-red-500 rounded"
+                                                        title="Cancelar (Esc)"
+                                                    >
+                                                        <XIcon className="w-3.5 h-3.5" />
+                                                    </button>
+                                                </div>
+                                            ) : (
+                                                <>
+                                                    <button
+                                                        onClick={() => switchConversation(chat.id)}
+                                                        onDoubleClick={() => beginEditConversation(chat.id, chat.title || '')}
+                                                        className={cn(
+                                                            "flex-1 flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-left transition-all whitespace-nowrap overflow-hidden text-ellipsis border-l-2",
+                                                            conversationId === chat.id
+                                                                ? "bg-primary/10 text-primary font-semibold dark:bg-primary/20 border-primary shadow-sm"
+                                                                : "text-muted-foreground hover:bg-black/5 dark:hover:bg-white/5 border-transparent"
+                                                        )}
+                                                        title="Click para abrir · doble click para renombrar"
+                                                    >
+                                                        <MessageSquare className="w-4 h-4 shrink-0" />
+                                                        <span className="truncate">{chat.title || 'Conversación sin título'}</span>
+                                                    </button>
+                                                    <button
+                                                        onClick={() => beginEditConversation(chat.id, chat.title || '')}
+                                                        className={cn(
+                                                            "p-2 text-muted-foreground hover:text-primary rounded-lg opacity-0 group-hover:opacity-100 transition-all focus:opacity-100",
+                                                            conversationId === chat.id && "opacity-100"
+                                                        )}
+                                                        title="Renombrar Chat"
+                                                    >
+                                                        <Pencil className="w-3.5 h-3.5" />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => deleteConversation(chat.id)}
+                                                        className={cn(
+                                                            "p-2 text-muted-foreground hover:text-red-500 rounded-lg opacity-0 group-hover:opacity-100 transition-all focus:opacity-100",
+                                                            conversationId === chat.id && "opacity-100 text-red-400"
+                                                        )}
+                                                        title="Eliminar Chat"
+                                                    >
+                                                        <Trash2 className="w-4 h-4" />
+                                                    </button>
+                                                </>
                                             )}
-                                        >
-                                            <MessageSquare className="w-4 h-4 shrink-0" />
-                                            <span className="truncate">{chat.title || 'Conversación sin título'}</span>
-                                        </button>
-                                        <button
-                                            onClick={() => deleteConversation(chat.id)}
-                                            className={cn(
-                                                "p-2 text-muted-foreground hover:text-red-500 rounded-lg opacity-0 group-hover:opacity-100 transition-all focus:opacity-100",
-                                                conversationId === chat.id && "opacity-100 text-red-400"
-                                            )}
-                                            title="Eliminar Chat"
-                                        >
-                                            <Trash2 className="w-4 h-4" />
-                                        </button>
-                                    </div>
-                                ))
+                                        </div>
+                                    );
+                                })
                             )}
                         </div>
                     </div>
@@ -529,79 +1456,176 @@ export function BudgetWizardChat({ isAdmin = false, isPublicMode = false }: { is
                 "flex w-full flex-col relative h-full min-h-0 transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] will-change-transform",
                 "md:flex-1"
             )}>
-                {/* Header */}
-                <header className="absolute top-0 left-0 right-0 z-10 flex h-16 md:h-20 items-center justify-between px-4 md:px-8 bg-gradient-to-b from-background via-background/95 to-transparent backdrop-blur-sm transition-all duration-300">
-                    <div className="flex items-center gap-3 md:gap-4">
-                        {isAdmin && (
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                                className="mr-0 md:mr-2 text-muted-foreground hover:text-primary transition-colors hidden md:flex"
-                            >
-                                {isSidebarOpen ? <PanelLeftClose className="w-5 h-5" /> : <PanelLeftOpen className="w-5 h-5" />}
-                            </Button>
-                        )}
-                        <Logo className="h-6 flex items-center" width={80} height={24} />
-                    </div>
+                {/* Header retirado: se gana altura visual para el chat. El toggle
+                    del sidebar y el banner de refine viven ahora dentro de la sticky
+                    bar de fases (más abajo) para no perder accesibilidad. */}
 
-                    <div className="flex items-center gap-1">
-                        {isAdmin && (
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={startNewConversation}
-                                className="mr-2 hidden md:flex text-muted-foreground hover:text-primary transition-colors"
-                            >
-                                <PlusCircle className="mr-1 h-4 w-4" />
-                                Nuevo Chat
-                            </Button>
-                        )}
-                    </div>
-                </header>
-
-                {/* Messages Area */}
+                {/* Messages Area. El PhaseStepper sigue sticky en `top-0` (sin
+                    header arriba que compensar). */}
                 <div className="flex-1 overflow-y-auto p-0 custom-scrollbar relative bg-background/50 leading-relaxed px-4 md:px-6">
-                    <div className="max-w-3xl mx-auto pt-20 pb-40 space-y-6 md:space-y-8 flex flex-col items-center">
+                    {/* Sticky bar bajo el header. En PDF flow (con partidas resueltas)
+                        mostramos `BudgetSummaryBar` con stats agregadas; en NL flow
+                        sigue `PhaseStepper` con el progreso conversacional. */}
+                    {messages.length > 0 && (() => {
+                        const stats = computeBudgetStats(progressSubEvents);
+                        const showSummaryBar = stats.partidasCount > 0;
+                        return (
+                            <div className="sticky top-0 z-[5] -mx-4 md:-mx-6 bg-background/85 backdrop-blur-md border-b border-black/5 dark:border-white/5 px-4 md:px-6 py-2.5">
+                                <div className="max-w-3xl mx-auto flex items-center gap-2 md:gap-3">
+                                    {/* Toggle del sidebar reubicado aquí tras quitar el header. */}
+                                    {isAdmin && (
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                                            className="shrink-0 text-muted-foreground hover:text-primary transition-colors hidden md:flex"
+                                            aria-label={isSidebarOpen ? "Ocultar listado de chats" : "Mostrar listado de chats"}
+                                        >
+                                            {isSidebarOpen ? <PanelLeftClose className="w-5 h-5" /> : <PanelLeftOpen className="w-5 h-5" />}
+                                        </Button>
+                                    )}
+                                    <div className="flex-1 min-w-0">
+                                        {showSummaryBar
+                                            ? <BudgetSummaryBar subEvents={progressSubEvents} totalTasks={generationProgress.extractedItems} />
+                                            : <PhaseStepper requirements={requirements} />}
+                                    </div>
+                                    {refineBanner && (
+                                        <div className="hidden md:flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-3 py-1.5 text-xs shrink-0">
+                                            <Sparkles className="h-3.5 w-3.5 text-primary" />
+                                            <span className="font-medium">{refineBanner.name}</span>
+                                            <Link
+                                                href={`/dashboard/leads/${targetLeadIdFromQuery}`}
+                                                className="ml-1 text-[10px] text-primary hover:underline"
+                                            >
+                                                ver lead →
+                                            </Link>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        );
+                    })()}
+                    {/* Empty-state: saludo centrado en ambos ejes del scroll area.
+                        Compensamos la altura aproximada del input bar fija (≈12rem)
+                        con un offset para que el centroide visual quede en el medio
+                        del espacio útil. Contraste correcto en ambos temas. */}
+                    {messages.length === 0 && !isLoadingMessages && state === 'idle' && generationProgress.step === 'idle' && (
+                        <div className="h-full flex items-center justify-center -mt-8 md:-mt-12">
+                            <div className="text-center space-y-2 px-4 w-full max-w-2xl mx-auto">
+                                <h2 className="text-3xl md:text-[40px] leading-tight font-display text-slate-700 dark:text-zinc-200">
+                                    Hola{isAdmin ? ' Admin' : (leadName ? ` ${leadName}` : '')}.
+                                </h2>
+                                <h2 className="text-2xl md:text-[32px] leading-tight font-display text-slate-500 dark:text-zinc-400">
+                                    ¿Por dónde empezamos?
+                                </h2>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* pt-4: ya no hay header arriba que compensar. pb-44: aire
+                        extra sobre el input bar para que pastillas y último
+                        mensaje no queden tapados por la caja de texto. */}
+                    <div className="max-w-3xl mx-auto pt-4 md:pt-6 pb-44 md:pb-48 space-y-6 md:space-y-8 flex flex-col items-center">
+                        {/* Skeleton loader mientras `switchConversation` fetchea mensajes */}
+                        {isLoadingMessages && (
+                            <div data-testid="chat-skeleton" className="w-full space-y-6 pt-10">
+                                {[0, 1, 2].map((i) => (
+                                    <div
+                                        key={i}
+                                        className={cn(
+                                            "flex gap-2",
+                                            i % 2 === 0 ? "justify-start" : "justify-end"
+                                        )}
+                                    >
+                                        {i % 2 === 0 && (
+                                            <div className="shrink-0 w-8 h-8 rounded-full bg-black/5 dark:bg-white/5 animate-pulse" />
+                                        )}
+                                        <div
+                                            className={cn(
+                                                "h-12 rounded-2xl animate-pulse",
+                                                i % 2 === 0
+                                                    ? "bg-black/5 dark:bg-white/5 w-[60%] rounded-bl-none"
+                                                    : "bg-primary/10 w-[50%] rounded-br-none"
+                                            )}
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                         <AnimatePresence initial={false}>
-                            {messages.length > 0 && (
+                            {!isLoadingMessages && messages.length > 0 && (
                                 messages.map((msg, index) => (
                                     <ChatBubble key={msg.id} message={msg} isGenerating={msg.content === w.progress.generatingMsg} />
                                 ))
                             )}
 
-                            {/* In-Stream Terminal Component */}
+                            {/* Activity timeline — estilo burbuja del bot con avatar.
+                                Se integra en el flow del chat, no flota al ancho completo. */}
                             {generationProgress.step !== 'idle' && (
                                 <motion.div
-                                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                                    className="flex w-full justify-start mt-6"
+                                    initial={{ opacity: 0, y: 6 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    className="flex w-full min-w-0 max-w-3xl mx-auto justify-start items-start gap-2 mt-2"
                                 >
-                                    <div className="w-full bg-[#0A0A0A] border border-white/10 rounded-2xl shadow-2xl overflow-hidden p-1">
-                                        <BudgetGenerationProgress
-                                            progress={generationProgress}
-                                            className="shadow-none border-none rounded-xl"
-                                            onComplete={(budgetId) => {
-                                                const viewLink = isAdmin
-                                                    ? `/dashboard/admin/budgets/${budgetId}/edit`
-                                                    : isPublicMode
-                                                        ? `/demo/viewer/${budgetId}` 
-                                                        : `/budget/${budgetId}`;
-                                                
-                                                setTimeout(() => {
-                                                    setGenerationProgress({ step: 'idle' });
-                                                    addSystemMessage(`¡Estado de Mediciones procesado y tasado con éxito!\n\n[Ver el resultado y Descargar](${viewLink})`);
-                                                    setState(isPublicMode ? 'generated' : 'idle');
-                                                }, 1500);
-                                            }}
-                                        />
+                                    {/* Avatar del bot, igual patrón que ChatBubble */}
+                                    <div className="shrink-0 mt-0.5 w-8 h-8 rounded-full flex items-center justify-center border shadow-sm bg-primary border-primary/40 text-primary-foreground">
+                                        <Bot className="w-4 h-4" />
                                     </div>
+                                    <BudgetGenerationProgress
+                                        progress={generationProgress}
+                                        budgetId={(generationProgress as any).budgetId || leadId}
+                                        pipelineJobId={generationProgress.pipelineJobId}
+                                        // Sprint 4 Fase J — el cronómetro arranca desde el
+                                        // startedAt persistido, no desde el mount. Sin esto
+                                        // el contador volvía a 00:00 al cambiar de conv.
+                                        startedAtMs={readActiveJob()?.startedAt}
+                                        onSubEventsChange={setProgressSubEvents}
+                                        onComplete={(budgetId) => {
+                                            // Sprint 4 Fase I — limpiar persistencia al completar.
+                                            clearActiveJob();
+                                            const viewLink = isAdmin
+                                                ? `/dashboard/admin/budgets/${budgetId}/edit`
+                                                : isPublicMode
+                                                    ? `/demo/viewer/${budgetId}`
+                                                    : `/budget/${budgetId}`;
+
+                                            setTimeout(() => {
+                                                // Fase 10.3 — burbuja final enriquecida con stats agregadas
+                                                // (partidas, capítulos, PEM, anomalías). Fallback al texto
+                                                // simple si no hay stats por algún motivo.
+                                                const finalStats = computeBudgetStats(progressSubEvents);
+                                                const lines: string[] = ['**¡Presupuesto generado!**'];
+                                                if (finalStats.partidasCount > 0) {
+                                                    const parts: string[] = [];
+                                                    parts.push(`📋 ${finalStats.partidasCount} partidas`);
+                                                    if (finalStats.chaptersCount > 0) parts.push(`🧱 ${finalStats.chaptersCount} capítulos`);
+                                                    if (finalStats.pemTotal > 0) parts.push(`💰 ${finalStats.formattedPem}`);
+                                                    lines.push(parts.join(' · '));
+                                                }
+                                                if (finalStats.anomaliesCount > 0) {
+                                                    lines.push(`⚠️ ${finalStats.anomaliesCount} ${finalStats.anomaliesCount === 1 ? 'partida necesita' : 'partidas necesitan'} revisión humana`);
+                                                }
+                                                lines.push(`[Ver el resultado y Descargar](${viewLink})`);
+
+                                                setGenerationProgress({ step: 'idle' });
+                                                addSystemMessage(lines.join('\n\n'));
+                                                setState(isPublicMode ? 'generated' : 'idle');
+                                            }, 1500);
+                                        }}
+                                    />
                                 </motion.div>
                             )}
                         </AnimatePresence>
 
-                        {/* Proactive Co-Pilot Suggestions */}
-                        {state === 'idle' && messages.length > 0 && generationProgress.step === 'idle' && (
+                        {/* Proactive Co-Pilot Suggestions — Fase 10.3 las ocultamos si
+                            el último mensaje es el system message con el link de
+                            descarga (post-completion). Las pills sugerirían refinar
+                            cuando en realidad ya está cerrado. */}
+                        {(() => {
+                            const last = messages[messages.length - 1];
+                            const isPostBudgetCompletion = last?.role === 'system' && /Ver el resultado y Descargar/.test(last.content || '');
+                            return state === 'idle' && messages.length > 0 && generationProgress.step === 'idle' && !isPostBudgetCompletion;
+                        })() && (
                             <motion.div
                                 initial={{ opacity: 0, y: 10 }}
                                 animate={{ opacity: 1, y: 0 }}
@@ -652,29 +1676,67 @@ export function BudgetWizardChat({ isAdmin = false, isPublicMode = false }: { is
                             </motion.div>
                         )}
 
-                        {state === 'processing_pdf' && (
-                            <motion.div
-                                initial={{ opacity: 0, scale: 0.95 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                className="self-start max-w-[85%] md:max-w-[85%] rounded-2xl p-5 shadow-sm bg-zinc-100 dark:bg-[#2a2a2b] border border-black/5 dark:border-white/5 flex flex-col gap-4 text-sm text-gray-500 dark:text-gray-400 mt-2 border-l-4 border-l-blue-500 dark:border-l-blue-400"
-                            >
-                                <div className="flex items-center gap-2">
-                                    <Paperclip className="w-5 h-5 text-blue-500 dark:text-blue-400 animate-pulse" />
-                                    <span className="font-semibold text-blue-600 dark:text-blue-400 text-base">Procesando Documento (Tool Activa)</span>
-                                </div>
-                                <div className="flex items-center gap-3 ml-1 bg-white dark:bg-black/20 p-3 rounded-lg border border-black/5 dark:border-white/5">
-                                    <div className="flex space-x-1 shrink-0">
-                                        <div className="w-2 h-2 bg-blue-500/70 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
-                                        <div className="w-2 h-2 bg-blue-500/70 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
-                                        <div className="w-2 h-2 bg-blue-500/70 rounded-full animate-bounce"></div>
-                                    </div>
-                                    <span className="font-medium text-slate-700 dark:text-slate-300">
-                                        Extrayendo información espacial con IA y emparejando precios en base de datos. Esto puede tardar hasta 1 minuto...
-                                    </span>
-                                </div>
-                            </motion.div>
-                        )}
-                        
+                        {/* Nota: la tarjeta estática "Procesando Documento (Tool Activa)"
+                         * se eliminó: el panel BudgetGenerationProgress que se monta más arriba
+                         * (cuando generationProgress.step !== 'idle') ya refleja el progreso
+                         * real en base a la telemetría que emite el servicio Python. */}
+
+                        {/* Mapa estructural del proyecto — DENTRO del stream, para revisar
+                            y decidir generar. Movido aquí desde encima del input (de-dup).
+                            COLAPSADO por defecto: cabecera compacta que no tapa el chat;
+                            se expande al pulsarla. El botón Layers del input lo oculta del todo. */}
+                        <AnimatePresence>
+                            {(requirements.specs || requirements.detectedNeeds?.length) && showRequirements && generationProgress.step === 'idle' && (
+                                <motion.div
+                                    initial={{ opacity: 0, y: 10, scale: 0.98 }}
+                                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                                    exit={{ opacity: 0, y: 10, scale: 0.98 }}
+                                    transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
+                                    className="w-full max-w-3xl mx-auto mt-4 rounded-2xl bg-[#1e1f20] border border-white/10 shadow-2xl overflow-hidden"
+                                >
+                                    {/* Cabecera compacta — clic para expandir/colapsar */}
+                                    <button
+                                        type="button"
+                                        onClick={() => setRequirementsExpanded(v => !v)}
+                                        aria-expanded={requirementsExpanded}
+                                        className="w-full flex items-center justify-between gap-3 px-4 py-3 text-left hover:bg-white/5 transition-colors"
+                                    >
+                                        <span className="flex items-center gap-2.5 min-w-0">
+                                            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-primary/15 border border-primary/20">
+                                                <Layers className="w-3.5 h-3.5 text-primary" />
+                                            </span>
+                                            <span className="flex flex-col min-w-0">
+                                                <span className="text-xs font-semibold text-white/90 truncate">Mapa Estructural del Proyecto</span>
+                                                <span className="text-[10px] text-white/40 truncate">
+                                                    {requirements.detectedNeeds?.length
+                                                        ? `${requirements.detectedNeeds.length} necesidades detectadas · toca para ${requirementsExpanded ? 'colapsar' : 'ver todo'}`
+                                                        : `Toca para ${requirementsExpanded ? 'colapsar' : 'ver la estructura'}`}
+                                                </span>
+                                            </span>
+                                        </span>
+                                        <ChevronDown className={cn("w-4 h-4 text-white/50 shrink-0 transition-transform duration-300", requirementsExpanded && "rotate-180")} />
+                                    </button>
+
+                                    {/* Contenido expandible */}
+                                    <AnimatePresence initial={false}>
+                                        {requirementsExpanded && (
+                                            <motion.div
+                                                initial={{ height: 0, opacity: 0 }}
+                                                animate={{ height: 'auto', opacity: 1 }}
+                                                exit={{ height: 0, opacity: 0 }}
+                                                transition={{ duration: 0.25, ease: [0.23, 1, 0.32, 1] }}
+                                                className="overflow-hidden"
+                                            >
+                                                <div className="max-h-[50vh] overflow-y-auto custom-scrollbar border-t border-white/10">
+                                                    <RequirementCard requirements={requirements} className="bg-transparent border-none shadow-none" />
+                                                </div>
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+
                         {/* Inline Generation Button */}
                         <AnimatePresence>
                             {showGenerateButton && generationProgress.step === 'idle' && (
@@ -699,54 +1761,16 @@ export function BudgetWizardChat({ isAdmin = false, isPublicMode = false }: { is
                     </div>
                 </div>
 
-                {/* Floating Input Area (Animated Layout for Zero State) */}
-                <motion.div
-                    layout
-                    className={cn(
-                        "absolute left-0 right-0 p-2 md:p-6 pointer-events-none flex flex-col items-center z-20 transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)]",
-                        (messages.length === 0 && state === 'idle' && generationProgress.step === 'idle')
-                            ? "top-1/2 -translate-y-1/2 px-4"
-                            : "bottom-0 bg-gradient-to-t from-background via-background/90 to-transparent"
-                    )}
+                {/* Input Area — anclado al bottom sin animación layout. */}
+                <div
+                    className="absolute left-0 right-0 bottom-0 p-2 md:p-6 pointer-events-none flex flex-col items-center z-20 bg-gradient-to-t from-background via-background/95 to-transparent"
                 >
                     <div className="pointer-events-auto w-full max-w-3xl relative flex flex-col items-center">
 
-                        {/* Greeting Header shown only when empty */}
-                        <AnimatePresence>
-                            {(messages.length === 0 && state === 'idle' && generationProgress.step === 'idle') && (
-                                <motion.div
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: -20, filter: 'blur(10px)' }}
-                                    transition={{ duration: 0.5 }}
-                                    className="w-full text-center space-y-2 mb-8 md:mb-12"
-                                >
-                                    <h2 className="text-3xl md:text-[40px] leading-tight font-display text-transparent bg-clip-text bg-gradient-to-r from-zinc-200 to-zinc-500">
-                                        Hola{isAdmin ? ' Admin' : (leadName ? ` ${leadName}` : '')}.
-                                    </h2>
-                                    <h2 className="text-3xl md:text-[40px] leading-tight font-display text-transparent bg-clip-text bg-gradient-to-r from-white to-zinc-400">
-                                        ¿Por dónde empezamos?
-                                    </h2>
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
+                        {/* De-dup: RequirementCard se movió al stream del chat (arriba,
+                            junto al CTA de generar). Ya NO se renderiza encima del input. */}
 
-                        {/* Rendering RequirementCard compactly above the input when toggled */}
-                        <AnimatePresence>
-                            {(requirements.specs || requirements.detectedNeeds?.length) && showRequirements && generationProgress.step === 'idle' && (
-                                <motion.div
-                                    initial={{ opacity: 0, y: 10, scale: 0.98 }}
-                                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                                    exit={{ opacity: 0, y: 10, scale: 0.98 }}
-                                    transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
-                                    className="w-full mb-3 max-h-[40vh] overflow-y-auto custom-scrollbar rounded-2xl bg-[#1e1f20]/95 backdrop-blur-xl border border-white/10 shadow-2xl"
-                                >
-                                    <RequirementCard requirements={requirements} className="bg-transparent border-none shadow-none" />
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
-
-                        <motion.div layout 
+                        <motion.div layout
                             onDragOver={handleDragOver}
                             onDragLeave={handleDragLeave}
                             onDrop={handleDrop}
@@ -756,22 +1780,85 @@ export function BudgetWizardChat({ isAdmin = false, isPublicMode = false }: { is
                             generationProgress.step !== 'idle' && generationProgress.step !== 'complete' && "opacity-50 pointer-events-none grayscale"
                         )}>
                             
+                            {/* BC3 detection card (F7) */}
+                            {bc3Detect && (
+                                <div className="px-3 pt-3">
+                                    <Bc3DetectCard loading={bc3Detect.loading} error={bc3Detect.error} result={bc3Detect.data} />
+                                </div>
+                            )}
+
                             {/* Pending Files Preview Area */}
                             {pendingFiles.length > 0 && (
                                 <div className="flex flex-wrap gap-2 px-3 pt-3 pb-1 animate-in fade-in slide-in-from-top-2 duration-300 ease-out">
                                     {pendingFiles.map((file, i) => {
                                         const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+                                        const isBc3 = file.name.toLowerCase().endsWith('.bc3');
                                         return (
-                                            <div key={i} className="relative group flex items-center gap-2.5 bg-[#2a2b2e] border border-white/5 shadow-[0_2px_10px_rgba(0,0,0,0.2)] rounded-xl py-1.5 pl-3 pr-1.5">
-                                                {isPdf ? (
+                                            <div key={i} className="relative group flex items-center gap-2 bg-[#2a2b2e] border border-white/5 shadow-[0_2px_10px_rgba(0,0,0,0.2)] rounded-xl py-1.5 pl-3 pr-1.5">
+                                                {isBc3 ? (
+                                                    <FileText className="w-4 h-4 text-amber-400" />
+                                                ) : isPdf ? (
                                                     <FileText className="w-4 h-4 text-blue-400" />
                                                 ) : (
                                                     <ImageIcon className="w-4 h-4 text-emerald-400" />
                                                 )}
                                                 <span className="text-[13px] font-medium text-white/90 max-w-[180px] truncate tracking-tight">{file.name}</span>
+                                                {isBc3 && (
+                                                    <span className="text-[9px] font-bold tracking-wider uppercase text-amber-300/90 bg-amber-500/15 border border-amber-500/30 px-1.5 py-0.5 rounded">
+                                                        BC3
+                                                    </span>
+                                                )}
+                                                {isPdf && (
+                                                    <DropdownMenu>
+                                                        <DropdownMenuTrigger asChild>
+                                                            <button
+                                                                type="button"
+                                                                data-testid="pdf-strategy-trigger"
+                                                                title="Tipo de formato del PDF"
+                                                                className="ml-1 flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-semibold text-white/80 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 transition-colors"
+                                                            >
+                                                                {pdfStrategy === 'INLINE' ? 'Estándar' : 'Anexado'}
+                                                                <ChevronDown className="w-3 h-3" />
+                                                            </button>
+                                                        </DropdownMenuTrigger>
+                                                        <DropdownMenuContent align="start" className="w-72 bg-zinc-900 border-white/10 text-white">
+                                                            <DropdownMenuItem
+                                                                data-testid="pdf-strategy-inline"
+                                                                onClick={() => setPdfStrategy('INLINE')}
+                                                                className={cn(
+                                                                    "flex flex-col items-start gap-0.5 py-2.5 cursor-pointer text-white",
+                                                                    "focus:bg-white/10 focus:text-white hover:bg-white/10",
+                                                                    pdfStrategy === 'INLINE' && "bg-primary/10"
+                                                                )}
+                                                            >
+                                                                <span className="text-sm font-semibold text-white">
+                                                                    Estándar{' '}
+                                                                    <span className="text-[10px] font-normal text-white/50">(Recomendado)</span>
+                                                                </span>
+                                                                <span className="text-[11px] text-white/70 leading-snug">
+                                                                    Texto y mediciones en la misma línea. Formato habitual.
+                                                                </span>
+                                                            </DropdownMenuItem>
+                                                            <DropdownMenuItem
+                                                                data-testid="pdf-strategy-annexed"
+                                                                onClick={() => setPdfStrategy('ANNEXED')}
+                                                                className={cn(
+                                                                    "flex flex-col items-start gap-0.5 py-2.5 cursor-pointer text-white",
+                                                                    "focus:bg-white/10 focus:text-white hover:bg-white/10",
+                                                                    pdfStrategy === 'ANNEXED' && "bg-primary/10"
+                                                                )}
+                                                            >
+                                                                <span className="text-sm font-semibold text-white">Anexado</span>
+                                                                <span className="text-[11px] text-white/70 leading-snug">
+                                                                    Literatura al inicio y mediciones en cuadro resumen al final.
+                                                                </span>
+                                                            </DropdownMenuItem>
+                                                        </DropdownMenuContent>
+                                                    </DropdownMenu>
+                                                )}
                                                 <button
                                                     onClick={() => handleRemovePendingFile(i)}
-                                                    className="p-1.5 rounded-full hover:bg-white/10 text-white/40 hover:text-white transition-colors ml-1"
+                                                    className="p-1.5 rounded-full hover:bg-white/10 text-white/40 hover:text-white transition-colors ml-0.5"
                                                 >
                                                     <X className="w-3.5 h-3.5" />
                                                 </button>
@@ -819,17 +1906,17 @@ export function BudgetWizardChat({ isAdmin = false, isPublicMode = false }: { is
                                         value={input}
                                         onChange={(e) => setInput(e.target.value)}
                                         onKeyDown={handleKeyDown}
-                                        placeholder="Pega aquí todo tu proyecto o escribe..."
-                                        className="min-h-[100px] max-h-48 w-full resize-none border-0 border-transparent bg-transparent py-4 text-base placeholder:text-gray-500 focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:outline-none shadow-none text-gray-100 scrollbar-hide font-medium leading-relaxed"
+                                        placeholder={isTranscribing ? w.input.transcribing : "Pega aquí todo tu proyecto o escribe..."}
+                                        className="min-h-[100px] max-h-48 w-full resize-none border-0 border-transparent bg-transparent py-4 text-base placeholder:text-gray-500 focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:outline-none shadow-none text-gray-100 scrollbar-hide font-medium leading-relaxed disabled:opacity-70"
                                         rows={1}
-                                        disabled={(state as string) === 'generated' || isLimitReached || state === 'uploading'}
+                                        disabled={(state as string) === 'generated' || isLimitReached || state === 'uploading' || isTranscribing}
                                     />
 
                                     <div className="shrink-0 flex items-center gap-1 mb-0.5">
                                         {/* Model Indicator Pill */}
                                         <div className="hidden md:flex items-center gap-1.5 px-4 h-10 rounded-full bg-primary/10 border border-primary/20 text-xs font-semibold text-primary mr-1 hover:bg-primary/20 transition-colors cursor-pointer select-none">
                                             <Sparkles className="w-3.5 h-3.5" />
-                                            Asistente IA
+                                            Grupo RG AI
                                         </div>
 
                                         <div className="relative">
@@ -839,7 +1926,7 @@ export function BudgetWizardChat({ isAdmin = false, isPublicMode = false }: { is
                                                 multiple
                                                 className="hidden"
                                                 onChange={handleFileChange}
-                                                accept="image/*,application/pdf"
+                                                accept="image/*,application/pdf,.bc3"
                                             />
                                             <label
                                                 htmlFor="file-upload"
@@ -861,6 +1948,16 @@ export function BudgetWizardChat({ isAdmin = false, isPublicMode = false }: { is
                                                 )}
                                             >
                                                 <Send className="h-4 w-4 md:h-5 md:w-5 ml-1" />
+                                            </Button>
+                                        ) : isTranscribing ? (
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                disabled
+                                                title={w.input.transcribing}
+                                                className="h-10 w-10 md:h-12 md:w-12 rounded-full text-primary"
+                                            >
+                                                <Loader2 className="h-5 w-5 animate-spin" />
                                             </Button>
                                         ) : (
                                             <Button
@@ -884,46 +1981,11 @@ export function BudgetWizardChat({ isAdmin = false, isPublicMode = false }: { is
                             </div>
                         </motion.div>
 
-                        {/* Suggestion Pills underneath */}
-                        <AnimatePresence>
-                            {messages.length === 0 && (
-                                <motion.div
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: 10 }}
-                                    transition={{ delay: 0.1, duration: 0.4 }}
-                                    className="flex flex-wrap items-center justify-center gap-2 md:gap-3 mt-4 md:mt-6 w-full"
-                                >
-                                    {w.emptyState.suggestions
-                                        .filter((s: any) => !(isPublicMode && s.title === 'Reforma integral'))
-                                        .map((suggestion: any, i: number) => {
-                                            const icons = [Home, Hammer, Layers, Sparkles];
-                                            const Icon = icons[i % icons.length];
-                                            return (
-                                                <button
-                                                    key={i}
-                                                    onClick={() => {
-                                                        setInput(suggestion.text);
-                                                        // Focus is handled correctly by normal React flow if a ref was bound, but here updating state acts naturally
-                                                    }}
-                                                    className="flex items-center gap-2 px-4 py-2 bg-[#1e1f20] hover:bg-white/10 border border-white/5 rounded-full text-[11px] md:text-xs font-medium text-white/80 transition-all hover:border-white/20 active:scale-95 shadow-sm text-left leading-tight max-w-[280px]"
-                                                >
-                                                    <Icon className="w-4 h-4 text-white/50" />
-                                                    {suggestion.title}
-                                                </button>
-                                            );
-                                        })}
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
-
-                        {/* Desktop & Mobile Generation Area Component (Moved to chat stream) */}
-
                         <p className="mt-3 text-center text-xs font-medium text-gray-400 dark:text-gray-600 hidden md:block pointer-events-auto">
-                            {isRecording ? `${w.input.recordingInfo} ${formatTime(recordingTime)}` : w.input.keyboardHint}
+                            {isTranscribing ? w.input.transcribing : (isRecording ? `${w.input.recordingInfo} ${formatTime(recordingTime)}` : w.input.keyboardHint)}
                         </p>
                     </div>
-                </motion.div>
+                </div>
             </div>
 
 
@@ -931,12 +1993,44 @@ export function BudgetWizardChat({ isAdmin = false, isPublicMode = false }: { is
             {/* Onboarding Sidebar (Desktop) / Drawer (Mobile) */}
             <BudgetWizardTips setInput={setInput} />
 
+            <ClientPromptDialog
+                open={clientPromptOpen}
+                defaultClientName={clientName}
+                defaultBudgetTitle={budgetTitle}
+                onCancel={() => setClientPromptOpen(false)}
+                onConfirm={handleConfirmClientPrompt}
+            />
+
+            <PdfMetadataPromptDialog
+                open={pdfMetadataPromptOpen}
+                initial={pdfMetadataPromptInitial}
+                onCancel={() => {
+                    setPdfMetadataPromptOpen(false);
+                    pdfMetadataResolverRef.current?.(null);
+                    pdfMetadataResolverRef.current = null;
+                }}
+                onConfirm={(name, title) => {
+                    setPdfMetadataPromptOpen(false);
+                    pdfMetadataResolverRef.current?.({
+                        clientName: name || undefined,
+                        budgetTitle: title || undefined,
+                    });
+                    pdfMetadataResolverRef.current = null;
+                }}
+            />
+
         </div >
     );
 }
 
 function ChatBubble({ message, isGenerating }: { message: Message, isGenerating?: boolean }) {
     const isUser = message.role === 'user';
+    const isSystem = message.role === 'system';
+    // v006 UX — etiqueta del agente para el chip bajo cada mensaje del bot.
+    // No intentamos atribuir la respuesta a un agente del swarm específico
+    // todavía; los mensajes conversacionales son del Arquitecto por diseño,
+    // los systemMessage son notificaciones transversales del pipeline.
+    const agentLabel = isSystem ? 'Sistema' : 'Arquitecto';
 
     return (
         <motion.div
@@ -945,10 +2039,29 @@ function ChatBubble({ message, isGenerating }: { message: Message, isGenerating?
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ duration: 0.3, ease: 'easeOut' }}
             className={cn(
-                "flex w-full min-w-0 max-w-3xl mx-auto",
-                isUser ? "justify-end" : "justify-start"
+                "flex w-full min-w-0 max-w-3xl mx-auto gap-2",
+                isUser ? "justify-end" : "justify-start items-start"
             )}
         >
+            {/* Avatar — solo para respuestas del bot. */}
+            {!isUser && (
+                <div
+                    data-testid="bot-avatar"
+                    className={cn(
+                        "shrink-0 mt-0.5 w-8 h-8 rounded-full flex items-center justify-center border shadow-sm",
+                        isSystem
+                            ? "bg-slate-200 dark:bg-slate-700/40 border-slate-300/60 dark:border-white/10 text-slate-600 dark:text-slate-300"
+                            : "bg-primary border-primary/40 text-primary-foreground"
+                    )}
+                    title={agentLabel}
+                >
+                    {isSystem ? (
+                        <Sparkles className="w-4 h-4" />
+                    ) : (
+                        <Bot className="w-4 h-4" />
+                    )}
+                </div>
+            )}
             <div
                 className={cn(
                     "relative max-w-[85%] rounded-2xl px-5 py-3.5 text-sm leading-relaxed shadow-sm overflow-hidden",
@@ -1037,7 +2150,7 @@ function ChatBubble({ message, isGenerating }: { message: Message, isGenerating?
                     {message.extractedInfo && message.extractedInfo.length > 0 && (
                         <div className="flex flex-wrap gap-1.5 mt-3 pt-3 border-t border-black/5 dark:border-white/5">
                             {message.extractedInfo.map((info, idx) => (
-                                <div key={idx} className="flex items-center gap-1.5 bg-primary/10 text-primary px-2.5 py-1 rounded-md text-[11px] font-semibold tracking-wide border border-primary/20 shadow-sm backdrop-blur-md">
+                                <div key={idx} className="flex items-center gap-1.5 bg-primary/10 text-amber-700 dark:text-primary px-2.5 py-1 rounded-md text-[11px] font-semibold tracking-wide border border-primary/20 shadow-sm backdrop-blur-md">
                                     <CheckCircle2 className="w-3.5 h-3.5" />
                                     {info}
                                 </div>
@@ -1046,12 +2159,27 @@ function ChatBubble({ message, isGenerating }: { message: Message, isGenerating?
                     )}
 
                 </div>
-                <span className={cn(
-                    "absolute -bottom-5 text-[10px] whitespace-nowrap",
-                    isUser ? "right-0 text-muted-foreground/60 dark:text-white/30" : "left-0 text-muted-foreground/60 dark:text-white/30"
+                <div className={cn(
+                    "absolute -bottom-5 flex items-center gap-1.5 text-[10px] whitespace-nowrap",
+                    isUser ? "right-0" : "left-0"
                 )}>
-                    {message.createdAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                </span>
+                    {!isUser && (
+                        <span
+                            data-testid="agent-chip"
+                            className={cn(
+                                "px-1.5 py-0.5 rounded-md font-semibold uppercase tracking-widest text-[9px] border",
+                                isSystem
+                                    ? "bg-slate-100 text-slate-500 border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700"
+                                    : "bg-primary/10 text-amber-700 dark:text-primary border-primary/20"
+                            )}
+                        >
+                            {agentLabel}
+                        </span>
+                    )}
+                    <span className="text-muted-foreground/60 dark:text-white/30">
+                        {message.createdAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </span>
+                </div>
             </div>
         </motion.div >
     );
@@ -1061,4 +2189,169 @@ function formatTime(seconds: number) {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins}:${secs.toString().padStart(2, '0')}`;
+}
+
+// ─────────────────────────────────────────────────────────────────
+// Prompt previo a la generación: pide nombre del cliente + título del
+// presupuesto. Se muestra solo cuando el admin pulsa "Generar" sin
+// haberlos rellenado todavía. El callback `onConfirm` recibe los
+// valores definitivos para invocar `runGeneration`.
+// ─────────────────────────────────────────────────────────────────
+function ClientPromptDialog({
+    open, defaultClientName, defaultBudgetTitle, onCancel, onConfirm,
+}: {
+    open: boolean;
+    defaultClientName: string;
+    defaultBudgetTitle: string;
+    onCancel: () => void;
+    onConfirm: (clientName: string, budgetTitle: string) => void;
+}) {
+    const [name, setName] = React.useState(defaultClientName);
+    const [title, setTitle] = React.useState(defaultBudgetTitle);
+
+    React.useEffect(() => { if (open) setName(defaultClientName); }, [open, defaultClientName]);
+    React.useEffect(() => { if (open) setTitle(defaultBudgetTitle); }, [open, defaultBudgetTitle]);
+
+    if (!open) return null;
+
+    const canSubmit = !!name.trim() && !!title.trim();
+
+    return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={onCancel}>
+            <div
+                className="bg-background dark:bg-zinc-900 rounded-2xl shadow-2xl border border-zinc-200 dark:border-zinc-800 max-w-md w-full mx-4 p-6"
+                onClick={e => e.stopPropagation()}
+            >
+                <div className="mb-4">
+                    <h3 className="text-lg font-semibold">Datos del presupuesto</h3>
+                    <p className="text-sm text-muted-foreground mt-1">
+                        Antes de generar, dinos el nombre del cliente y un título para
+                        este presupuesto. Quedarán guardados con el resultado.
+                    </p>
+                </div>
+
+                <div className="space-y-3">
+                    <div className="space-y-1">
+                        <label className="text-xs font-medium">Nombre del cliente *</label>
+                        <input
+                            value={name}
+                            onChange={e => setName(e.target.value)}
+                            placeholder="Ej: Juan Pérez / Constructora XYZ SL"
+                            className="w-full rounded-lg border border-zinc-200 dark:border-zinc-700 bg-background px-3 py-2 text-sm"
+                            autoFocus
+                        />
+                    </div>
+                    <div className="space-y-1">
+                        <label className="text-xs font-medium">Título del presupuesto *</label>
+                        <input
+                            value={title}
+                            onChange={e => setTitle(e.target.value)}
+                            placeholder="Ej: Reforma cocina Calle Mayor 23"
+                            className="w-full rounded-lg border border-zinc-200 dark:border-zinc-700 bg-background px-3 py-2 text-sm"
+                        />
+                    </div>
+                </div>
+
+                <div className="flex justify-end gap-2 mt-5">
+                    <Button variant="outline" onClick={onCancel}>Cancelar</Button>
+                    <Button
+                        onClick={() => onConfirm(name.trim(), title.trim())}
+                        disabled={!canSubmit}
+                        className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white"
+                    >
+                        Generar presupuesto
+                    </Button>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+// ─────────────────────────────────────────────────────────────────
+// Dialog mostrado tras subir un PDF de mediciones. Recibe los valores
+// extraídos por Gemini Flash sobre la primera página y permite editar
+// antes de disparar el dispatch del job. Si confidence es bajo (<0.5),
+// los inputs aparecen vacíos para forzar revisión del usuario.
+// ─────────────────────────────────────────────────────────────────
+function PdfMetadataPromptDialog({
+    open, initial, onCancel, onConfirm,
+}: {
+    open: boolean;
+    initial: { clientName: string; budgetTitle: string; confidence: number } | null;
+    onCancel: () => void;
+    onConfirm: (clientName: string, budgetTitle: string) => void;
+}) {
+    const [name, setName] = React.useState('');
+    const [title, setTitle] = React.useState('');
+
+    React.useEffect(() => {
+        if (!open || !initial) return;
+        // Si la confianza es alta, prerellena; si es baja, deja vacío para
+        // forzar al usuario a teclear (evita propagar alucinaciones).
+        const hi = (initial.confidence || 0) >= 0.5;
+        setName(hi ? initial.clientName : '');
+        setTitle(hi ? initial.budgetTitle : '');
+    }, [open, initial]);
+
+    if (!open || !initial) return null;
+
+    const lowConfidence = (initial.confidence || 0) < 0.5;
+    const canSubmit = !!name.trim() && !!title.trim();
+
+    return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={onCancel}>
+            <div
+                className="bg-background dark:bg-zinc-900 rounded-2xl shadow-2xl border border-zinc-200 dark:border-zinc-800 max-w-md w-full mx-4 p-6"
+                onClick={e => e.stopPropagation()}
+            >
+                <div className="mb-4">
+                    <h3 className="text-lg font-semibold">Confirma los datos del PDF</h3>
+                    <p className="text-sm text-muted-foreground mt-1">
+                        Hemos analizado la primera página. Revisa cliente y título — luego
+                        arrancaremos la valoración completa de partidas.
+                    </p>
+                </div>
+
+                {lowConfidence && (
+                    <div className="mb-3 rounded-lg bg-amber-50 dark:bg-amber-900/20 px-3 py-2 text-xs text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
+                        No hemos podido extraer los datos del encabezado con seguridad.
+                        Rellénalos a mano.
+                    </div>
+                )}
+
+                <div className="space-y-3">
+                    <div className="space-y-1">
+                        <label className="text-xs font-medium">Nombre del cliente *</label>
+                        <input
+                            value={name}
+                            onChange={e => setName(e.target.value)}
+                            placeholder="Ej: Juan Pérez / Constructora XYZ SL"
+                            className="w-full rounded-lg border border-zinc-200 dark:border-zinc-700 bg-background px-3 py-2 text-sm"
+                            autoFocus
+                        />
+                    </div>
+                    <div className="space-y-1">
+                        <label className="text-xs font-medium">Título del presupuesto *</label>
+                        <input
+                            value={title}
+                            onChange={e => setTitle(e.target.value)}
+                            placeholder="Ej: Reforma cocina Calle Mayor 23"
+                            className="w-full rounded-lg border border-zinc-200 dark:border-zinc-700 bg-background px-3 py-2 text-sm"
+                        />
+                    </div>
+                </div>
+
+                <div className="flex justify-end gap-2 mt-5">
+                    <Button variant="outline" onClick={onCancel}>Cancelar</Button>
+                    <Button
+                        onClick={() => onConfirm(name.trim(), title.trim())}
+                        disabled={!canSubmit}
+                        className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white"
+                    >
+                        Arrancar valoración
+                    </Button>
+                </div>
+            </div>
+        </div>
+    );
 }

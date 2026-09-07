@@ -4,12 +4,12 @@ export interface PersonalInfo {
     email: string;
     phone: string;
     address?: string;
-    web?: string; // NEW: Optional website
+    web?: string;
 
     // Datos fiscales / facturación. Todos opcionales — un Lead inicial sólo
     // necesita nombre+email+phone. Se rellenan al crear obra o al confirmar
-    // datos del cliente desde el editor de presupuestos (portado de dochevi).
-    nif?: string;                // DNI / NIF / CIF
+    // datos del cliente desde el PDF.
+    nif?: string;                // DNI / NIF / CIE
     companyName?: string;        // Razón social si es empresa
     billingAddress?: string;     // Dirección fiscal (si difiere de `address`)
     billingCity?: string;
@@ -57,6 +57,95 @@ export interface LeadVerification {
     attempts: number;
 }
 
+// ── Public Intake (datos capturados al solicitar presupuesto) ──
+
+export type LeadProjectType =
+    | 'bathroom'
+    | 'kitchen'
+    | 'integral'
+    | 'new_build'
+    | 'pool'
+    | 'other';
+
+export type LeadIntakeSource =
+    | 'chat_public'
+    | 'wizard'
+    | 'quick_form'
+    | 'detailed_form'
+    | 'new_build_form'
+    | 'demo';
+
+export type LeadTimeline = 'asap' | '1-3m' | '3-6m' | '6m+';
+
+export type LeadQualityLevel = 'basic' | 'medium' | 'premium';
+
+export interface LeadIntake {
+    projectType: LeadProjectType;
+    description: string;
+    source: LeadIntakeSource;
+    approxSquareMeters?: number;
+    postalCode?: string;
+    city?: string;
+    approxBudget?: number;
+    timeline?: LeadTimeline;
+    qualityLevel?: LeadQualityLevel;
+    imageUrls: string[];        // URLs en Firebase Storage (públicas o firmadas)
+    suspicious?: boolean;        // marcado por sanitizer si detecta intentos de injection
+    submittedAt: Date;
+    /**
+     * Snapshot crudo del formulario tal como lo rellenó el cliente. Se guarda
+     * sólo para leads provenientes de formularios (quick / detailed / new_build);
+     * los leads del chat NO usan este campo (la transcripción vive en la
+     * Conversation asociada). Útil para el admin: ver decisiones binarias del
+     * wizard, m² por estancia, materiales pedidos, etc., sin perder detalle.
+     */
+    rawFormData?: Record<string, any>;
+    /**
+     * ID temporal de la sesión de chat público antes de tener leadId. Permite
+     * vincular la Conversation persistida al lead cuando ocurre el handoff.
+     * Sólo presente si source === 'chat_public'.
+     */
+    chatSessionId?: string;
+}
+
+export type QualificationDecision = 'qualified' | 'review_required' | 'rejected';
+
+export interface LeadScoreEvent {
+    /** Razón humana de por qué el score cambió. */
+    reason: string;
+    /** Δ aplicado al score (+ subió, − bajó). */
+    delta: number;
+    /** Score resultante después del ajuste. */
+    score: number;
+    /** ID lógico del evento (ej. 'booking_confirmed', 'budget_sent', 'email_opened'). */
+    eventId: string;
+    timestamp: Date;
+}
+
+export interface LeadQualification {
+    decision: QualificationDecision;
+    score: number;              // 0–100
+    reasons: string[];
+    rules: string[];
+    evaluatedAt: Date;
+    evaluatedBy: 'auto' | 'admin';
+    /**
+     * Bandera de baja confianza (e.g. email throwaway, dominio sospechoso).
+     * Se muestra al admin como badge ámbar — no bloquea, sólo señala revisar.
+     */
+    lowTrust?: boolean;
+    /**
+     * Razones por las que el lead se marcó como low-trust. Útiles para
+     * auditoría y para que el admin entienda la flag de un vistazo.
+     */
+    lowTrustReasons?: string[];
+    /**
+     * Historial de ajustes de score post-cualificación inicial. Permite
+     * trazabilidad al admin (qué evento subió/bajó el score y cuándo).
+     */
+    scoreHistory?: LeadScoreEvent[];
+}
+
 /**
  * Lead Aggregate Root
  * Represents a potential client who has initiated contact.
@@ -72,7 +161,9 @@ export class Lead {
         public updatedAt: Date,
         public demoBudgetsGenerated: number = 0,
         public demoPdfsDownloaded: number = 0,
-        public pdfMetadata: Record<string, any> = {}
+        public pdfMetadata: Record<string, any> = {},
+        public intake: LeadIntake | null = null,
+        public qualification: LeadQualification | null = null
     ) { }
 
     static create(id: string, info: PersonalInfo, preferences: LeadPreferences): Lead {
@@ -86,8 +177,36 @@ export class Lead {
             new Date(),
             0,
             0,
-            {}
+            {},
+            null,
+            null
         );
+    }
+
+    setIntake(intake: LeadIntake): void {
+        this.intake = intake;
+        this.updatedAt = new Date();
+    }
+
+    /**
+     * Anexa URLs al `intake.imageUrls` sin duplicar. Devuelve `true` si hubo
+     * cambios reales (al menos una URL nueva). El chat público lo usa para
+     * mantener el intake al día con las fotos que el visitante adjunta en
+     * turnos posteriores al handoff inicial.
+     */
+    appendIntakeImages(urls: string[]): boolean {
+        if (!this.intake || urls.length === 0) return false;
+        const existing = this.intake.imageUrls || [];
+        const merged = Array.from(new Set([...existing, ...urls]));
+        if (merged.length === existing.length) return false;
+        this.intake = { ...this.intake, imageUrls: merged };
+        this.updatedAt = new Date();
+        return true;
+    }
+
+    setQualification(qualification: LeadQualification): void {
+        this.qualification = qualification;
+        this.updatedAt = new Date();
     }
 
     completeProfile(data: Omit<ClientProfile, 'completedAt'>): void {

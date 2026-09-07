@@ -16,7 +16,6 @@ import {
     Sparkles,
     Briefcase,
     MessageSquare,
-    FileUp,
     Package,
     Building2,
     Receipt,
@@ -110,7 +109,6 @@ export function ModernSidebar({ t, className }: ModernSidebarProps) {
         {
             label: 'IA',
             items: [
-                { href: '/dashboard/measurements', label: 'Mediciones', icon: FileUp },
                 { href: '/dashboard/seo-generator', label: t.dashboard.nav.seoGenerator, icon: Search },
                 { href: '/dashboard/admin/jobs', label: 'Jobs IA', icon: Activity },
                 { href: '/dashboard/admin/pdf-layout-test', label: 'Lecturas PDF', icon: FileSearch },
