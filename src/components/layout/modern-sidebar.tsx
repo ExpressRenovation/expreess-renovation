@@ -27,6 +27,8 @@ import {
     CalendarDays,
     TrendingUp,
     Bot,
+    Activity,
+    SlidersHorizontal,
 } from 'lucide-react';
 import Image from 'next/image';
 import { BRAND_ASSETS } from '@/lib/site-assets';
@@ -74,10 +76,14 @@ export function ModernSidebar({ t, className }: ModernSidebarProps) {
         {
             label: 'Configuración',
             items: [
+                { href: '/dashboard/settings/company', label: 'Empresa', icon: Building2 },
                 { href: '/dashboard/admin/traces', label: 'Trazas IA', icon: Bot },
+                { href: '/dashboard/admin/jobs', label: 'Pipeline Jobs', icon: Activity },
+                { href: '/dashboard/admin/pdf-layout-test', label: 'PDF Layout Test', icon: FileText },
                 { href: '/dashboard/admin/prices', label: t.dashboard.nav.priceBook, icon: Briefcase },
                 { href: '/dashboard/admin/prices?view=catalog', label: 'Catálogo', icon: Package },
                 { href: '/dashboard/settings/pricing', label: t.dashboard.nav.quickPricing, icon: DollarSign },
+                { href: '/dashboard/settings/budget', label: 'Calibración', icon: SlidersHorizontal },
                 { href: '/dashboard/settings', label: t.dashboard.nav.settings, icon: Settings },
             ]
         }
