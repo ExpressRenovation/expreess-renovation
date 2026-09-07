@@ -15,9 +15,15 @@ export function AnalyticsPanel() {
     const [sequences, setSequences] = useState<any[]>([]);
 
     useEffect(() => {
-        // Fetch sequences from our backend API route
+        // Fetch sequences from our backend API route. The marketing/re-engagement
+        // backend is Fase 2, so the route may not exist yet — guard against a 404
+        // HTML page (which would blow up res.json() with "Unexpected token '<'")
+        // and just render an empty panel until the backend lands.
         fetch('/api/marketing/sequences')
-            .then(res => res.json())
+            .then(res => {
+                const isJson = res.headers.get('content-type')?.includes('application/json');
+                return res.ok && isJson ? res.json() : { sequences: [] };
+            })
             .then(data => {
                 if (data.sequences) setSequences(data.sequences);
             })
