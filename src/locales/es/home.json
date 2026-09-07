@@ -218,5 +218,69 @@
                 "generateError": "No se pudo generar el presupuesto. "
             }
         }
+    },
+    "platform": {
+        "wizardChat": {
+            "header": {
+                "title": "Arquitecto IA",
+                "subtitle": "Asistente Inteligente",
+                "clearTooltip": "Borrar conversación y empezar de nuevo"
+            },
+            "emptyState": {
+                "title": "¿En qué puedo ayudarte hoy?",
+                "subtitle": "Puedo ayudarte a estimar costos, definir materiales o planificar tu reforma integral.",
+                "suggestions": [
+                    {
+                        "title": "Reforma de cocina",
+                        "text": "Quiero reformar la cocina completa, con cambio de muebles y electrodomésticos."
+                    },
+                    {
+                        "title": "Baño completo",
+                        "text": "Cambio de bañera por plato de ducha, alicatado y sanitarios nuevos."
+                    },
+                    {
+                        "title": "Reforma integral",
+                        "text": "Presupuesto para reformar un piso completo de 90m2."
+                    },
+                    {
+                        "title": "Suelos y pintura",
+                        "text": "Necesito cambiar el suelo a tarima flotante y pintar todo el piso liso."
+                    }
+                ]
+            },
+            "input": {
+                "placeholder": "Describe tu proyecto...",
+                "analyzingDocs": "Analizando documentos... esto puede tardar unos segundos 🧠",
+                "transcribing": "Transcribiendo audio...",
+                "recordingInfo": "Grabando...",
+                "keyboardHint": "Presiona Enter para enviar. Shift + Enter para línea nueva.",
+                "analyzingText": "Analizando..."
+            },
+            "panel": {
+                "title": "Datos del Proyecto",
+                "status": "En curso",
+                "completed": "Completado",
+                "deepGenTitle": "Generación Profunda",
+                "deepGenDesc": "Desglosan por capítulos y partidas (más lento)."
+            },
+            "progress": {
+                "generatingMsg": "(Generando presupuesto detallado...)",
+                "extracting": "Extrayendo partidas...",
+                "searching": "Buscando coincidencias...",
+                "calculating": "Calculando totales...",
+                "generateBtn": "Generar Presupuesto"
+            },
+            "pdfDownloadCard": {
+                "title": "Presupuesto Creado",
+                "subtitle": "Tu presupuesto se ha generado y descargado correctamente.",
+                "nextStep": "¿Quieres automatizar esto o tener el asistente integrado?",
+                "benefits": "Nuestra plataforma te permite invitar a subcontratistas, firmar digitalmente y conectar tu obra con precios reales.",
+                "button": "Planifica Tu Obra"
+            },
+            "errors": {
+                "resetConfirm": "¿Estás seguro de que quieres borrar la conversación? Esto no se puede deshacer.",
+                "generateError": "No se pudo generar el presupuesto. "
+            }
+        }
     }
 }
