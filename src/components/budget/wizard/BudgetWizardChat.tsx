@@ -488,7 +488,7 @@ export function BudgetWizardChat({ isAdmin = false, isPublicMode = false }: { is
     // adjunto y pasa directo a procesar sin intermediar con dos botones grandes).
     const [pdfAwaitingStrategy, setPdfAwaitingStrategy] = useState<File | null>(null);
     // v006 UX: estrategia pre-seleccionada por adjunto PDF. Default 'INLINE' (la
-    // más frecuente según telemetría Grupo RG).
+    // más frecuente según nuestra telemetría).
     const [pdfStrategy, setPdfStrategy] = useState<'INLINE' | 'ANNEXED'>('INLINE');
 
     // Fase 10.2 — sub-events bubble-up del progress component para alimentar
@@ -1916,7 +1916,7 @@ export function BudgetWizardChat({ isAdmin = false, isPublicMode = false }: { is
                                         {/* Model Indicator Pill */}
                                         <div className="hidden md:flex items-center gap-1.5 px-4 h-10 rounded-full bg-primary/10 border border-primary/20 text-xs font-semibold text-primary mr-1 hover:bg-primary/20 transition-colors cursor-pointer select-none">
                                             <Sparkles className="w-3.5 h-3.5" />
-                                            Grupo RG AI
+                                            Express Renovation AI
                                         </div>
 
                                         <div className="relative">

@@ -37,7 +37,7 @@ export function buildLeadBrief(lead: Lead): string {
     const projectLabel = PROJECT_TYPE_LABEL[intake.projectType] || intake.projectType;
 
     lines.push(
-        `Soy admin de Grupo RG y voy a refinar contigo la solicitud de un cliente real. ` +
+        `Soy admin de Express Renovation y voy a refinar contigo la solicitud de un cliente real. ` +
         `Te paso el contexto que ya tenemos del lead y vamos a iterarlo hasta tener un brief listo para presupuestar.`
     );
     lines.push('');

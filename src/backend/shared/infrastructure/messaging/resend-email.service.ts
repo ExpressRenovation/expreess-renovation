@@ -38,7 +38,7 @@ export class ResendEmailService {
     static getDefaultFrom(): string {
         return (
             process.env.RESEND_FROM_EMAIL ||
-            'Grupo RG <onboarding@resend.dev>'
+            'Express Renovation Mallorca <onboarding@resend.dev>'
         );
     }
 

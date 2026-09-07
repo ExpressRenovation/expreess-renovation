@@ -85,7 +85,7 @@ export async function sendBudgetToClientAction(
             acceptanceTokenIssuedAt,
         } as any);
 
-        const subject = `Tu presupuesto de Grupo RG está listo · ${displayBudgetNumber(budget)}`;
+        const subject = `Tu presupuesto de Express Renovation Mallorca está listo · ${displayBudgetNumber(budget)}`;
         const totalFmt = formatCurrency(budget.totalEstimated || budget.costBreakdown?.total || 0);
         const acceptanceUrl = buildAcceptanceUrl(acceptanceToken);
         const html = renderClientEmailHtml({
@@ -172,7 +172,7 @@ function renderClientEmailHtml(args: {
 <body style="margin:0; padding:24px; background:#f5f5f4; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #1f2937;">
   <div style="max-width:560px; margin:0 auto; background:white; border-radius:12px; overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,0.06);">
     <div style="padding: 24px 28px; background: linear-gradient(135deg, #0f172a 0%, #334155 100%); color: white;">
-      <p style="margin:0; font-size:12px; letter-spacing:0.06em; text-transform:uppercase; opacity:0.7;">Grupo RG · Constructores en Mallorca</p>
+      <p style="margin:0; font-size:12px; letter-spacing:0.06em; text-transform:uppercase; opacity:0.7;">Express Renovation Mallorca</p>
       <h1 style="margin:8px 0 0; font-size:22px; font-weight:600;">Tu presupuesto está listo</h1>
     </div>
     <div style="padding: 28px;">
@@ -198,7 +198,7 @@ function renderClientEmailHtml(args: {
       </p>
     </div>
     <div style="padding: 16px 28px; background:#f8fafc; border-top:1px solid #e2e8f0; font-size:12px; color:#64748b;">
-      Grupo RG · Mallorca · constructoresenmallorca.com
+      Express Renovation Mallorca · expressrenovationmallorca.es
     </div>
   </div>
 </body>
