@@ -57,6 +57,17 @@ export function BudgetWizardChat({ isAdmin = false, isPublicMode = false }: { is
     const [editingConvId, setEditingConvId] = React.useState<string | null>(null);
     const [editingTitle, setEditingTitle] = React.useState('');
 
+    // Composer auto-grow: la caja crece con el contenido (hasta un máximo) en
+    // vez de ser una altura fija con scrollbar interno. Se re-mide en cada
+    // cambio de `input` (incluye el reset a "" tras enviar).
+    const composerRef = useRef<HTMLTextAreaElement>(null);
+    useEffect(() => {
+        const el = composerRef.current;
+        if (!el) return;
+        el.style.height = 'auto';
+        el.style.height = `${Math.min(el.scrollHeight, 192)}px`;
+    }, [input]);
+
     const beginEditConversation = (id: string, currentTitle: string) => {
         setEditingConvId(id);
         setEditingTitle(currentTitle || '');
@@ -1903,11 +1914,12 @@ export function BudgetWizardChat({ isAdmin = false, isPublicMode = false }: { is
                             ) : (
                                 <>
                                     <Textarea
+                                        ref={composerRef}
                                         value={input}
                                         onChange={(e) => setInput(e.target.value)}
                                         onKeyDown={handleKeyDown}
                                         placeholder={isTranscribing ? w.input.transcribing : "Pega aquí todo tu proyecto o escribe..."}
-                                        className="min-h-[100px] max-h-48 w-full resize-none border-0 border-transparent bg-transparent py-4 text-base placeholder:text-gray-500 focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:outline-none shadow-none text-gray-100 scrollbar-hide font-medium leading-relaxed disabled:opacity-70"
+                                        className="min-h-[48px] max-h-[192px] w-full resize-none border-0 border-transparent bg-transparent py-3 text-base placeholder:text-gray-500 focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:outline-none shadow-none text-gray-100 overflow-y-auto font-medium leading-relaxed disabled:opacity-70"
                                         rows={1}
                                         disabled={(state as string) === 'generated' || isLimitReached || state === 'uploading' || isTranscribing}
                                     />
