@@ -71,9 +71,12 @@ export const clientRequirementsFlow = ai.defineFlow(
         const DetectedNeedSchema = z.object({
             category: z.string().describe("Category of the need (e.g., 'Flooring', 'Painting')"),
             description: z.string().describe("Detail of the need"),
-            requestedMaterial: z.string().optional().describe("Material exacto o acabado solicitado explícitamente por el usuario (ej: 'piedra mallorquina', 'suelo laminado'). ¡CRÍTICO! Si el usuario no menciona explícitamente materiales, déjalo vacío."),
-            estimatedQuantity: z.number().optional(),
-            unit: z.string().optional()
+            // .nullish() (no .optional()): Gemini devuelve `null` — no `undefined`— para
+            // campos "no especificados", y z.string().optional() RECHAZA null → rompía
+            // toda la extracción de requisitos. nullish acepta string | null | undefined.
+            requestedMaterial: z.string().nullish().describe("Material exacto o acabado solicitado explícitamente por el usuario (ej: 'piedra mallorquina', 'suelo laminado'). ¡CRÍTICO! Si el usuario no menciona explícitamente materiales, déjalo vacío."),
+            estimatedQuantity: z.number().nullish(),
+            unit: z.string().nullish()
         });
 
         const BudgetRequirementSchema = z.object({
