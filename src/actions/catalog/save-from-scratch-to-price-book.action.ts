@@ -2,7 +2,7 @@
 
 import { FirestorePriceBookRepository } from '@/backend/price-book/infrastructure/firestore-price-book-repository';
 import { PriceBookItem, PriceBookComponent } from '@/backend/price-book/domain/price-book-item';
-import { ai, embeddingModel } from '@/backend/ai/shared/config/genkit.config';
+import { vertexDocumentEmbedder } from '@/backend/ai/shared/vertex-embedding.adapter';
 import { stripExplicitMaterialTag } from '@/lib/budget/explicit-material';
 
 const PRICE_BOOK_YEAR = 2025;
@@ -89,17 +89,12 @@ export async function saveFromScratchToPriceBookAction(input: SaveFromScratchInp
         const origCode = String(partida.code || 'NL').replace(/[^\w-]/g, '');
         const code = `IA-${shortBudget}-${origCode}`;
 
-        // Embedding 768 (Vertex) desde la descripción limpia → indexable en el RAG.
+        // Embedding 768 con gemini-embedding-2 (RETRIEVAL_DOCUMENT — se INDEXA como
+        // doc, mismo modelo que el resto de price_book_2025) desde la descripción
+        // limpia → indexable en el RAG.
         let embedding: number[] | undefined;
         try {
-            const embeddingResult = await ai.embed({
-                embedder: embeddingModel,
-                content: description,
-                options: { outputDimensionality: 768 },
-            });
-            embedding = Array.isArray(embeddingResult)
-                ? embeddingResult[0]?.embedding
-                : (embeddingResult as any).embedding;
+            embedding = await vertexDocumentEmbedder.embedText(description);
         } catch (e: any) {
             console.error('[saveFromScratch] embedding falló:', e?.message);
             return { success: false, error: 'No se pudo generar el índice semántico (embedding). Inténtalo de nuevo.' };

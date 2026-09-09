@@ -1,6 +1,7 @@
 
 import { z } from 'zod';
-import { ai, embeddingModel } from '@/backend/ai/config/genkit.config';
+import { ai } from '@/backend/ai/config/genkit.config';
+import { vertexQueryEmbedder } from '@/backend/ai/shared/vertex-embedding.adapter';
 import { FirestorePriceBookRepository } from '@/backend/price-book/infrastructure/firestore-price-book-repository';
 
 const priceBookRepo = new FirestorePriceBookRepository();
@@ -27,16 +28,9 @@ export const priceBookRetrieverTool = ai.defineTool(
         try {
             console.log(`[Tool:PriceBookRetriever] Searching for: "${input.query}" (Year: ${input.year})`);
 
-            // 1. Generate Embedding for the query
-            const embeddingResult = await ai.embed({
-                embedder: embeddingModel,
-                content: input.query,
-            });
-
-            // Handle array or object return type from Genkit
-            const embedding = Array.isArray(embeddingResult)
-                ? embeddingResult[0].embedding
-                : (embeddingResult as any).embedding;
+            // 1. Embedding de la query con gemini-embedding-2 (RETRIEVAL_QUERY, 768)
+            // — mismo modelo que price_book_2025.
+            const embedding = await vertexQueryEmbedder.embedText(input.query);
 
             // 2. Search in Repository
             const results = await priceBookRepo.searchByVector(embedding, input.limit, input.year);

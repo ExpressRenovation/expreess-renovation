@@ -28,10 +28,37 @@ export class FirestorePriceBookRepository implements PriceBookRepository {
     private db;
     private collectionName: string;
 
-    constructor(collectionName: string = 'price_book_items') {
+    // Fuente única: `price_book_2025` (COAATMCA 2025, gemini-embedding-2 @768,
+    // enriquecido). Reemplaza al legacy `price_book_items` (-001), que se jubila.
+    // Los docs traen `kind` (item/breakdown); las lecturas filtran `kind=='item'`.
+    constructor(collectionName: string = 'price_book_2025') {
         initFirebaseAdminApp();
         this.db = getFirestore();
         this.collectionName = collectionName;
+    }
+
+    /**
+     * Normaliza un doc de `price_book_2025` a la forma `PriceBookItem` que espera la
+     * UedI/agentes. Clave: `unit` no existe en el esquema nuevo → se deriva de
+     * `unit_raw`/`unit_normalized`. Los descompuestos viven como docs
+     * `kind=='breakdown'` aparte (via `breakdown_ids`); para el listado de búsqueda
+     * `breakdown` queda `undefined`.
+     */
+    private mapDoc(id: string, data: any, extra: Record<string, any> = {}): any {
+        const { embedding: _e, createdAt, unit, unit_raw, unit_normalized, ...rest } = data;
+        let createdDate: Date | undefined;
+        if (createdAt && typeof createdAt.toDate === 'function') createdDate = createdAt.toDate();
+        else if (createdAt instanceof Date) createdDate = createdAt;
+        else if (typeof createdAt === 'string') createdDate = new Date(createdAt);
+        return {
+            id,
+            createdAt: createdDate,
+            unit: unit ?? unit_raw ?? unit_normalized ?? 'ud',
+            unit_raw,
+            unit_normalized,
+            ...rest,
+            ...extra,
+        };
     }
     async saveBatch(items: PriceBookItem[]): Promise<void> {
         // Reduced from 400 to 50 because Embeddings increase payload size significantly
@@ -121,12 +148,17 @@ export class FirestorePriceBookRepository implements PriceBookRepository {
         // Hybrid Strategy: Fetch more candidates via Vector Search (Loose Net), then Re-rank via Keyword
         const candidateLimit = keywordFilter ? limit * 3 : limit;
 
-        let vectorQuery = collectionRef.findNearest('embedding', vectorValue, {
-            limit: candidateLimit,
-            distanceMeasure: 'COSINE',
-        });
+        // Filtro `kind=='item'`: `price_book_2025` mezcla partidas (item) y sus
+        // componentes (breakdown). El buscador devuelve solo partidas. Requiere el
+        // índice vectorial compuesto `kind ASC + embedding VECTOR(768)`.
+        let vectorQuery = collectionRef
+            .where('kind', '==', 'item')
+            .findNearest('embedding', vectorValue, {
+                limit: candidateLimit,
+                distanceMeasure: 'COSINE',
+            });
 
-        // if (year) { ... } // Complicated in Firestore with Vector currently without composite index. Ignoring for now.
+        // if (year) { ... } // price_book_2025 no tiene `year`; el filtro se ignora.
 
         const snapshot = await vectorQuery.get();
 
@@ -142,23 +174,7 @@ export class FirestorePriceBookRepository implements PriceBookRepository {
                 }
             }
 
-            const { embedding: _, createdAt, ...rest } = data;
-
-            let createdDate: Date | undefined;
-            if (createdAt && typeof createdAt.toDate === 'function') {
-                createdDate = createdAt.toDate();
-            } else if (createdAt instanceof Date) {
-                createdDate = createdAt;
-            } else if (typeof createdAt === 'string') {
-                createdDate = new Date(createdAt);
-            }
-
-            return {
-                id: doc.id,
-                createdAt: createdDate,
-                matchScore: matchScore,
-                ...rest
-            } as PriceBookItem & { matchScore: number };
+            return this.mapDoc(doc.id, data, { matchScore }) as PriceBookItem & { matchScore: number };
         });
 
         // Hybrid Re-ranking
@@ -205,11 +221,14 @@ export class FirestorePriceBookRepository implements PriceBookRepository {
     ): Promise<(PriceBookItem & { matchScore: number })[]> {
         const collectionRef = this.db.collection(this.collectionName);
 
-        let queryRef: any = collectionRef;
+        // Base: solo partidas (`kind=='item'`). Cada combinación adicional de
+        // filtros de igualdad + findNearest exige su propio índice vectorial
+        // compuesto; hoy el path vivo (surveyor) pasa filtros vacíos → basta
+        // `kind + embedding`. `year` se omite (price_book_2025 no lo tiene).
+        let queryRef: any = collectionRef.where('kind', '==', 'item');
 
         if (filters.chapter) queryRef = queryRef.where('chapter', '==', filters.chapter);
         if (filters.section) queryRef = queryRef.where('section', '==', filters.section);
-        if (filters.year) queryRef = queryRef.where('year', '==', filters.year);
         if (filters.maxPrice) queryRef = queryRef.where('priceTotal', '<=', filters.maxPrice);
 
         const vectorValue = FieldValue.vector(embedding);
@@ -234,12 +253,7 @@ export class FirestorePriceBookRepository implements PriceBookRepository {
                 }
             }
 
-            const { embedding: _, createdAt, ...rest } = data;
-            return {
-                id: doc.id,
-                matchScore,
-                ...rest
-            } as PriceBookItem & { matchScore: number };
+            return this.mapDoc(doc.id, data, { matchScore }) as PriceBookItem & { matchScore: number };
         }).sort((a: PriceBookItem & { matchScore: number }, b: PriceBookItem & { matchScore: number }) => b.matchScore - a.matchScore);
     }
 

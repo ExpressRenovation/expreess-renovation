@@ -1,49 +1,25 @@
-
 import { VectorizerPort } from '../../domain/vectorizer.port';
+import { vertexQueryEmbedder, vertexDocumentEmbedder } from '@/backend/ai/shared/vertex-embedding.adapter';
 
-interface GeminiEmbeddingResponse {
-    embedding: {
-        values: number[];
-    };
-}
-
+/**
+ * RestApiVectorizerAdapter — DELEGA en el embedder Vertex `gemini-embedding-2`.
+ *
+ * Antes llamaba al Dev API (`generativelanguage.googleapis.com`, gemini-embedding-001).
+ * Se migró a Vertex -2 (ver `vertex-embedding.adapter.ts`) porque los corpus
+ * (`price_book_2025`, `material_catalog`) están ahora en -2 @768; una query -001
+ * vive en otro espacio vectorial → coseno inválido. Se conserva el nombre de clase
+ * y el puerto para que los 7 consumidores (retrievers, catalog-search, surveyor,
+ * acciones y scripts) cambien sin tocarlos.
+ *
+ * embedText → RETRIEVAL_QUERY (uso dominante: búsquedas).
+ * embedMany → RETRIEVAL_DOCUMENT (ingesta: asimetría doc/query mejora el recall).
+ */
 export class RestApiVectorizerAdapter implements VectorizerPort {
-    private apiKey: string;
-    // Reverted to gemini-embedding-001 as text-embedding-004 is unavailable for this key
-    private baseUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-001:embedContent';
+  async embedText(text: string): Promise<number[]> {
+    return vertexQueryEmbedder.embedText(text);
+  }
 
-    constructor() {
-        const key = process.env.GOOGLE_GENAI_API_KEY || process.env.GEMINI_API_KEY;
-        if (!key) throw new Error("GOOGLE_GENAI_API_KEY or GEMINI_API_KEY is not set");
-        this.apiKey = key;
-    }
-
-    async embedText(text: string): Promise<number[]> {
-        if (!text) throw new Error("Text to embed cannot be empty");
-
-        const url = `${this.baseUrl}?key=${this.apiKey}`;
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                content: { parts: [{ text }] },
-                outputDimensionality: 768
-            })
-        });
-
-        if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`Gemini API Error: ${response.status} ${response.statusText} - ${errorText}`);
-        }
-
-        const data = await response.json() as GeminiEmbeddingResponse;
-        return data.embedding.values;
-    }
-
-    async embedMany(texts: string[]): Promise<number[][]> {
-        // Simple parallel implementation. 
-        // Note: For large batches, we might need rate limiting/throttling.
-        // But the UseCase sends batches of 50, which should be fine for concurrency.
-        return Promise.all(texts.map(text => this.embedText(text)));
-    }
+  async embedMany(texts: string[]): Promise<number[][]> {
+    return vertexDocumentEmbedder.embedMany(texts);
+  }
 }

@@ -14,12 +14,9 @@ export async function searchPriceBookAction(query: string, year: number = 2025):
     try {
         console.log(`[ServerAction] Searching for: "${query}"`);
 
-        // Dependency Injection (Manual for now)
-        // In a larger app, we might use a container or singleton instance
-        // express-renovation tiene el libro vectorizado en `price_book_items`
-        // (1.688 items + índice vectorial). `price_book_2025` está vacío.
-        const collectionName = 'price_book_items';
-        const repository = new FirestorePriceBookRepository(collectionName);
+        // Fuente única: `price_book_2025` (gemini-embedding-2 @768, 12.174,
+        // enriquecido). Reemplaza al legacy `price_book_items` (-001), jubilado.
+        const repository = new FirestorePriceBookRepository('price_book_2025');
         const vectorizer = new RestApiVectorizerAdapter();
         const useCase = new SemanticSearchUseCase(repository, vectorizer);
 

@@ -2,7 +2,7 @@
 import { PriceBookRepository } from '../domain/price-book-repository';
 import { LLMPriceBookParser } from '../infrastructure/llm-price-book-parser';
 import { IngestionJobRepository } from '../domain/ingestion-job-repository';
-import { ai, embeddingModel } from '@/backend/ai/shared/config/genkit.config';
+import { vertexDocumentEmbedder } from '@/backend/ai/shared/vertex-embedding.adapter';
 import { PriceBookItem } from '../domain/price-book-item';
 
 /**
@@ -133,16 +133,13 @@ export class IngestPriceBookService {
             });
 
             try {
-                // Call Genkit embedMany
-                const embeddings = await ai.embedMany({
-                    embedder: embeddingModel,
-                    content: textsToEmbed,
-                    options: { outputDimensionality: 768 }
-                });
+                // gemini-embedding-2 (RETRIEVAL_DOCUMENT, 768) — coherente con
+                // price_book_2025. Devuelve number[][] (una fila por texto).
+                const embeddings = await vertexDocumentEmbedder.embedMany(textsToEmbed);
 
                 // Assign embeddings back to items
                 for (let j = 0; j < batch.length; j++) {
-                    const vector = embeddings[j].embedding;
+                    const vector = embeddings[j];
                     if (vector.length > 2048) {
                         console.error(`Error: Embedding dimension ${vector.length} exceeds 2048 limit.`);
                         throw new Error(`Generated embedding dimension ${vector.length} exceeds Firestore limit of 2048.`);

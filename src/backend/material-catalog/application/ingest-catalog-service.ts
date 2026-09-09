@@ -1,7 +1,8 @@
 
 import { MaterialCatalogRepository } from '../domain/material-catalog-repository';
 import { MaterialItem, MaterialItemSchema } from '../domain/material-item';
-import { ai, gemini25Flash, embeddingModel } from '@/backend/ai/shared/config/genkit.config';
+import { ai, gemini25Flash } from '@/backend/ai/shared/config/genkit.config';
+import { vertexDocumentEmbedder } from '@/backend/ai/shared/vertex-embedding.adapter';
 import { PDFDocument } from 'pdf-lib';
 import { z } from 'zod';
 import { getFirestore, FieldValue } from 'firebase-admin/firestore';
@@ -256,22 +257,16 @@ export class IngestMaterialCatalogService {
         );
 
         try {
-            // Atomic Vectorization: Each item text corresponds to exactly one embedding.
-            const results = await ai.embedMany({
-                embedder: embeddingModel,
-                content: textsToEmbed,
-                options: { outputDimensionality: 768 }
-            });
+            // gemini-embedding-2 (RETRIEVAL_DOCUMENT, 768) — coherente con
+            // material_catalog. Devuelve number[][] (una fila por texto).
+            const results = await vertexDocumentEmbedder.embedMany(textsToEmbed);
 
-            // Genkit embedMany doesn't always expose usage in a standard way across all providers,
-            // but we can approximate or check metadata if available.
-            // For now, we'll assume ~1 token per 4 chars for estimation if missing, 
-            // but we'll check if results have some metadata.
-            const tokens = results.reduce((sum, r: any) => sum + (r.metadata?.usage?.totalTokens || 0), 0);
+            // Vertex embedContent no expone `usage` por llamada aquí.
+            const tokens = 0;
 
             const enrichedItems = items.map((item, index) => ({
                 ...item,
-                embedding: results[index].embedding
+                embedding: results[index]
             }));
 
             return { items: enrichedItems, tokens };

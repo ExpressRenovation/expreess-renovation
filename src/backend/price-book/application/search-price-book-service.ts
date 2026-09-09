@@ -1,6 +1,6 @@
 
 import { PriceBookRepository } from "../domain/price-book-repository";
-import { ai, embeddingModel } from '@/backend/ai/shared/config/genkit.config';
+import { vertexQueryEmbedder } from '@/backend/ai/shared/vertex-embedding.adapter';
 import { PriceBookItem } from "../domain/price-book-item";
 
 export class SearchPriceBookService {
@@ -9,15 +9,9 @@ export class SearchPriceBookService {
     async execute(query: string, limit: number = 10, year?: number): Promise<PriceBookItem[]> {
         console.log(`[SearchService] Generating embedding for query: "${query}"`);
 
-        // 1. Generate Embedding for the query
-        // Note: ai.embed returns an Array of results even for single content in this SDK version
-        const embeddingResult = await ai.embed({
-            embedder: embeddingModel,
-            content: query
-        });
-
-        // Handle Array return type
-        const vector = Array.isArray(embeddingResult) ? embeddingResult[0]?.embedding : (embeddingResult as any).embedding;
+        // 1. Embedding de la query con gemini-embedding-2 (RETRIEVAL_QUERY, 768) —
+        // mismo modelo que los docs de price_book_2025 para que el coseno sea válido.
+        const vector = await vertexQueryEmbedder.embedText(query);
 
         console.log(`[SearchService] Generated vector length: ${vector?.length}`);
 

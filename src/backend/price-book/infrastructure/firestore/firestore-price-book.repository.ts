@@ -11,10 +11,20 @@ export class FirestorePriceBookRepository implements PriceBookRepository {
     private db;
     private collectionName: string;
 
-    constructor(collectionName: string = 'price_book_items') {
+    // Fuente única: `price_book_2025` (gemini-embedding-2 @768). Reemplaza al
+    // legacy `price_book_items` (-001), que se jubila.
+    constructor(collectionName: string = 'price_book_2025') {
         initFirebaseAdminApp();
         this.db = getFirestore();
         this.collectionName = collectionName;
+    }
+
+    /** Normaliza un doc de price_book_2025 a PriceBookItem (unit ← unit_raw). */
+    private static mapDoc(data: any): PriceBookItem {
+        return {
+            ...data,
+            unit: data.unit ?? data.unit_raw ?? data.unit_normalized ?? 'ud',
+        } as PriceBookItem;
     }
 
     async save(item: PriceBookItem): Promise<void> {
@@ -72,16 +82,19 @@ export class FirestorePriceBookRepository implements PriceBookRepository {
     }
 
     async searchBySimilarity(embedding: number[], limit: number = 10): Promise<PriceBookItem[]> {
-        // Requires Firestore Vector Search Index
+        // Requires Firestore Vector Search Index. Filtro `kind=='item'` (price_book_2025
+        // mezcla partidas y breakdowns) → índice compuesto `kind + embedding`.
         const coll = this.db.collection(this.collectionName);
 
-        const vectorQuery = coll.findNearest('embedding', FieldValue.vector(embedding), {
-            limit: limit,
-            distanceMeasure: 'COSINE',
-        });
+        const vectorQuery = coll
+            .where('kind', '==', 'item')
+            .findNearest('embedding', FieldValue.vector(embedding), {
+                limit: limit,
+                distanceMeasure: 'COSINE',
+            });
 
         const snapshot = await vectorQuery.get();
-        return snapshot.docs.map(doc => doc.data() as PriceBookItem);
+        return snapshot.docs.map(doc => FirestorePriceBookRepository.mapDoc(doc.data()));
     }
 
     async count(): Promise<number> {

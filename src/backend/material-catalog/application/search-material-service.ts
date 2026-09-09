@@ -1,7 +1,7 @@
 
 import { MaterialCatalogRepository } from '../domain/material-catalog-repository';
 import { MaterialItem } from '../domain/material-item';
-import { ai, embeddingModel } from '@/backend/ai/shared/config/genkit.config';
+import { vertexQueryEmbedder } from '@/backend/ai/shared/vertex-embedding.adapter';
 
 export class SearchMaterialService {
     constructor(
@@ -16,16 +16,11 @@ export class SearchMaterialService {
             if (bySku) return [bySku];
         }
 
-        // 2. Semantic Search using Vector Embeddings
+        // 2. Semantic Search — embedding de la query con gemini-embedding-2
+        // (RETRIEVAL_QUERY, 768), mismo modelo que los vectores de material_catalog.
         try {
-            const results = await ai.embed({
-                embedder: embeddingModel,
-                content: query,
-                options: { outputDimensionality: 768 }
-            });
-
-            // Genkit embed returns an array of results even for single content
-            return await this.repository.searchByVector(results[0].embedding, limit);
+            const vector = await vertexQueryEmbedder.embedText(query);
+            return await this.repository.searchByVector(vector, limit);
         } catch (error) {
             console.error("Vector search failed, falling back to text:", error);
             return await this.repository.searchByText(query, limit);

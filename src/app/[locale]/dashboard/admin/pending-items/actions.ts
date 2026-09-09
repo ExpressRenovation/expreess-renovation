@@ -1,6 +1,6 @@
 'use server';
 
-import { ai, embeddingModel } from '@/backend/ai/shared/config/genkit.config';
+import { vertexDocumentEmbedder } from '@/backend/ai/shared/vertex-embedding.adapter';
 import { FirestorePriceBookRepository } from '@/backend/price-book/infrastructure/firestore-price-book-repository';
 import { FirestorePendingPriceItemRepository } from '@/backend/budget/infrastructure/firestore-pending-item.repository';
 import { PendingPriceItem } from '@/backend/budget/domain/pending-price-item';
@@ -21,23 +21,19 @@ export async function approvePendingItemAction(input: ApproveItemInput) {
     try {
         console.log(`[Action] Approving item ${input.id}...`);
 
-        // 1. Generate Embedding for the new description
-        // Use Genkit embed
-        const embeddingResult = await ai.embed({
-            embedder: embeddingModel,
-            content: input.finalDescription,
-        });
+        // 1. Embedding con gemini-embedding-2 (RETRIEVAL_DOCUMENT, 768) — se indexa
+        // como doc en price_book_2025.
+        const embedding = await vertexDocumentEmbedder.embedText(input.finalDescription);
 
-        const embedding = Array.isArray(embeddingResult)
-            ? embeddingResult[0].embedding
-            : (embeddingResult as any).embedding;
-
-        // 2. Create Price Book Item
+        // 2. Create Price Book Item — forma canónica de price_book_2025 (`kind:'item'`
+        // + `unit_raw`) para que entre en el filtro `kind=='item'` de las búsquedas.
         await priceBookRepo.saveBatch([{
-            id: input.finalCode, // Or generate new ID? Use Code as ID for uniqueness? Or auto-id
+            id: input.finalCode,
             code: input.finalCode,
             description: input.finalDescription,
             unit: input.finalUnit,
+            unit_raw: input.finalUnit,
+            kind: 'item',
             priceTotal: input.finalPrice,
             priceLabor: 0, // Default breakdown
             priceMaterial: input.finalPrice,
