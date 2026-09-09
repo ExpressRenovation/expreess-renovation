@@ -1,0 +1,66 @@
+rules_version = '2';
+
+// Reglas de Firebase Storage para express-renovation.
+//
+// Contexto: a diferencia de Firestore (server-only, `if false` — se accede vía
+// Admin SDK), varias subidas SÍ ocurren desde el navegador (cliente), así que
+// necesitan reglas explícitas. El proyecto nuevo venía con todo denegado, lo que
+// rompía la subida de BC3/PDF (`pipeline_uploads/…`) → error storage/unauthorized.
+//
+// Principio: cada usuario solo escribe en SU carpeta; límites de tamaño y
+// content-type en el servidor; todo lo no declarado, denegado.
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function isSignedIn() { return request.auth != null; }
+    function isAdmin() { return isSignedIn() && request.auth.token.admin == true; }
+
+    // --- Pipeline PDF/BC3 (NL/PDF/BC3 → ai-core). Solo la carpeta del propio
+    // usuario. El worker de ai-core lee por IAM (Admin), no por estas reglas. ---
+    match /pipeline_uploads/{uid}/{jobId}/{fileName} {
+      allow read: if isSignedIn() && request.auth.uid == uid;
+      allow write: if isSignedIn()
+                   && request.auth.uid == uid
+                   && request.resource.size < 100 * 1024 * 1024
+                   && (request.resource.contentType == 'application/pdf'
+                       || request.resource.contentType == 'application/octet-stream');
+    }
+
+    // --- Renders (dream-renovator): imágenes por presupuesto, usuario autenticado. ---
+    match /renders/{budgetId}/{fileName} {
+      allow read: if isSignedIn();
+      allow write: if isSignedIn()
+                   && request.resource.size < 25 * 1024 * 1024
+                   && request.resource.contentType.matches('image/.*');
+    }
+
+    // --- Carga de libros de precios (panel admin): solo admins. ---
+    match /price-books/{fileName} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin()
+                   && request.resource.size < 100 * 1024 * 1024;
+    }
+
+    // --- Formulario PÚBLICO de solicitud de presupuesto (páginas públicas):
+    // usuarios NO autenticados suben imágenes. OJO SEGURIDAD: es escritura sin
+    // auth → límites estrictos (solo imágenes, tamaño acotado). Si no quieres
+    // subidas anónimas, elimina estos dos bloques y el form público dejará de
+    // subir imágenes. ---
+    match /public_drafts/{fileName} {
+      allow read: if true;
+      allow write: if request.resource.size < 15 * 1024 * 1024
+                   && request.resource.contentType.matches('image/.*');
+    }
+    match /public_uploads/{fileName} {
+      allow read: if true;
+      allow write: if request.resource.size < 15 * 1024 * 1024
+                   && request.resource.contentType.matches('image/.*');
+    }
+
+    // --- Todo lo demás: denegado. ---
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
