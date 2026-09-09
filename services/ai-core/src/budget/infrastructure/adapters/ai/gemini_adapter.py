@@ -18,6 +18,86 @@ logger = logging.getLogger(__name__)
 
 
 # ---------------------------------------------------------------------------
+# Vertex embedContent vía REST DIRECTO.
+#
+# El SDK `google-genai` enruta `embed_content` al método Vertex `:predict`
+# (endpoint de embeddings clásico, `text-embedding-*` / `gemini-embedding-001`).
+# Pero `gemini-embedding-2` SOLO se sirve por el método Gemini `:embedContent`
+# → el SDK devuelve 404 en el worker desplegado ("model not found"), lo que
+# tumbaba TODOS los embeddings (query del catálogo + material lookup del
+# compositor) → 0 candidatos → todo from_scratch. Llamamos al endpoint REST
+# `:embedContent` directamente (host `global` sin prefijo de región), con token
+# ADC del SA de runtime. Validado 200/768-dims. No depende del enrutado del SDK.
+# ---------------------------------------------------------------------------
+
+import json as _json  # noqa: E402
+import urllib.error as _urllib_error  # noqa: E402
+import urllib.request as _urllib_request  # noqa: E402
+
+_ADC_CREDS: Any = None  # cache del objeto de credenciales ADC (refresca solo el token)
+
+
+def _adc_token() -> str:
+    global _ADC_CREDS
+    import google.auth
+    from google.auth.transport.requests import Request as _AuthRequest
+
+    if _ADC_CREDS is None:
+        _ADC_CREDS, _ = google.auth.default(
+            scopes=["https://www.googleapis.com/auth/cloud-platform"]
+        )
+    if not _ADC_CREDS.valid:
+        _ADC_CREDS.refresh(_AuthRequest())
+    return _ADC_CREDS.token
+
+
+def _vertex_embed_content(
+    project: str,
+    location: str,
+    model: str,
+    text: str,
+    *,
+    dim: int = 768,
+    task_type: str = "RETRIEVAL_QUERY",
+) -> List[float]:
+    """POST síncrono a Vertex `:embedContent` (gemini-embedding-2 @global).
+
+    Devuelve el vector truncado a ``dim``. Lanza en error HTTP (lo captura el
+    retry de ``get_embedding``).
+    """
+    url = (
+        f"https://aiplatform.googleapis.com/v1/projects/{project}"
+        f"/locations/{location}/publishers/google/models/{model}:embedContent"
+    )
+    body = _json.dumps(
+        {
+            "content": {"parts": [{"text": text}]},
+            "outputDimensionality": dim,
+            "taskType": task_type,
+        }
+    ).encode("utf-8")
+    req = _urllib_request.Request(
+        url,
+        data=body,
+        method="POST",
+        headers={
+            "Authorization": f"Bearer {_adc_token()}",
+            "Content-Type": "application/json",
+        },
+    )
+    try:
+        with _urllib_request.urlopen(req, timeout=30) as r:
+            data = _json.load(r)
+    except _urllib_error.HTTPError as e:
+        detail = e.read().decode("utf-8", "ignore")[:300]
+        raise AIProviderError(f"Vertex embedContent {e.code}: {detail}")
+    values = (data.get("embedding") or {}).get("values")
+    if not values:
+        raise ValueError("empty embedding from Vertex embedContent")
+    return [float(x) for x in values[:dim]]
+
+
+# ---------------------------------------------------------------------------
 # S2-A-02 — Circuit breaker para Gemini.
 #
 # Objetivo: si Gemini falla repetidamente (>3 fallos en 5 min), abrimos el
@@ -523,47 +603,43 @@ class GoogleGenerativeAIAdapter(ILLMProvider):
     async def get_embedding(self, text: str) -> List[float]:
         import asyncio
         import random
-        from google.genai import types
 
         attempt = 0
         while attempt < self.max_retries:
             try:
-                # Ejecutamos en Thread Pool el método síncrono del cliente genai.
-                # Phase 0 — el id del modelo de embeddings viene del registry
-                # configurable (``model_registry/embedding``), TTL-cached y
-                # no-fatal; cae a ``gemini-embedding-2`` si no hay doc.
-                # output_dimensionality=768 se mantiene FIJO para casar con los
-                # vectores almacenados en Firestore — NUNCA lo decide el registry
-                # (cambiar dims invalida vectores).
-                # task_type=RETRIEVAL_QUERY: asimetria doc/query (los docs se
-                # indexan con RETRIEVAL_DOCUMENT) mejora el recall. Usamos el
-                # cliente `global` porque gemini-embedding-2 solo vive alli.
+                # Phase 0 — id del modelo desde el registry configurable
+                # (``model_registry/embedding``), TTL-cached; cae a
+                # ``gemini-embedding-2`` si no hay doc.
+                # output_dimensionality=768 FIJO (casa con Firestore; cambiarlo
+                # invalida los vectores). task_type=RETRIEVAL_QUERY (asimetría
+                # doc/query mejora recall). Endpoint `global` (único que sirve -2).
+                #
+                # REST `:embedContent` DIRECTO — NO el SDK: `embed_content` del SDK
+                # enruta a `:predict`, que gemini-embedding-2 no soporta (404). Ver
+                # `_vertex_embed_content`.
                 embedding_model = get_model(
                     "embedding", default_model_id="gemini-embedding-2"
                 ).model_id
-                response = await asyncio.to_thread(
-                    self._embed_client.models.embed_content,
-                    model=embedding_model,
-                    contents=text,
-                    config=types.EmbedContentConfig(
-                        output_dimensionality=768,
-                        task_type="RETRIEVAL_QUERY",
-                    ),
+                embeddings = await asyncio.to_thread(
+                    _vertex_embed_content,
+                    self.project,
+                    self._embed_location,
+                    embedding_model,
+                    text,
+                    dim=768,
+                    task_type="RETRIEVAL_QUERY",
                 )
-                
-                embeddings = response.embeddings[0].values
                 if not embeddings:
-                    raise ValueError(f"No embeddings returned from GenAI API.")
-                
+                    raise ValueError("No embeddings returned from Vertex embedContent.")
                 return embeddings
             except Exception as e:
-                logger.error(f"Embedding API SDK Error: {e}")
-                
+                logger.error(f"Embedding API Error: {e}")
+
             attempt += 1
             if attempt >= self.max_retries:
                 raise AIProviderError(f"Failed to get embeddings after {self.max_retries} retries.")
-                
+
             delay = self.base_delay * (2 ** (attempt - 1)) + random.uniform(0, 1)
             await asyncio.sleep(delay)
-            
+
         raise AIProviderError("Fell through get_embedding retry loop unexpectedly.")
