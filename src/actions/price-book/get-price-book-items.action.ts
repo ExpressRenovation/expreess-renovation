@@ -7,18 +7,19 @@ import { PriceBookItem } from '@/backend/price-book/domain/price-book-item';
 
 export async function getPriceBookItems(year: number, limitCount: number = 50) {
     try {
-        console.log(`[Action] Fetching price book items for year ${year} (limit: ${limitCount})...`);
+        console.log(`[Action] Fetching price book items (kind=item, limit: ${limitCount})...`);
         initFirebaseAdminApp();
         const db = getFirestore();
-        // express-renovation: datos del libro en `price_book_items` (no price_book_2025).
-        const collectionName = 'price_book_items';
+        // Fuente única: `price_book_2025` (gemini-embedding-2). Se filtra por
+        // `kind=='item'` (excluye breakdowns); NO por `year` (el esquema nuevo no
+        // tiene ese campo). `unit` se deriva de `unit_raw`/`unit_normalized`.
+        const collectionName = 'price_book_2025';
         const collectionRef = db.collection(collectionName);
 
         console.log(`[Action] Querying Firestore...`);
-        // Query by year
         const snapshot = await collectionRef
-            .where('year', '==', year)
-            .select('code', 'description', 'unit', 'priceTotal', 'year', 'chapter', 'section', 'createdAt', 'updatedAt', 'priceLabor', 'priceMaterial', 'breakdown')
+            .where('kind', '==', 'item')
+            .select('code', 'description', 'unit_raw', 'unit_normalized', 'priceTotal', 'kind', 'chapter', 'section', 'createdAt', 'updatedAt', 'priceLabor', 'priceMaterial', 'breakdown')
             .limit(limitCount)
             .get();
 
@@ -44,14 +45,16 @@ export async function getPriceBookItems(year: number, limitCount: number = 50) {
             return {
                 ...data,
                 id: doc.id,
+                // unit no existe en price_book_2025 → derivar de unit_raw/unit_normalized.
+                unit: (data as any).unit ?? (data as any).unit_raw ?? (data as any).unit_normalized ?? 'ud',
                 embedding: undefined, // Don't send heavy vectors to client
                 createdAt: toDate(data.createdAt),
                 updatedAt: toDate(data.updatedAt),
             } as PriceBookItem;
         });
 
-        // Get total count
-        const countQuery = collectionRef.where('year', '==', year).count();
+        // Get total count (solo partidas)
+        const countQuery = collectionRef.where('kind', '==', 'item').count();
         const countSnapshot = await countQuery.get();
 
         // Final separate sanitization to ensure no non-POJOs leak
