@@ -5,3 +5,12 @@ tests/fixtures/bc3/
 # Estado local de la re-vectorización por batch (input/mapping/predicciones/
 # checkpoint). Efímero y pesado — nunca se versiona.
 scripts/.batch_cache/
+
+# Bytecode compilado de Python — artefactos generados al ejecutar, nunca se
+# versionan (el Docker build compila fresco y .dockerignore ya los excluye).
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
