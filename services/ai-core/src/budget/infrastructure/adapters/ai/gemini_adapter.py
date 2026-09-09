@@ -300,6 +300,13 @@ class GoogleGenerativeAIAdapter(ILLMProvider):
         self.genai_client = genai.Client(
             vertexai=True, project=self.project, location=self.location
         )
+        # Cliente DEDICADO a embeddings: gemini-embedding-2 solo se sirve en el
+        # endpoint `global` (y su cuota es global, 6000/min). El LLM flash sigue
+        # en europe-southwest1 con `self.genai_client`.
+        self._embed_location = os.environ.get("EMBEDDING_LOCATION", "global")
+        self._embed_client = genai.Client(
+            vertexai=True, project=self.project, location=self._embed_location
+        )
 
         self.model_name = model_name
         # S1-A-06 — defaults configurables vía env vars. Las llamadas pueden
@@ -524,18 +531,24 @@ class GoogleGenerativeAIAdapter(ILLMProvider):
                 # Ejecutamos en Thread Pool el método síncrono del cliente genai.
                 # Phase 0 — el id del modelo de embeddings viene del registry
                 # configurable (``model_registry/embedding``), TTL-cached y
-                # no-fatal; cae a ``gemini-embedding-001`` si no hay doc.
+                # no-fatal; cae a ``gemini-embedding-2`` si no hay doc.
                 # output_dimensionality=768 se mantiene FIJO para casar con los
-                # vectores ya almacenados en Firestore (gemini-embedding-001 @768)
-                # — NUNCA lo decide el registry (cambiar dims invalida vectores).
+                # vectores almacenados en Firestore — NUNCA lo decide el registry
+                # (cambiar dims invalida vectores).
+                # task_type=RETRIEVAL_QUERY: asimetria doc/query (los docs se
+                # indexan con RETRIEVAL_DOCUMENT) mejora el recall. Usamos el
+                # cliente `global` porque gemini-embedding-2 solo vive alli.
                 embedding_model = get_model(
-                    "embedding", default_model_id="gemini-embedding-001"
+                    "embedding", default_model_id="gemini-embedding-2"
                 ).model_id
                 response = await asyncio.to_thread(
-                    self.genai_client.models.embed_content,
+                    self._embed_client.models.embed_content,
                     model=embedding_model,
                     contents=text,
-                    config=types.EmbedContentConfig(output_dimensionality=768),
+                    config=types.EmbedContentConfig(
+                        output_dimensionality=768,
+                        task_type="RETRIEVAL_QUERY",
+                    ),
                 )
                 
                 embeddings = response.embeddings[0].values

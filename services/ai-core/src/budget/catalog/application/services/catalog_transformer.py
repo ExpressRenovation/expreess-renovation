@@ -122,5 +122,8 @@ class CatalogTransformer:
             # entre items, ej. `mo055` aparece en cientos de partidas).
             breakdown_ids=[b.doc_id or b.code for b in bk_entries],
             source_page=raw_item.get("page"),
+            # Alias semánticos generados offline (jerga cliente/aparejador ES).
+            # Presentes solo en el JSON enriquecido; ausente → lista vacía.
+            search_aliases=raw_item.get("search_aliases") or [],
         )
         return item_entry, bk_entries

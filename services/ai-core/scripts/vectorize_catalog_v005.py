@@ -59,39 +59,49 @@ def _init_firebase_admin() -> None:
     load_dotenv(ROOT / ".env")
 
     import os
-    project_id = os.environ.get("FIREBASE_PROJECT_ID")
+    project_id = (
+        os.environ.get("FIREBASE_PROJECT_ID")
+        or os.environ.get("GCLOUD_PROJECT")
+        or "express-renovation"
+    )
     client_email = os.environ.get("FIREBASE_CLIENT_EMAIL")
     private_key = os.environ.get("FIREBASE_PRIVATE_KEY", "").replace("\\n", "\n")
 
-    if not (project_id and client_email and private_key):
-        raise SystemExit(
-            "Faltan FIREBASE_PROJECT_ID / FIREBASE_CLIENT_EMAIL / FIREBASE_PRIVATE_KEY en .env"
-        )
+    if client_email and private_key:
+        # Ruta con clave de servicio explícita (prod/CI).
+        info = {
+            "type": "service_account",
+            "project_id": project_id,
+            "private_key_id": "auto",
+            "private_key": private_key,
+            "client_email": client_email,
+            "client_id": "auto",
+            "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+            "token_uri": "https://oauth2.googleapis.com/token",
+            "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+            "client_x509_cert_url": (
+                f"https://www.googleapis.com/robot/v1/metadata/x509/"
+                f"{client_email.replace('@', '%40')}"
+            ),
+        }
+        cred: object = credentials.Certificate(info)
+        try:
+            firebase_admin.initialize_app(cred)
+        except ValueError:
+            pass  # ya inicializado
+    else:
+        # Sin clave SA (la organización bloquea crear claves): Application
+        # Default Credentials — `gcloud auth application-default login`.
+        logger.info("Sin FIREBASE_CLIENT_EMAIL/PRIVATE_KEY → usando ADC (project=%s).", project_id)
+        try:
+            firebase_admin.initialize_app(options={"projectId": project_id})
+        except ValueError:
+            pass  # ya inicializado
 
-    info = {
-        "type": "service_account",
-        "project_id": project_id,
-        "private_key_id": "auto",
-        "private_key": private_key,
-        "client_email": client_email,
-        "client_id": "auto",
-        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-        "token_uri": "https://oauth2.googleapis.com/token",
-        "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-        "client_x509_cert_url": (
-            f"https://www.googleapis.com/robot/v1/metadata/x509/"
-            f"{client_email.replace('@', '%40')}"
-        ),
-    }
-    try:
-        firebase_admin.initialize_app(credentials.Certificate(info))
-    except ValueError:
-        pass  # ya inicializado
 
-
-async def run(commit: bool, wipe: bool) -> int:
-    logger.info(f"Leyendo {SOURCE_JSON.name} (~5MB)…")
-    with SOURCE_JSON.open("r", encoding="utf-8") as f:
+async def run(commit: bool, wipe: bool, source_path: Path = SOURCE_JSON) -> int:
+    logger.info(f"Leyendo {source_path} (~5MB)…")
+    with source_path.open("r", encoding="utf-8") as f:
         source = json.load(f)
 
     if commit:
@@ -99,7 +109,7 @@ async def run(commit: bool, wipe: bool) -> int:
         _init_firebase_admin()
         repo = FirestorePriceBookRepository(db=firestore.client())
         embedder = GeminiEmbeddingProvider()
-        logger.info("Commit real: Gemini (gemini-embedding-001) → Firestore price_book_2025.")
+        logger.info("Commit real: Gemini (gemini-embedding-2 @global, RETRIEVAL_DOCUMENT) → Firestore price_book_2025.")
     else:
         # Dry-run: adapters in-memory + determinista (ningún I/O).
         from src.budget.catalog.infrastructure.adapters.deterministic_embedding_provider import (
@@ -137,12 +147,19 @@ def main() -> int:
         action="store_true",
         help="Borrar todos los docs de price_book_2025 antes de escribir. Requiere --commit.",
     )
+    parser.add_argument(
+        "--source",
+        default=None,
+        help="Ruta al JSON origen (default: docs/2025_variable_final.json). "
+        "Usa el enriquecido para incluir search_aliases.",
+    )
     args = parser.parse_args()
 
     if args.wipe and not args.commit:
         logger.warning("--wipe sin --commit no tiene efecto en dry-run.")
 
-    return asyncio.run(run(commit=args.commit, wipe=args.wipe))
+    source_path = Path(args.source) if args.source else SOURCE_JSON
+    return asyncio.run(run(commit=args.commit, wipe=args.wipe, source_path=source_path))
 
 
 if __name__ == "__main__":

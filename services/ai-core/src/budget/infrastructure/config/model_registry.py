@@ -69,8 +69,12 @@ class ModelConfig:
 _CODE_DEFAULTS: Dict[str, ModelConfig] = {
     "pricing_flash": ModelConfig(model_id="gemini-2.5-flash"),
     "pricing_pro": ModelConfig(model_id="gemini-2.5-pro"),
+    # gemini-embedding-2: cuota alta self-service (6000/min global) vs los
+    # 5/min capados de gemini-embedding-001 en proyecto nuevo. Soporta
+    # outputDimensionality=768 (verificado), así que el índice 768-dim NO cambia.
+    # Requiere location="global" (ver GeminiEmbeddingProvider / GeminiAdapter).
     "embedding": ModelConfig(
-        model_id="gemini-embedding-001",
+        model_id="gemini-embedding-2",
         params={"outputDimensionality": 768},
     ),
 }

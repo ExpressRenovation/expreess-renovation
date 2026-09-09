@@ -36,6 +36,10 @@ class PriceBookItemEntry(BaseModel):
     breakdown_ids: list[str] = Field(default_factory=list)
     source_page: Optional[int] = None
     source_book: str = "COAATMCA_2025"
+    # Alias semánticos (jerga cliente/aparejador ES) generados offline para
+    # enriquecer el embedding (y BM25). Se persiste vía model_dump; NO altera
+    # ningún campo de la partida original.
+    search_aliases: list[str] = Field(default_factory=list)
 
 
 class PriceBookBreakdownEntry(BaseModel):
@@ -82,7 +86,13 @@ class EmbeddingTextBuilder:
     def for_item(item: PriceBookItemEntry) -> str:
         unit = item.unit_normalized or item.unit_raw
         section = item.section or ""
-        return f"{item.chapter} > {section} | {unit} | {item.description}"
+        base = f"{item.chapter} > {section} | {unit} | {item.description}"
+        # Enriquecimiento semántico: anexamos los alias de búsqueda (jerga de
+        # cliente/aparejador) para que el vector "entienda" cómo se nombra la
+        # partida en un presupuesto real, no solo la redacción oficial COAATMCA.
+        if item.search_aliases:
+            base += f" | también: {', '.join(item.search_aliases)}"
+        return base
 
     @staticmethod
     def for_breakdown(bk: PriceBookBreakdownEntry) -> str:

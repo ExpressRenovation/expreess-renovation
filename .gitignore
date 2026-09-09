@@ -53,3 +53,6 @@ next-env.d.ts
 # firebase
 firebase-debug.log
 firestore-debug.log
+
+# Claude Code — settings per-usuario (permisos locales). launch.json sí es compartible.
+.claude/settings.local.json

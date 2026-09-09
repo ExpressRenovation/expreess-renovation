@@ -29,7 +29,7 @@ from src.budget.infrastructure.config.model_registry import get_model
 
 logger = logging.getLogger(__name__)
 
-_MODEL = "gemini-embedding-001"
+_MODEL = "gemini-embedding-2"
 
 # gemini-embedding-001 es MRL (Matryoshka) y devuelve 3072 dims por defecto.
 # Firestore acepta vectores de ≤ 2048 dims. Truncamos a 768 (coincide con
@@ -53,9 +53,17 @@ class GeminiEmbeddingProvider(IEmbeddingProvider):
     def __init__(
         self,
         *,
-        max_retries: int = 5,
-        base_delay: float = 4.0,
+        max_retries: int = 8,
+        # Backoff suave y ACOTADO (cap 8s): un 429 puntual se reintenta rápido.
+        base_delay: float = 1.0,
         inter_batch_delay: float = 0.7,
+        # OJO: gemini-embedding-2 en proyecto nuevo tiene una RÁFAGA grande
+        # (~2000) pero un enforcement por-segundo/concurrente conservador. Medido:
+        # serie (conc=1) → 7/s LIMPIO sostenido; conc=2 → 13/s LIMPIO sobre 500;
+        # conc=4 → colapsa tras ~2137 (429 en tromba). Usamos conc=2 (rápido y
+        # por debajo del umbral de ráfaga) + 8 reintentos que absorben 429
+        # puntuales sin abortar la ingesta.
+        concurrency: int = 2,
     ) -> None:
         project = (
             os.environ.get("GOOGLE_CLOUD_PROJECT")
@@ -67,7 +75,10 @@ class GeminiEmbeddingProvider(IEmbeddingProvider):
                 "GeminiEmbeddingProvider requires GOOGLE_CLOUD_PROJECT / GCLOUD_PROJECT / "
                 "FIREBASE_PROJECT_ID (Vertex AI)."
             )
-        location = os.environ.get("GOOGLE_CLOUD_LOCATION", "europe-southwest1")
+        # gemini-embedding-2 SOLO se sirve en el endpoint `global` (y su cuota
+        # es global). Desacoplamos de GOOGLE_CLOUD_LOCATION, que apunta a
+        # europe-southwest1 para el LLM flash.
+        location = os.environ.get("EMBEDDING_LOCATION", "global")
         from google import genai
         self._client: Any = genai.Client(vertexai=True, project=project, location=location)
         # Phase 0 — embedding model id from the configurable registry
@@ -81,40 +92,46 @@ class GeminiEmbeddingProvider(IEmbeddingProvider):
         # Throttle preventivo entre batches — 0.7s da <90 RPM, por debajo del
         # free tier de 100 RPM con algo de margen.
         self._inter_batch_delay = inter_batch_delay
+        self._concurrency = concurrency
 
     async def embed_batch(self, texts: list[str]) -> list[list[float]]:
         if not texts:
             return []
 
-        last_exc: Exception | None = None
-        for attempt in range(self._max_retries):
-            try:
-                from google.genai import types
-                response = await asyncio.to_thread(
-                    self._client.models.embed_content,
-                    model=self._model,
-                    contents=texts,
-                    config=types.EmbedContentConfig(output_dimensionality=_FIRESTORE_DIM_LIMIT),
-                )
-                vectors = [emb.values for emb in response.embeddings]
-                if len(vectors) != len(texts):
-                    raise RuntimeError(
-                        f"Unexpected embeddings returned: got {len(vectors)}, expected {len(texts)}"
-                    )
-                # Throttle preventivo en camino feliz — evita disparar el rate
-                # limit en el siguiente batch.
-                if self._inter_batch_delay > 0:
-                    await asyncio.sleep(self._inter_batch_delay)
-                return [v[:_FIRESTORE_DIM_LIMIT] for v in vectors]
-            except Exception as e:
-                last_exc = e
-                if not _is_rate_limit_error(e) or attempt == self._max_retries - 1:
-                    raise
-                delay = self._base_delay * (2 ** attempt) + random.uniform(0, 1)
-                logger.warning(
-                    f"Rate limit on embed_batch (attempt {attempt + 1}/{self._max_retries}), "
-                    f"sleeping {delay:.1f}s"
-                )
-                await asyncio.sleep(delay)
+        from google.genai import types
 
-        raise RuntimeError(f"embed_batch exhausted retries: {last_exc}")
+        config = types.EmbedContentConfig(
+            output_dimensionality=_FIRESTORE_DIM_LIMIT,
+            task_type="RETRIEVAL_DOCUMENT",
+        )
+        # gemini-embedding-2 (metodo `embedContent`) embebe UNA content por
+        # llamada — NO soporta batch como gemini-embedding-001 (`predict` con
+        # `instances`). Embebemos cada texto individualmente con concurrencia
+        # acotada; la cuota de -2 (6000/min global) da margen de sobra y el
+        # backoff absorbe cualquier 429 puntual. Se preserva el ORDEN.
+        sem = asyncio.Semaphore(self._concurrency)
+
+        async def _embed_one(text: str) -> list[float]:
+            last_exc: Exception | None = None
+            for attempt in range(self._max_retries):
+                try:
+                    async with sem:
+                        response = await asyncio.to_thread(
+                            self._client.models.embed_content,
+                            model=self._model,
+                            contents=text,
+                            config=config,
+                        )
+                    vals = response.embeddings[0].values
+                    if not vals:
+                        raise RuntimeError("empty embedding returned")
+                    return list(vals[:_FIRESTORE_DIM_LIMIT])
+                except Exception as e:
+                    last_exc = e
+                    if not _is_rate_limit_error(e) or attempt == self._max_retries - 1:
+                        raise
+                    delay = min(self._base_delay * (2 ** attempt), 8.0) + random.uniform(0, 1)
+                    await asyncio.sleep(delay)
+            raise RuntimeError(f"embed_one exhausted retries: {last_exc}")
+
+        return await asyncio.gather(*[_embed_one(t) for t in texts])

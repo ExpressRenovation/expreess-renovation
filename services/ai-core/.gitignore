@@ -1,3 +1,7 @@
 
 # Sprint 4 Fase L — BC3 fixtures cliente (contienen partidas con datos reales).
 tests/fixtures/bc3/
+
+# Estado local de la re-vectorización por batch (input/mapping/predicciones/
+# checkpoint). Efímero y pesado — nunca se versiona.
+scripts/.batch_cache/
