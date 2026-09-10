@@ -1,18 +1,49 @@
 rules_version = '2';
 
+// Reglas de Firestore para express-renovation.
+//
+// PRINCIPIO: server-only por defecto. La app llega a Firestore vía Admin SDK
+// (server actions de Next.js + servicio ai-core en Cloud Run) y el Admin SDK
+// IGNORA estas reglas. Por eso el catch-all deniega todo.
+//
+// ÚNICA excepción — hay UN acceso desde el navegador (cliente): el hook
+// `src/hooks/use-pipeline-job.ts` hace `onSnapshot(doc(db,'pipeline_jobs',jobId))`
+// para pintar estado/progreso del job (el ActiveJobBanner del asistente y el
+// flujo de mediciones con NEXT_PUBLIC_USE_PIPELINE_JOBS). Con `if false` esa
+// suscripción se DENEGABA en silencio (el error se traga → el banner nunca
+// aparecía). Por eso `pipeline_jobs` ahora permite LECTURA autenticada.
+//   - Las ESCRITURAS de `pipeline_jobs` las hace Python/ai-core (Admin SDK) →
+//     server-only (`if false`).
+//   - `pipeline_telemetry` NO se lee desde el navegador: el cliente escucha por
+//     SSE (`/api/budget/stream`) que usa Admin SDK → sigue server-only.
+//
+// CONTEXTO HISTÓRICO: `/mail` permitía `create` sin auth para que los forms
+// públicos encolaran emails desde el navegador. Con el repo público y la web
+// API key visible en su historial, eso era un open-relay desde el remitente de
+// la empresa. Ahora el correo sale por `sendLeadNotification` (servidor); el
+// catch-all lo mantiene denegado.
+
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Everything is server-only. The app reaches Firestore through the Admin
-    // SDK inside Next.js server actions and the ai-core Cloud Run service, and
-    // the Admin SDK bypasses these rules entirely.
-    //
-    // `/mail` used to allow unauthenticated `create` so the public budget forms
-    // could queue notification emails straight from the browser. With the
-    // repository public and the Firebase web API key visible in its history,
-    // that let anyone queue mail from the company's sender — an open relay.
-    // Those writes now go through `sendLeadNotification`, so nothing needs
-    // client-side write access.
+    function isSignedIn() { return request.auth != null; }
+
+    // --- Progreso de jobs del pipeline (NL/PDF/BC3 → ai-core). El cliente SOLO
+    // LEE (onSnapshot) para pintar estado/progreso; el doc lo escribe ai-core
+    // (Admin SDK). Se identifica por `jobId` y su campo de propiedad es `leadId`
+    // (no el uid de Auth), así que se permite lectura a cualquier usuario
+    // autenticado del panel — área interna de staff. Si en el futuro hubiera
+    // clientes finales con login en este proyecto, endurecer a
+    // `request.auth.token.admin == true`. ---
+    match /pipeline_jobs/{jobId} {
+      allow read: if isSignedIn();
+      allow write: if false;
+    }
+
+    // --- Todo lo demás: server-only (Admin SDK bypassa estas reglas). Incluye
+    // budgets, leads, price_book_2025 / material_catalog, pipeline_telemetry
+    // (se lee por SSE server-route, no desde el navegador), /mail, sesiones del
+    // asistente, etc. ---
     match /{document=**} {
       allow read, write: if false;
     }
