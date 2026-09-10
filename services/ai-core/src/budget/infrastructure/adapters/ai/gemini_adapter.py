@@ -469,6 +469,10 @@ class GoogleGenerativeAIAdapter(ILLMProvider):
         
         attempt = 0
         while attempt < self.max_retries:
+            # S2-A-02 fix — flag por-intento: ¿el último error fue un 429
+            # (rate-limit)? Un throttle es backpressure, NO un servicio caído, así
+            # que al agotar retries NO debe contar para el circuit breaker.
+            last_error_was_throttle = False
             # Inicializados fuera del try para que el except ValidationError pueda leerlos
             # cuando el fallo ocurre en model_validate_json (JSON truncado por el LLM).
             raw_json: str = ""
@@ -548,6 +552,12 @@ class GoogleGenerativeAIAdapter(ILLMProvider):
                     # circuit rapido para no quemar recursos.
                     _circuit_breaker.record_failure()
                     raise AIProviderError(f"Terminal API Error {code} on Vertex AI: {e}")
+                # 429 / RESOURCE_EXHAUSTED = rate-limit (backpressure), NO fallo de
+                # servicio: se reintenta con backoff y, al agotar retries, se levanta
+                # SIN abrir el circuit breaker (evita el hard-fail en cascada del
+                # resto de partidas del batch bajo un burst de 429).
+                if code == 429:
+                    last_error_was_throttle = True
                 error_str = f"Vertex API Error {code}: {e}"
                 logger.error(f"Vertex AI Error: {error_str}")
             except ValidationError as e:
@@ -583,10 +593,11 @@ class GoogleGenerativeAIAdapter(ILLMProvider):
 
             attempt += 1
             if attempt >= self.max_retries:
-                # S2-A-02 — agotamos retries: marcamos un fallo en el circuit
-                # breaker. Si llevamos >3 fallos en 5 min, el próximo call
-                # se bloqueará en `should_allow_call`.
-                _circuit_breaker.record_failure()
+                # S2-A-02 — agotamos retries. Marcamos fallo en el breaker SOLO si
+                # el último error NO fue un 429 (rate-limit): un throttle transitorio
+                # no debe degradar el circuit y hard-fallar el resto de partidas.
+                if not last_error_was_throttle:
+                    _circuit_breaker.record_failure()
                 raise AIProviderError(f"Unknown AI API error after {self.max_retries} retries: {error_str}")
 
             delay = self.base_delay * (2 ** (attempt - 1))

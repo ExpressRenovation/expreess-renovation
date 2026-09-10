@@ -92,6 +92,14 @@ def test_original_item_without_sanitization_rejects_null_unit():
 def test_evaluate_batch_skips_corrupt_item_and_emits_event(monkeypatch):
     """Un item que revienta al construir `OriginalItem` NO aborta el batch.
     Los demás items se resuelven normalmente; se emite `item_skipped` para el malo.
+
+    Contrato de COBERTURA (2026-09-10): además del `item_skipped`, la
+    reconciliación INTENTA recuperar el item corrupto como fallback. En este
+    caso extremo el propio dominio lo rechaza también al construir el fallback
+    (`OriginalItem` patcheado revienta para CORRUPT.1), así que NO puede
+    materializarse — pero en vez de perderlo EN SILENCIO se emite un evento
+    LOUD `partida_recovery_failed`. (En producción el fallback siempre se
+    construye: `OriginalItem` solo falla con `unit=None`, ya saneado.)
     """
     import asyncio
 
@@ -200,7 +208,8 @@ def test_evaluate_batch_skips_corrupt_item_and_emits_event(monkeypatch):
     metrics: Dict[str, float] = {"prompt": 0, "completion": 0, "total": 0, "cost": 0.0}
     priced = asyncio.run(svc.evaluate_batch(items, budget_id="b-1", metrics=metrics))
 
-    # Assertions: 1 partida resuelta + 1 evento item_skipped con el código correcto.
+    # OK.1 se resuelve normal. CORRUPT.1 no es reconstruible (ni como fallback,
+    # porque el dominio patcheado lo rechaza), así que queda 1 sola partida...
     assert len(priced) == 1
     assert priced[0].code == "OK.1"
 
@@ -208,6 +217,12 @@ def test_evaluate_batch_skips_corrupt_item_and_emits_event(monkeypatch):
     assert len(skipped_events) == 1
     assert skipped_events[0]["data"]["code"] == "CORRUPT.1"
     assert "Simulated" in skipped_events[0]["data"]["reason"]
+
+    # ...pero NO se pierde en silencio: la reconciliación lo intentó y, al fallar
+    # también el fallback, lo señaló con un evento LOUD `partida_recovery_failed`.
+    recovery_failed = [e for e in emitter.events if e["type"] == "partida_recovery_failed"]
+    assert len(recovery_failed) == 1
+    assert recovery_failed[0]["data"]["code"] == "CORRUPT.1"
 
 
 # -------- Test 3: item_resolved carries pricing_metadata (S1-A-04) -----------
