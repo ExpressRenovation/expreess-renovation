@@ -12,6 +12,7 @@ from pydantic import BaseModel, ValidationError
 
 from src.budget.application.ports.ports import ILLMProvider
 from src.budget.domain.exceptions import AIProviderError
+from src.budget.infrastructure.adapters.ai.llm_rate_limiter import get_llm_rate_limiter
 from src.budget.infrastructure.config.model_registry import get_model
 
 logger = logging.getLogger(__name__)
@@ -484,6 +485,12 @@ class GoogleGenerativeAIAdapter(ILLMProvider):
                 # retry interno del SDK puede bloquear el slot del semaphore del
                 # swarm indefinidamente (incidente 2026-05-18). Al expirar lanzamos
                 # `asyncio.TimeoutError`, capturado por el except de abajo.
+                # Rate-limit GLOBAL: espera un token del bucket compartido ANTES de
+                # tocar Vertex, para no exceder el pool DSQ de gemini-2.5-flash y
+                # evitar 429 en ráfaga (extracción + deconstruct + pricing +
+                # compositor pasan todos por aquí). Off por defecto: `LLM_MAX_RPM`
+                # ausente → NoOp, sin espera ni cambio de comportamiento.
+                await get_llm_rate_limiter().acquire()
                 call_started_at = time.monotonic()
                 response = await asyncio.wait_for(
                     self.genai_client.aio.models.generate_content(
